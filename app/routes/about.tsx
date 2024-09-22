@@ -1,17 +1,14 @@
 import { Player } from '@remotion/player'
 import { MyComposition } from '../../remotion/Composition'
 import { Form } from '@remix-run/react'
-
+import path from 'path'
 import type { ActionFunctionArgs } from '@remix-run/node'
 
-import path from 'path'
 export async function action(_: ActionFunctionArgs) {
   const p = path.join(process.cwd(), 'remotion', 'index.ts')
-  console.log('🚀 ~ render ~ p:', p)
 
   import('@remotion/bundler').then(async ({ bundle }) => {
     const bundled = await bundle(p)
-    console.log('🚀 ~ render ~ bundled:', bundled)
 
     import('@remotion/renderer').then(
       async ({ renderMedia, selectComposition }) => {

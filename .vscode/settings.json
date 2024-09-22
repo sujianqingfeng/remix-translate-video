@@ -1,5 +1,5 @@
 {
-  "cSpell.words": [],
+  "cSpell.words": ["isbot", "tailwindcss", "typecheck"],
   "editor.formatOnSave": true,
   "prettier.enable": true,
   "[typescriptreact]": {
