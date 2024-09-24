@@ -1,12 +1,12 @@
 import { Player } from '@remotion/player'
-import { MyComposition } from '../../remotion/Composition'
+import { TranslateCommentVideo } from '../../src-remotion/TranslateCommentVideo'
 import { Form } from '@remix-run/react'
 import path from 'path'
 import type { ActionFunctionArgs } from '@remix-run/node'
-import { webpackOverride } from '../../remotion/webpack-override'
+import { webpackOverride } from '../../src-remotion/webpack-override'
 
 export async function action(_: ActionFunctionArgs) {
-  const p = path.join(process.cwd(), 'remotion', 'index.ts')
+  const p = path.join(process.cwd(), 'src-remotion', 'index.ts')
 
   import('@remotion/bundler').then(async ({ bundle }) => {
     const bundled = await bundle({
@@ -18,7 +18,7 @@ export async function action(_: ActionFunctionArgs) {
       async ({ renderMedia, selectComposition }) => {
         const composition = await selectComposition({
           serveUrl: bundled,
-          id: 'MyComposition',
+          id: 'TranslateCommentVideo',
           inputProps: { text: 'World' }
         })
 
@@ -40,11 +40,11 @@ export default function About() {
   return (
     <div>
       <Player
-        component={MyComposition}
+        component={TranslateCommentVideo}
         inputProps={{ text: 'World' }}
-        durationInFrames={120}
-        compositionWidth={1920}
-        compositionHeight={1080}
+        durationInFrames={30 * 20}
+        compositionWidth={1280}
+        compositionHeight={720}
         fps={30}
         style={{
           width: 1280,

@@ -11,8 +11,8 @@
     "lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint .",
     "start": "remix-serve ./build/server/index.js",
     "typecheck": "tsc",
-    "remotion:studio": "remotion studio remotion/index.ts",
-    "remotion:render": "remotion render remotion/index.ts MyComposition out/video.mp4"
+    "remotion:studio": "remotion studio src-remotion/index.ts",
+    "remotion:render": "remotion render src-remotion/index.ts TranslateCommentVideo out/video.mp4"
   },
   "dependencies": {
     "@remix-run/node": "^2.12.1",
