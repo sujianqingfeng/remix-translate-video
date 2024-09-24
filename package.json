@@ -1,7 +1,9 @@
 {
   "name": "remix-translate-video",
   "private": true,
-  "sideEffects": false,
+  "sideEffects": [
+    "*.css"
+  ],
   "type": "module",
   "scripts": {
     "build": "remix vite:build",
@@ -27,6 +29,7 @@
   "devDependencies": {
     "@remix-run/dev": "^2.12.1",
     "@remotion/eslint-plugin": "^4.0.212",
+    "@remotion/tailwind": "^4.0.212",
     "@types/react": "^18.2.20",
     "@types/react-dom": "^18.2.7",
     "@typescript-eslint/eslint-plugin": "^6.7.4",

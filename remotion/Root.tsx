@@ -1,5 +1,6 @@
 import { Composition } from 'remotion'
 import { MyComposition } from './Composition'
+import '../app/tailwind.css'
 
 export function RemotionRoot() {
   return (

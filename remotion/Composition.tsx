@@ -1,7 +1,3 @@
 export function MyComposition() {
-  return (
-    <div className=" bg-white" style={{ color: 'red' }}>
-      Hello
-    </div>
-  )
+  return <div className=" bg-white text-red-500">Hello</div>
 }

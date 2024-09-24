@@ -3,12 +3,16 @@ import { MyComposition } from '../../remotion/Composition'
 import { Form } from '@remix-run/react'
 import path from 'path'
 import type { ActionFunctionArgs } from '@remix-run/node'
+import { webpackOverride } from '../../remotion/webpack-override'
 
 export async function action(_: ActionFunctionArgs) {
   const p = path.join(process.cwd(), 'remotion', 'index.ts')
 
   import('@remotion/bundler').then(async ({ bundle }) => {
-    const bundled = await bundle(p)
+    const bundled = await bundle({
+      entryPoint: p,
+      webpackOverride
+    })
 
     import('@remotion/renderer').then(
       async ({ renderMedia, selectComposition }) => {
