@@ -1,5 +1,8 @@
 import fetch, { RequestInit } from 'node-fetch'
 import { Comment } from '~/types'
+import fsp from 'node:fs/promises'
+import { getOut } from './video'
+import ytdl from '@distube/ytdl-core'
 
 export function findContinuation(html: string) {
   const index = html.indexOf('"targetId":"comments-section"')
@@ -11,13 +14,22 @@ export function findContinuation(html: string) {
   return token[1]
 }
 
+export function getTitle(html: string) {
+  const startIndex = html.indexOf('videoPrimaryInfoRenderer')
+  const end = startIndex + 200
+  const str = html.slice(startIndex, end)
+  const titleMatch = str.match(/"text":"([^"]+)"/)
+  const title = titleMatch ? titleMatch[1] : 'Unknown Title'
+  return title
+}
+
 export async function getYoutubeComments({
   videoId,
   agent
 }: {
   videoId: string
   agent?: RequestInit['agent']
-}): Promise<Comment[]> {
+}): Promise<{ title: string; comments: Comment[] }> {
   const url = `https://www.youtube.com/watch?v=${videoId}`
 
   const response = await fetch(url, {
@@ -25,6 +37,10 @@ export async function getYoutubeComments({
   })
   const html = await response.text()
 
+  const { htmlFile } = getOut(videoId)
+  fsp.writeFile(htmlFile, html)
+
+  const title = getTitle(html)
   const continuation = findContinuation(html)
 
   // Construct the API request
@@ -91,5 +107,10 @@ export async function getYoutubeComments({
     }
   })
 
-  return comments
+  return { comments, title }
+}
+
+export async function download(url: string) {
+  const agent = ytdl.createProxyAgent('http://127.0.0.1:7890')
+  await ytdl.getInfo(url, { agent })
 }

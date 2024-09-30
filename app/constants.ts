@@ -1,2 +1,5 @@
 export const OUT_DIR = 'out'
 export const COMMENTS_FILE = 'comments.json'
+export const VIDEO_FILE = 'video.mp4'
+export const TITLE_FILE = 'title.json'
+export const HTML_FILE = 'original.html'

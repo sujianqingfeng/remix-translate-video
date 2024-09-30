@@ -9,8 +9,7 @@ export async function action({ params }: ActionFunctionArgs) {
   invariant(params.videoId, 'missing videoId')
 
   const videoId = params.videoId
-
-  const { commentFile } = getOut(videoId)
+  const { commentFile, titleFile } = getOut(videoId)
 
   const commentStr = await fsp.readFile(commentFile, 'utf-8')
   const comments: Comment[] = JSON.parse(commentStr)
@@ -22,8 +21,12 @@ export async function action({ params }: ActionFunctionArgs) {
       return comment
     })
   )
-
   await fsp.writeFile(commentFile, JSON.stringify(translatedComments, null, 2))
+
+  const titleStr = await fsp.readFile(titleFile, 'utf-8')
+  const title = JSON.parse(titleStr).title
+  const translatedTitle = await translate(title)
+  await fsp.writeFile(titleFile, JSON.stringify({ title, translatedTitle }))
 
   return redirect(`/${videoId}`)
 }

@@ -1,20 +1,15 @@
 import { Player } from '@remotion/player'
 import { TranslateCommentVideo } from '../../src-remotion/TranslateCommentVideo'
 import { Form, json, useLoaderData } from '@remix-run/react'
-import path from 'path'
-import type {
-  ActionFunctionArgs,
-  LoaderFunctionArgs,
-  MetaFunction
-} from '@remix-run/node'
-import { webpackOverride } from '../../src-remotion/webpack-override'
-import { getYoutubeComments } from '~/utils/youtube-comment'
+import type { LoaderFunctionArgs, MetaFunction } from '@remix-run/node'
+import { getYoutubeComments } from '~/utils/youtube'
 import { HttpsProxyAgent } from 'https-proxy-agent'
 import invariant from 'tiny-invariant'
 import fsp from 'fs/promises'
 import { Languages } from 'lucide-react'
-import { getOut } from '~/utils/video'
+import { getOut, getVideoComment } from '~/utils/video'
 import type { Comment } from '~/types'
+
 export const meta: MetaFunction = () => {
   return [
     { title: 'New Remix App' },
@@ -22,43 +17,12 @@ export const meta: MetaFunction = () => {
   ]
 }
 
-export async function action(_: ActionFunctionArgs) {
-  const p = path.join(process.cwd(), 'src-remotion', 'index.ts')
-
-  import('@remotion/bundler').then(async ({ bundle }) => {
-    const bundled = await bundle({
-      entryPoint: p,
-      webpackOverride
-    })
-
-    import('@remotion/renderer').then(
-      async ({ renderMedia, selectComposition }) => {
-        const composition = await selectComposition({
-          serveUrl: bundled,
-          id: 'TranslateCommentVideo',
-          inputProps: { text: 'World' }
-        })
-
-        await renderMedia({
-          codec: 'h264',
-          composition,
-          serveUrl: bundled,
-          inputProps: { text: 'World' },
-          outputLocation: `out/${composition.id}.mp4`
-        })
-      }
-    )
-  })
-
-  return null // Add this line to return null
-}
-
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   invariant(params.videoId, 'videoId is required')
 
   const videoId = params.videoId
 
-  const { outDir, commentFile } = getOut(videoId)
+  const { outDir, commentFile, titleFile } = getOut(videoId)
   await fsp.mkdir(outDir, { recursive: true })
 
   let comments: Comment[] = []
@@ -70,25 +34,44 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
   }
 
   if (comments.length === 0) {
-    comments = await getYoutubeComments({
+    const { comments: youtubeComments, title } = await getYoutubeComments({
       videoId,
       agent: new HttpsProxyAgent(`http://127.0.0.1:7890`)
     })
 
+    comments = youtubeComments
     await fsp.writeFile(commentFile, JSON.stringify(comments))
+    await fsp.writeFile(
+      titleFile,
+      JSON.stringify({
+        title
+      })
+    )
   }
-  return json({ videoId, comments })
+
+  let title = 'Unknown Title'
+  try {
+    const titleStr = await fsp.readFile(titleFile, 'utf-8')
+    const titleObj = JSON.parse(titleStr)
+    title = titleObj.translatedTitle
+  } catch (error) {
+    console.log('no title file')
+  }
+
+  return json({ videoId, comments, title })
 }
 
 export default function VideoCommentPage() {
-  const { videoId, comments } = useLoaderData<typeof loader>()
+  const { videoId, comments, title } = useLoaderData<typeof loader>()
+  const { videoComments, totalDurationInFrames } = getVideoComment(comments)
+
   return (
     <div className="p-4 h-full w-full flex">
       <div>
         <Player
           component={TranslateCommentVideo}
-          inputProps={{ text: 'World' }}
-          durationInFrames={30 * 20}
+          inputProps={{ comments: videoComments, title }}
+          durationInFrames={totalDurationInFrames}
           compositionWidth={1280}
           compositionHeight={720}
           fps={30}
@@ -99,9 +82,13 @@ export default function VideoCommentPage() {
           controls
         />
 
-        <Form method="post">
+        <Form method="post" action="render">
           <button type="submit">render</button>
         </Form>
+
+        <p> {title}</p>
+
+        <p>https://www.youtube.com/watch?v={videoId}</p>
       </div>
 
       <div>

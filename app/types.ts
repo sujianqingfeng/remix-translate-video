@@ -3,3 +3,11 @@ export type Comment = {
   author: string
   translatedContent?: string
 }
+
+export type VideoComment = {
+  author: string
+  content: string
+  translatedContent?: string
+  durationInFrames: number
+  form: number
+}

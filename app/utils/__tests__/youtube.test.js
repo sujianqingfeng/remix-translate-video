@@ -1,9 +1,14 @@
 import { HttpsProxyAgent } from 'https-proxy-agent'
-import { findContinuation, getYoutubeComments } from '../youtube-comment'
+import {
+  findContinuation,
+  getTitle,
+  getYoutubeComments,
+  download
+} from '../youtube'
 import { describe, it, expect } from 'vitest'
 import fsp from 'fs/promises'
 
-describe('getYoutubeComment', () => {
+describe('youtube-comment', () => {
   it.skip('should return html', async () => {
     const html = await getYoutubeComments({
       videoId: 'dQw4w9WgXcQ',
@@ -117,5 +122,18 @@ describe('getYoutubeComment', () => {
     const html = await fsp.readFile('./dQw4w9WgXcQ.html', 'utf-8')
     const token = findContinuation(html)
     expect(token).toMatchInlineSnapshot(``)
+  })
+
+  it.skip('get title', async () => {
+    const html = await fsp.readFile('./out/mmE-C-OzRXQ/original.html', 'utf-8')
+    const title = getTitle(html)
+    expect(title).toMatchInlineSnapshot(
+      `"China test-fires intercontinental ballistic missile into Pacific Ocean"`
+    )
+  })
+
+  it('download', async () => {
+    const info = await download('https://www.youtube.com/watch?v=mmE-C-OzRXQ')
+    expect(info).toMatchInlineSnapshot(`undefined`)
   })
 })
