@@ -6,7 +6,7 @@ import type {
   MetaFunction,
   ActionFunctionArgs
 } from '@remix-run/node'
-import { getYoutubeComments } from '~/utils/youtube'
+import { getYoutubeComments } from '~/utils/youtube-comments'
 import { HttpsProxyAgent } from 'https-proxy-agent'
 import invariant from 'tiny-invariant'
 import fsp from 'fs/promises'
@@ -17,8 +17,8 @@ import { Button } from '~/components/ui/button'
 
 export const meta: MetaFunction = () => {
   return [
-    { title: 'New Remix App' },
-    { name: 'description', content: 'Welcome to Remix!' }
+    { title: 'Translate Youtube Comments' },
+    { name: 'description', content: 'Translate Youtube Comments' }
   ]
 }
 

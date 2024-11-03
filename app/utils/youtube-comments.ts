@@ -42,7 +42,6 @@ export async function getYoutubeComments({
   const title = getTitle(html)
   const continuation = findContinuation(html)
 
-  // Construct the API request
   const apiUrl = 'https://www.youtube.com/youtubei/v1/next?prettyPrint=false'
   const requestBody = {
     context: {
