@@ -1,16 +1,6 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-html,
-body {
-  @apply bg-white dark:bg-gray-950;
-
-  @media (prefers-color-scheme: dark) {
-    color-scheme: dark;
-  }
-}
-
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -66,12 +56,11 @@ body {
     --chart-5: 340 75% 55%;
   }
 }
-
 @layer base {
   * {
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground min-h-screen;
   }
 }

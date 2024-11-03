@@ -1,6 +1,0 @@
-[install]
-registry = "https://registry.npmmirror.com"
-
-[install.scopes]
-"@types" = "https://registry.npmmirror.com"
-"@babel" = "https://registry.npmmirror.com"

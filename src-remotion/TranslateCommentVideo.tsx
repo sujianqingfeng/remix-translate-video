@@ -33,7 +33,7 @@ export function TranslateCommentVideo({
             style={{ flex: 1, objectFit: 'contain' }}
             startFrom={0}
             crossOrigin="anonymous"
-            src={staticFile('test.mp4')}
+            src={staticFile('original.mp4')}
           />
         </div>
       </AbsoluteFill>

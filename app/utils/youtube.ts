@@ -2,7 +2,6 @@ import fetch, { RequestInit } from 'node-fetch'
 import { Comment } from '~/types'
 import fsp from 'node:fs/promises'
 import { getOut } from './video'
-import ytdl from '@distube/ytdl-core'
 
 export function findContinuation(html: string) {
   const index = html.indexOf('"targetId":"comments-section"')
@@ -108,9 +107,4 @@ export async function getYoutubeComments({
   })
 
   return { comments, title }
-}
-
-export async function download(url: string) {
-  const agent = ytdl.createProxyAgent('http://127.0.0.1:7890')
-  await ytdl.getInfo(url, { agent })
 }
