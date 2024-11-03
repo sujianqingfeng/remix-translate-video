@@ -2,6 +2,7 @@ import path from 'node:path'
 import {
 	COMMENTS_FILE,
 	HTML_FILE,
+	ORIGINAL_VIDEO_FILE,
 	OUT_DIR,
 	TITLE_FILE,
 	VIDEO_FILE,
@@ -14,8 +15,16 @@ export function getOut(videoId: string) {
 	const videoFile = path.join(outDir, VIDEO_FILE)
 	const titleFile = path.join(outDir, TITLE_FILE)
 	const htmlFile = path.join(outDir, HTML_FILE)
+	const originalVideoFile = path.join(outDir, ORIGINAL_VIDEO_FILE)
 
-	return { outDir, commentFile, videoFile, titleFile, htmlFile }
+	return {
+		outDir,
+		commentFile,
+		videoFile,
+		titleFile,
+		htmlFile,
+		originalVideoFile,
+	}
 }
 
 export function getVideoComment(comments: Comment[]) {
