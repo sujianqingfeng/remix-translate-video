@@ -10,6 +10,7 @@ import { HttpsProxyAgent } from 'https-proxy-agent'
 import { Languages, Trash } from 'lucide-react'
 import invariant from 'tiny-invariant'
 import { Button } from '~/components/ui/button'
+import { ORIGINAL_VIDEO_FILE } from '~/constants'
 import type { Comment } from '~/types'
 import { getOut, getVideoComment } from '~/utils/video'
 import { getYoutubeComments } from '~/utils/youtube-comments'
@@ -105,7 +106,11 @@ export default function VideoCommentPage() {
 			<div className="flex flex-col gap-2">
 				<Player
 					component={TranslateCommentVideo}
-					inputProps={{ comments: videoComments, title }}
+					inputProps={{
+						comments: videoComments,
+						title,
+						videoSrc: ORIGINAL_VIDEO_FILE,
+					}}
 					durationInFrames={totalDurationInFrames}
 					compositionWidth={1280}
 					compositionHeight={720}

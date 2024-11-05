@@ -3,7 +3,10 @@ export const COMMENTS_FILE = 'comments.json'
 export const VIDEO_FILE = 'video.mp4'
 export const TITLE_FILE = 'title.json'
 export const HTML_FILE = 'original.html'
-export const ORIGINAL_VIDEO_FILE = 'original.mp4'
+
+export const DOWNLOAD_URL = ''
+// export const ORIGINAL_VIDEO_FILE = 'original.mp4'
+export const ORIGINAL_VIDEO_FILE = 'original.webm'
 
 export const USER_AGENT =
 	'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36'
