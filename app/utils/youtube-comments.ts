@@ -2,7 +2,7 @@ import fsp from 'node:fs/promises'
 import fetch, { type RequestInit } from 'node-fetch'
 import { USER_AGENT } from '~/constants'
 import type { Comment } from '~/types'
-import { getOut } from './video'
+import { getOut, getYoutubeUrlByVideoId } from './video'
 
 export function findContinuation(html: string) {
 	const index = html.indexOf('"targetId":"comments-section"')
@@ -30,7 +30,7 @@ export async function getYoutubeComments({
 	videoId: string
 	agent?: RequestInit['agent']
 }): Promise<{ title: string; comments: Comment[] }> {
-	const url = `https://www.youtube.com/watch?v=${videoId}`
+	const url = getYoutubeUrlByVideoId(videoId)
 
 	const response = await fetch(url, {
 		agent,
@@ -76,34 +76,38 @@ export async function getYoutubeComments({
 		agent,
 	})
 
-	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	const apiData = (await apiResponse.json()) as any
 
-	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	const getContent = (comment: any) => {
 		return comment.payload.commentEntityPayload?.properties?.content?.content
 	}
-	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	const getAuthor = (comment: any) => {
 		return comment.payload.commentEntityPayload?.properties?.authorButtonA11y
 	}
 
+	const getLikes = (comment: any) => {
+		return comment.payload.commentEntityPayload?.toolbar?.likeCountLiked
+	}
+
+	const getAuthorThumbnail = (comment: any) => {
+		return comment.payload.commentEntityPayload?.author?.avatarThumbnailUrl
+	}
+
 	let commentMutations =
 		apiData.frameworkUpdates.entityBatchUpdate.mutations.filter(
-			// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 			(item: any) => item.type === 'ENTITY_MUTATION_TYPE_REPLACE',
 		)
 
-	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	commentMutations = commentMutations.filter((comment: any) => {
 		return getAuthor(comment) && getContent(comment)
 	})
 
-	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	const comments = commentMutations.map((comment: any) => {
 		return {
 			content: getContent(comment),
 			author: getAuthor(comment),
+			likes: getLikes(comment),
+			authorThumbnail: getAuthorThumbnail(comment),
 		}
 	})
 

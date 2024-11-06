@@ -43,3 +43,7 @@ export function getVideoComment(comments: Comment[]) {
 		totalDurationInFrames,
 	}
 }
+
+export function getYoutubeUrlByVideoId(videoId: string) {
+	return `https://www.youtube.com/watch?v=${videoId}`
+}

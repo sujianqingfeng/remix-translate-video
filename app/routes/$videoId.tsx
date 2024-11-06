@@ -102,7 +102,7 @@ export default function VideoCommentPage() {
 	const { videoComments, totalDurationInFrames } = getVideoComment(comments)
 
 	return (
-		<div className="p-4 h-screen w-full flex gap-2">
+		<div className="p-4 h-screen w-full flex justify-center gap-2">
 			<div className="flex flex-col gap-2">
 				<Player
 					component={TranslateCommentVideo}

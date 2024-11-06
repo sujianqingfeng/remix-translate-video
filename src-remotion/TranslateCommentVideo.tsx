@@ -1,4 +1,5 @@
-import { AbsoluteFill, Sequence, Video, staticFile } from 'remotion'
+import { ThumbsDown, ThumbsUp } from 'lucide-react'
+import { AbsoluteFill, Img, Sequence, Video, staticFile } from 'remotion'
 import type { VideoComment } from '~/types'
 
 // 添加计算字体大小的辅助函数，同时考虑宽度和高度限制
@@ -47,16 +48,23 @@ export function TranslateCommentVideo({
 	return (
 		<AbsoluteFill style={{ backgroundColor: 'white' }}>
 			<AbsoluteFill>
-				<div style={{ display: 'flex', height: 'calc(100% - 160px)' }}>
+				<div
+					style={{
+						display: 'flex',
+						justifyContent: 'center',
+						alignItems: 'center',
+						height: 'calc(100% - 160px)',
+					}}
+				>
 					<div
 						style={{
-							width: '300px',
+							width: '250px',
 							flexShrink: 0,
 							height: '100%',
 							display: 'flex',
 							alignItems: 'center',
 							justifyContent: 'center',
-							color: 'red',
+							color: '#F87171',
 							fontSize: '30px',
 							padding: '20px',
 						}}
@@ -64,9 +72,8 @@ export function TranslateCommentVideo({
 						{title}
 					</div>
 					<Video
-						className="w-full"
 						loop
-						style={{ flex: 1, objectFit: 'contain' }}
+						style={{ flexGrow: 1, objectFit: 'contain', height: '100%' }}
 						startFrom={0}
 						crossOrigin="anonymous"
 						src={staticFile(videoSrc)}
@@ -91,14 +98,19 @@ export function TranslateCommentVideo({
 								width: '100%',
 							}}
 						>
-							<p
+							<div
 								style={{
 									fontSize: '12px',
 									lineHeight: '20px',
+									display: 'flex',
+									alignItems: 'center',
+									gap: '10px',
 								}}
 							>
-								{comment.author}
-							</p>
+								<div>{comment.author}</div>
+								<ThumbsUp size={16} />
+								<span>{comment.likes}</span>
+							</div>
 							<p
 								style={{
 									fontSize: `${calculateFontSize(
@@ -118,7 +130,7 @@ export function TranslateCommentVideo({
 							</p>
 							<p
 								style={{
-									color: 'red',
+									color: '#F87171',
 									fontSize: `${calculateFontSize(
 										comment.translatedContent ?? '',
 										commentMaxWidth,

@@ -1,7 +1,7 @@
 import fsp from 'node:fs/promises'
 import fetch, { type RequestInit } from 'node-fetch'
 import { RE_XML_TRANSCRIPT, USER_AGENT } from '~/constants'
-import { getOut } from './video'
+import { getOut, getYoutubeUrlByVideoId } from './video'
 
 export function parseTranscriptCaptionUrl(html: string) {
 	if (!html.includes('"captionTracks":')) {
@@ -28,7 +28,7 @@ export async function getYoutubeTranscript({
 	videoId: string
 	agent?: RequestInit['agent']
 }) {
-	const url = `https://www.youtube.com/watch?v=${videoId}`
+	const url = getYoutubeUrlByVideoId(videoId)
 
 	const response = await fetch(url, {
 		agent,

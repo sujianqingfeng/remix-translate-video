@@ -3,7 +3,7 @@ import { type ActionFunctionArgs, redirect } from '@remix-run/node'
 import invariant from 'tiny-invariant'
 import type { Comment } from '~/types'
 import { translate } from '~/utils/translate'
-import { getOut } from '~/utils/video'
+import { getOut, getYoutubeUrlByVideoId } from '~/utils/video'
 
 export async function action({ params }: ActionFunctionArgs) {
 	invariant(params.videoId, 'missing videoId')
@@ -26,7 +26,15 @@ export async function action({ params }: ActionFunctionArgs) {
 	const titleStr = await fsp.readFile(titleFile, 'utf-8')
 	const title = JSON.parse(titleStr).title
 	const translatedTitle = await translate(title)
-	await fsp.writeFile(titleFile, JSON.stringify({ title, translatedTitle }))
+	await fsp.writeFile(
+		titleFile,
+		JSON.stringify({
+			title,
+			translatedTitle,
+			publishTitle: `外网真实评论：${translatedTitle}`,
+			youtubeUrl: getYoutubeUrlByVideoId(videoId),
+		}),
+	)
 
 	return redirect(`/${videoId}`)
 }
