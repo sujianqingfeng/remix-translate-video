@@ -40,10 +40,10 @@ export function TranslateCommentVideo({
 	title: string
 	videoSrc: string
 }) {
-	// 计算评论区域的最大宽度和高度（考虑padding）
-	const commentMaxWidth = 1920 - 340 // 1920px 减去左侧标题宽度和padding
-	const commentContentMaxHeight = 50 // 原始评论的最大高度
-	const translatedContentMaxHeight = 70 // 翻译评论的最大高度
+	// 调整评论区域的布局参数
+	const commentMaxWidth = 1920 - 340
+	const commentContentMaxHeight = 45 // 稍微减小原始评论的高度
+	const translatedContentMaxHeight = 85 // 增加翻译内容的最大高度
 
 	return (
 		<AbsoluteFill style={{ backgroundColor: 'white' }}>
@@ -53,7 +53,7 @@ export function TranslateCommentVideo({
 						display: 'flex',
 						justifyContent: 'center',
 						alignItems: 'center',
-						height: 'calc(100% - 160px)',
+						height: 'calc(100% - 180px)', // 增加底部空间
 					}}
 				>
 					<div
@@ -94,7 +94,7 @@ export function TranslateCommentVideo({
 								bottom: 0,
 								left: 0,
 								padding: '20px',
-								height: '160px',
+								height: '180px', // 增加整体评论区域的高度
 								width: '100%',
 							}}
 						>
@@ -118,10 +118,10 @@ export function TranslateCommentVideo({
 										commentMaxWidth,
 										commentContentMaxHeight,
 										16,
-										1.8,
+										1.6, // 减小行高
 									)}px`,
-									lineHeight: '1.8',
-									marginBottom: '4px',
+									lineHeight: '1.6',
+									marginBottom: '8px',
 									maxHeight: `${commentContentMaxHeight}px`,
 									overflow: 'hidden',
 								}}
@@ -135,12 +135,16 @@ export function TranslateCommentVideo({
 										comment.translatedContent ?? '',
 										commentMaxWidth,
 										translatedContentMaxHeight,
-										30,
-										1.5,
+										28, // 稍微减小基础字号
+										1.4, // 减小行高以容纳更多内容
 									)}px`,
-									lineHeight: '1.5',
+									lineHeight: '1.4',
 									maxHeight: `${translatedContentMaxHeight}px`,
 									overflow: 'hidden',
+									display: '-webkit-box',
+									WebkitLineClamp: 3, // 最多显示3行
+									WebkitBoxOrient: 'vertical',
+									textOverflow: 'ellipsis',
 								}}
 							>
 								{comment.translatedContent}

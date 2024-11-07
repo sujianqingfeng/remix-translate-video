@@ -1,15 +1,12 @@
 import fsp from 'node:fs/promises'
 import path from 'node:path'
-import type {
-	ActionFunctionArgs,
-	LoaderFunctionArgs,
-	MetaFunction,
-} from '@remix-run/node'
+import type { LoaderFunctionArgs, MetaFunction } from '@remix-run/node'
 import { Form, json, useFetcher, useLoaderData } from '@remix-run/react'
 import { Player } from '@remotion/player'
 import { HttpsProxyAgent } from 'https-proxy-agent'
-import { Languages, Trash } from 'lucide-react'
+import { Languages } from 'lucide-react'
 import invariant from 'tiny-invariant'
+import { CommentsList } from '~/components/business/CommentsList'
 import { Button } from '~/components/ui/button'
 import { PROXY } from '~/constants'
 import type { Comment } from '~/types'
@@ -27,7 +24,11 @@ export const meta: MetaFunction = () => {
 async function copyOriginalVideoToPublic(videoId: string) {
 	const originalVideoFile = await getOriginalVideoFile(videoId)
 
-	if (!originalVideoFile) throw new Error('Video file not found')
+	if (!originalVideoFile) {
+		return {
+			originalFileName: '',
+		}
+	}
 
 	const publicDir = path.join(process.cwd(), 'public')
 
@@ -41,14 +42,11 @@ async function copyOriginalVideoToPublic(videoId: string) {
 	}
 }
 
-export const loader = async ({ params, request }: LoaderFunctionArgs) => {
-	invariant(params.videoId, 'videoId is required')
-
-	const videoId = params.videoId
-
-	const { outDir, commentFile, titleFile } = getOut(videoId)
-	await fsp.mkdir(outDir, { recursive: true })
-
+async function fetchComments({
+	videoId,
+	commentFile,
+	titleFile,
+}: { videoId: string; commentFile: string; titleFile: string }) {
 	let comments: Comment[] = []
 	try {
 		const str = await fsp.readFile(commentFile, 'utf-8')
@@ -73,6 +71,10 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
 		)
 	}
 
+	return { comments }
+}
+
+async function fetchTitle({ titleFile }: { titleFile: string }) {
 	let title = 'Unknown Title'
 	try {
 		const titleStr = await fsp.readFile(titleFile, 'utf-8')
@@ -82,6 +84,19 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
 		console.log('no title file')
 	}
 
+	return { title }
+}
+
+export const loader = async ({ params, request }: LoaderFunctionArgs) => {
+	invariant(params.videoId, 'videoId is required')
+
+	const videoId = params.videoId
+
+	const { outDir, commentFile, titleFile } = getOut(videoId)
+	await fsp.mkdir(outDir, { recursive: true })
+
+	const { comments } = await fetchComments({ videoId, commentFile, titleFile })
+	const { title } = await fetchTitle({ titleFile })
 	const { originalFileName } = await copyOriginalVideoToPublic(videoId)
 
 	return json({
@@ -90,35 +105,6 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
 		title,
 		videoUrl: originalFileName,
 	})
-}
-
-export async function action({ request, params }: ActionFunctionArgs) {
-	const formData = await request.formData()
-	const intent = formData.get('intent')
-	const commentContent = formData.get('commentContent')
-
-	if (intent === 'delete' && commentContent) {
-		const videoId = params.videoId
-		invariant(videoId, 'videoId is required')
-
-		const { commentFile } = getOut(videoId)
-
-		// 读取现有评论
-		const commentsStr = await fsp.readFile(commentFile, 'utf-8')
-		const comments: Comment[] = JSON.parse(commentsStr)
-
-		// 过滤掉要删除的评论
-		const newComments = comments.filter(
-			(comment) => comment.content !== commentContent,
-		)
-
-		// 保存更新后的评论
-		await fsp.writeFile(commentFile, JSON.stringify(newComments))
-
-		return json({ success: true })
-	}
-
-	return json({ success: false })
 }
 
 export default function VideoCommentPage() {
@@ -148,10 +134,12 @@ export default function VideoCommentPage() {
 				/>
 
 				<p>{title}</p>
-				<Form method="post" action="render">
+				<fetcher.Form method="post" action="render">
 					<input type="hidden" name="videoUrl" value={videoUrl} />
-					<Button type="submit">render</Button>
-				</Form>
+					<Button type="submit" disabled={fetcher.state !== 'idle'}>
+						{fetcher.state === 'submitting' ? 'Loading...' : 'Render'}
+					</Button>
+				</fetcher.Form>
 			</div>
 
 			<div className="overflow-y-auto">
@@ -164,34 +152,7 @@ export default function VideoCommentPage() {
 					</Form>
 				</div>
 
-				<div>
-					{comments.map((comment) => {
-						return (
-							<div key={comment.content} className="p-2">
-								<p className="text-sm flex items-center justify-between gap-1">
-									{comment.author}
-
-									<fetcher.Form method="post">
-										<input type="hidden" name="intent" value="delete" />
-										<input
-											type="hidden"
-											name="commentContent"
-											value={comment.content}
-										/>
-										<button
-											type="submit"
-											className="cursor-pointer hover:text-red-500"
-										>
-											<Trash size={16} />
-										</button>
-									</fetcher.Form>
-								</p>
-								<p className="text-md">{comment.content}</p>
-								<p className="text-md">{comment.translatedContent}</p>
-							</div>
-						)
-					})}
-				</div>
+				<CommentsList comments={comments} />
 			</div>
 		</div>
 	)
