@@ -1,8 +1,9 @@
+import fsp from 'node:fs/promises'
 import path from 'node:path'
 import {
 	COMMENTS_FILE,
 	HTML_FILE,
-	ORIGINAL_VIDEO_FILE,
+	ORIGINAL_VIDEO_FILES,
 	OUT_DIR,
 	TITLE_FILE,
 	VIDEO_FILE,
@@ -15,7 +16,6 @@ export function getOut(videoId: string) {
 	const videoFile = path.join(outDir, VIDEO_FILE)
 	const titleFile = path.join(outDir, TITLE_FILE)
 	const htmlFile = path.join(outDir, HTML_FILE)
-	const originalVideoFile = path.join(outDir, ORIGINAL_VIDEO_FILE)
 
 	return {
 		outDir,
@@ -23,7 +23,6 @@ export function getOut(videoId: string) {
 		videoFile,
 		titleFile,
 		htmlFile,
-		originalVideoFile,
 	}
 }
 
@@ -46,4 +45,19 @@ export function getVideoComment(comments: Comment[]) {
 
 export function getYoutubeUrlByVideoId(videoId: string) {
 	return `https://www.youtube.com/watch?v=${videoId}`
+}
+
+export async function getOriginalVideoFile(videoId: string) {
+	let originalVideoFile = ''
+	const { outDir } = getOut(videoId)
+
+	for (const file of ORIGINAL_VIDEO_FILES) {
+		const filePath = path.join(outDir, file)
+		try {
+			await fsp.access(filePath)
+			originalVideoFile = filePath
+		} catch (error) {}
+	}
+
+	return originalVideoFile
 }

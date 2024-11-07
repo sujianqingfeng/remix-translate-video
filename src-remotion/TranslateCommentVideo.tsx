@@ -1,5 +1,5 @@
-import { ThumbsDown, ThumbsUp } from 'lucide-react'
-import { AbsoluteFill, Img, Sequence, Video, staticFile } from 'remotion'
+import { ThumbsUp } from 'lucide-react'
+import { AbsoluteFill, Sequence, Video, staticFile } from 'remotion'
 import type { VideoComment } from '~/types'
 
 // 添加计算字体大小的辅助函数，同时考虑宽度和高度限制

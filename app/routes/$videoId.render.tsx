@@ -1,11 +1,10 @@
 import fsp from 'node:fs/promises'
 import path from 'node:path'
-import type { ActionFunctionArgs } from '@remix-run/node'
+import { type ActionFunctionArgs, json, redirect } from '@remix-run/node'
 import { bundle } from '@remotion/bundler'
 import type { RenderMediaOnProgress } from '@remotion/renderer'
 import { renderMedia, selectComposition } from '@remotion/renderer'
 import invariant from 'tiny-invariant'
-import { ORIGINAL_VIDEO_FILE } from '~/constants'
 import type { Comment } from '~/types'
 import { throttle } from '~/utils/timer'
 import { getOut, getVideoComment } from '~/utils/video'
@@ -26,10 +25,17 @@ const throttleRenderOnProgress = throttle(renderOnProgress, 1000, {
 	trailing: true,
 })
 
-export async function action({ params }: ActionFunctionArgs) {
+export async function action({ request, params }: ActionFunctionArgs) {
 	invariant(params.videoId, 'videoId is required')
 
-	const { commentFile, titleFile } = getOut(params.videoId)
+	const formData = await request.formData()
+	const videoUrl = formData.get('videoUrl')
+
+	invariant(videoUrl, 'videoUrl is required')
+
+	const { videoId } = params
+
+	const { commentFile, titleFile } = getOut(videoId)
 	const str = await fsp.readFile(commentFile, 'utf-8')
 	const comments: Comment[] = JSON.parse(str)
 
@@ -52,7 +58,7 @@ export async function action({ params }: ActionFunctionArgs) {
 		inputProps: {
 			comments: videoComments,
 			title,
-			videoSrc: ORIGINAL_VIDEO_FILE,
+			videoSrc: videoUrl,
 		},
 	})
 
@@ -65,21 +71,11 @@ export async function action({ params }: ActionFunctionArgs) {
 		inputProps: {
 			comments: videoComments,
 			title,
-			videoSrc: ORIGINAL_VIDEO_FILE,
+			videoSrc: videoUrl,
 		},
-		outputLocation: `out/${params.videoId}/output.mp4`,
+		outputLocation: `out/${videoId}/output.mp4`,
 		onProgress: throttleRenderOnProgress,
 	})
 
-	// import('@remotion/renderer').then(
-	// 	async ({ renderMedia, selectComposition }) => {
-
-	// 	},
-	// )
-
-	// import('@remotion/bundler').then(async ({ bundle }) => {
-
-	// })
-
-	return null // Add this line to return null
+	return json({ success: true })
 }

@@ -1,4 +1,5 @@
 import fsp from 'node:fs/promises'
+import path from 'node:path'
 import type {
 	ActionFunctionArgs,
 	LoaderFunctionArgs,
@@ -10,9 +11,9 @@ import { HttpsProxyAgent } from 'https-proxy-agent'
 import { Languages, Trash } from 'lucide-react'
 import invariant from 'tiny-invariant'
 import { Button } from '~/components/ui/button'
-import { ORIGINAL_VIDEO_FILE } from '~/constants'
+import { PROXY } from '~/constants'
 import type { Comment } from '~/types'
-import { getOut, getVideoComment } from '~/utils/video'
+import { getOriginalVideoFile, getOut, getVideoComment } from '~/utils/video'
 import { getYoutubeComments } from '~/utils/youtube-comments'
 import { TranslateCommentVideo } from '../../src-remotion/TranslateCommentVideo'
 
@@ -23,7 +24,24 @@ export const meta: MetaFunction = () => {
 	]
 }
 
-export const loader = async ({ params }: LoaderFunctionArgs) => {
+async function copyOriginalVideoToPublic(videoId: string) {
+	const originalVideoFile = await getOriginalVideoFile(videoId)
+
+	if (!originalVideoFile) throw new Error('Video file not found')
+
+	const publicDir = path.join(process.cwd(), 'public')
+
+	const originalFileName = path.basename(originalVideoFile)
+
+	const destPath = path.join(publicDir, originalFileName)
+	await fsp.copyFile(originalVideoFile, destPath)
+
+	return {
+		originalFileName,
+	}
+}
+
+export const loader = async ({ params, request }: LoaderFunctionArgs) => {
 	invariant(params.videoId, 'videoId is required')
 
 	const videoId = params.videoId
@@ -42,7 +60,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 	if (comments.length === 0) {
 		const { comments: youtubeComments, title } = await getYoutubeComments({
 			videoId,
-			agent: new HttpsProxyAgent('http://127.0.0.1:7890'),
+			agent: new HttpsProxyAgent(PROXY),
 		})
 
 		comments = youtubeComments
@@ -64,7 +82,14 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 		console.log('no title file')
 	}
 
-	return json({ videoId, comments, title })
+	const { originalFileName } = await copyOriginalVideoToPublic(videoId)
+
+	return json({
+		videoId,
+		comments,
+		title,
+		videoUrl: originalFileName,
+	})
 }
 
 export async function action({ request, params }: ActionFunctionArgs) {
@@ -97,7 +122,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 }
 
 export default function VideoCommentPage() {
-	const { videoId, comments, title } = useLoaderData<typeof loader>()
+	const { videoId, comments, title, videoUrl } = useLoaderData<typeof loader>()
 	const fetcher = useFetcher()
 	const { videoComments, totalDurationInFrames } = getVideoComment(comments)
 
@@ -109,7 +134,7 @@ export default function VideoCommentPage() {
 					inputProps={{
 						comments: videoComments,
 						title,
-						videoSrc: ORIGINAL_VIDEO_FILE,
+						videoSrc: videoUrl,
 					}}
 					durationInFrames={totalDurationInFrames}
 					compositionWidth={1280}
@@ -123,8 +148,8 @@ export default function VideoCommentPage() {
 				/>
 
 				<p>{title}</p>
-				<p className="text-sm">https://www.youtube.com/watch?v={videoId}</p>
 				<Form method="post" action="render">
+					<input type="hidden" name="videoUrl" value={videoUrl} />
 					<Button type="submit">render</Button>
 				</Form>
 			</div>
