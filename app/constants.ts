@@ -3,7 +3,6 @@ export const COMMENTS_FILE = 'comments.json'
 export const VIDEO_FILE = 'video.mp4'
 export const TITLE_FILE = 'title.json'
 export const HTML_FILE = 'original.html'
-
 export const DOWNLOAD_URL = import.meta.env.DOWNLOAD_URL
 export const ORIGINAL_VIDEO_FILES = ['original.webm', 'original.mp4']
 
@@ -14,3 +13,6 @@ export const USER_AGENT =
 
 export const RE_XML_TRANSCRIPT =
 	/<text start="([^"]*)" dur="([^"]*)">([^<]*)<\/text>/g
+
+export const SHORT_TEXT_DIR = 'short-text'
+export const SHORT_TEXT_INPUT_FILE = 'input.json'

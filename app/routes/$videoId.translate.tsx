@@ -3,13 +3,13 @@ import { type ActionFunctionArgs, redirect } from '@remix-run/node'
 import invariant from 'tiny-invariant'
 import type { Comment } from '~/types'
 import { translate } from '~/utils/translate'
-import { getOut, getYoutubeUrlByVideoId } from '~/utils/video'
+import { getVideoCommentOut, getYoutubeUrlByVideoId } from '~/utils/video'
 
 export async function action({ params }: ActionFunctionArgs) {
 	invariant(params.videoId, 'missing videoId')
 
 	const videoId = params.videoId
-	const { commentFile, titleFile } = getOut(videoId)
+	const { commentFile, titleFile } = getVideoCommentOut(videoId)
 
 	const commentStr = await fsp.readFile(commentFile, 'utf-8')
 	const comments: Comment[] = JSON.parse(commentStr)

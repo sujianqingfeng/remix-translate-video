@@ -11,7 +11,11 @@ import { Button } from '~/components/ui/button'
 import { PROXY } from '~/constants'
 import { TranslateCommentVideo } from '~/remotion/translate-comments/TranslateCommentVideo'
 import type { Comment } from '~/types'
-import { getOriginalVideoFile, getOut, getVideoComment } from '~/utils/video'
+import {
+	getOriginalVideoFile,
+	getVideoComment,
+	getVideoCommentOut,
+} from '~/utils/video'
 import { getYoutubeComments } from '~/utils/youtube-comments'
 
 export const meta: MetaFunction = () => {
@@ -92,7 +96,7 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
 
 	const videoId = params.videoId
 
-	const { outDir, commentFile, titleFile } = getOut(videoId)
+	const { outDir, commentFile, titleFile } = getVideoCommentOut(videoId)
 	await fsp.mkdir(outDir, { recursive: true })
 
 	const { comments } = await fetchComments({ videoId, commentFile, titleFile })

@@ -2,7 +2,7 @@ import fsp from 'node:fs/promises'
 import fetch, { type RequestInit } from 'node-fetch'
 import { USER_AGENT } from '~/constants'
 import type { Comment } from '~/types'
-import { getOut, getYoutubeUrlByVideoId } from './video'
+import { getVideoCommentOut, getYoutubeUrlByVideoId } from './video'
 
 export function findContinuation(html: string) {
 	const index = html.indexOf('"targetId":"comments-section"')
@@ -37,7 +37,7 @@ export async function getYoutubeComments({
 	})
 	const html = await response.text()
 
-	const { htmlFile } = getOut(videoId)
+	const { htmlFile } = getVideoCommentOut(videoId)
 	fsp.writeFile(htmlFile, html)
 
 	const title = getTitle(html)

@@ -2,7 +2,7 @@ import fsp from 'node:fs/promises'
 import { type ActionFunctionArgs, json } from '@remix-run/node'
 import invariant from 'tiny-invariant'
 import type { Comment } from '~/types'
-import { getOut } from '~/utils/video'
+import { getVideoCommentOut } from '~/utils/video'
 
 export async function action({ request, params }: ActionFunctionArgs) {
 	const formData = await request.formData()
@@ -13,7 +13,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 		const videoId = params.videoId
 		invariant(videoId, 'videoId is required')
 
-		const { commentFile } = getOut(videoId)
+		const { commentFile } = getVideoCommentOut(videoId)
 
 		const commentsStr = await fsp.readFile(commentFile, 'utf-8')
 		const comments: Comment[] = JSON.parse(commentsStr)

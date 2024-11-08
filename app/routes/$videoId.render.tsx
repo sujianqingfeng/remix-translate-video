@@ -8,7 +8,7 @@ import invariant from 'tiny-invariant'
 import { webpackOverride } from '~/remotion/webpack-override'
 import type { Comment } from '~/types'
 import { throttle } from '~/utils/timer'
-import { getOut, getVideoComment } from '~/utils/video'
+import { getVideoComment, getVideoCommentOut } from '~/utils/video'
 
 const bundleOnProgress = throttle(
 	(progress: number) => {
@@ -43,7 +43,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
 	const { videoId } = params
 
-	const { commentFile, titleFile } = getOut(videoId)
+	const { commentFile, titleFile } = getVideoCommentOut(videoId)
 	const str = await fsp.readFile(commentFile, 'utf-8')
 	const comments: Comment[] = JSON.parse(str)
 

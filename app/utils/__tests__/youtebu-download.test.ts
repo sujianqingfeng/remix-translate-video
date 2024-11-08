@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { getOut } from '../video'
+import { getVideoCommentOut } from '../video'
 import { downloadYoutubeVideo } from '../youtube-download'
 
 describe('downloadYoutubeVideo', () => {

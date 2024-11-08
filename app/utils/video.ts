@@ -10,7 +10,7 @@ import {
 } from '~/constants'
 import type { Comment, VideoComment } from '~/types'
 
-export function getOut(videoId: string) {
+export function getVideoCommentOut(videoId: string) {
 	const outDir = path.join(process.cwd(), OUT_DIR, videoId)
 	const commentFile = path.join(outDir, COMMENTS_FILE)
 	const videoFile = path.join(outDir, VIDEO_FILE)
@@ -49,7 +49,7 @@ export function getYoutubeUrlByVideoId(videoId: string) {
 
 export async function getOriginalVideoFile(videoId: string) {
 	let originalVideoFile = ''
-	const { outDir } = getOut(videoId)
+	const { outDir } = getVideoCommentOut(videoId)
 
 	for (const file of ORIGINAL_VIDEO_FILES) {
 		const filePath = path.join(outDir, file)

@@ -13,3 +13,10 @@ export type VideoComment = {
 	durationInFrames: number
 	form: number
 }
+
+export type ShortTextInputItem = {
+	start: number
+	end: number
+	text: string
+	score: number
+}

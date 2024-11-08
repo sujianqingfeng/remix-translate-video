@@ -1,7 +1,7 @@
 import fsp from 'node:fs/promises'
 import fetch, { type RequestInit } from 'node-fetch'
 import { RE_XML_TRANSCRIPT, USER_AGENT } from '~/constants'
-import { getOut, getYoutubeUrlByVideoId } from './video'
+import { getVideoCommentOut, getYoutubeUrlByVideoId } from './video'
 
 export function parseTranscriptCaptionUrl(html: string) {
 	if (!html.includes('"captionTracks":')) {
@@ -38,7 +38,7 @@ export async function getYoutubeTranscript({
 	})
 	const html = await response.text()
 
-	const { htmlFile, outDir } = getOut(videoId)
+	const { htmlFile, outDir } = getVideoCommentOut(videoId)
 
 	// 确保目录存在
 	await fsp.mkdir(outDir, { recursive: true })
