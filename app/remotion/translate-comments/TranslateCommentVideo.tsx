@@ -76,24 +76,30 @@ export function TranslateCommentVideo({
 								<span>{comment.likes}</span>
 							</div>
 							<p
-								className={`leading-1.6 mb-[8px] overflow-hidden text-[${calculateFontSize(
-									comment.content,
-									commentMaxWidth,
-									commentContentMaxHeight,
-									16,
-									1.6, // 减小行高
-								)}px] max-h-[${commentContentMaxHeight}px]`}
+								className={`leading-1.6 mb-[8px] overflow-hidden max-h-[${commentContentMaxHeight}px]`}
+								style={{
+									fontSize: `${calculateFontSize(
+										comment.content,
+										commentMaxWidth,
+										commentContentMaxHeight,
+										16,
+										1.6,
+									)}px`,
+								}}
 							>
 								{comment.content}
 							</p>
 							<p
-								className={`text-[#F87171] leading-1.4 line-clamp-3 overflow-hidden text-[${calculateFontSize(
-									comment.translatedContent ?? '',
-									commentMaxWidth,
-									translatedContentMaxHeight,
-									28,
-									1.4,
-								)}px] mb-[${translatedContentMaxHeight}px]`}
+								className={`text-[#F87171] leading-1.4 line-clamp-3 overflow-hidden mb-[${translatedContentMaxHeight}px]`}
+								style={{
+									fontSize: `${calculateFontSize(
+										comment.translatedContent ?? '',
+										commentMaxWidth,
+										translatedContentMaxHeight,
+										28,
+										1.4,
+									)}px`,
+								}}
 							>
 								{comment.translatedContent}
 							</p>

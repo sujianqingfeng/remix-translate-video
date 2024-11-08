@@ -18,13 +18,6 @@ import {
 } from '~/utils/video'
 import { getYoutubeComments } from '~/utils/youtube-comments'
 
-export const meta: MetaFunction = () => {
-	return [
-		{ title: 'Translate Youtube Comments' },
-		{ name: 'description', content: 'Translate Youtube Comments' },
-	]
-}
-
 async function copyOriginalVideoToPublic(videoId: string) {
 	const originalVideoFile = await getOriginalVideoFile(videoId)
 

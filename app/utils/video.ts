@@ -27,15 +27,16 @@ export function getVideoCommentOut(videoId: string) {
 }
 
 export function getVideoComment(comments: Comment[]) {
+	const fps = 30
 	const videoComments: VideoComment[] = comments.map((comment, i) => {
 		return {
 			...comment,
-			durationInFrames: 30 * 10,
-			form: 30 * 10 * i,
+			durationInFrames: fps * 10,
+			form: fps * 10 * i,
 		}
 	})
 
-	const totalDurationInFrames = 30 * 10 * comments.length
+	const totalDurationInFrames = fps * 10 * comments.length
 
 	return {
 		videoComments,

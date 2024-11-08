@@ -2,28 +2,12 @@ import fsp from 'node:fs/promises'
 import path from 'node:path'
 import { type ActionFunctionArgs, json } from '@remix-run/node'
 import { bundle } from '@remotion/bundler'
-import type { RenderMediaOnProgress } from '@remotion/renderer'
 import { renderMedia, selectComposition } from '@remotion/renderer'
 import invariant from 'tiny-invariant'
 import { webpackOverride } from '~/remotion/webpack-override'
 import type { Comment } from '~/types'
-import { throttle } from '~/utils/timer'
+import { bundleOnProgress, throttleRenderOnProgress } from '~/utils/remotion'
 import { getVideoComment, getVideoCommentOut } from '~/utils/video'
-
-const bundleOnProgress = throttle(
-	(progress: number) => {
-		console.log(`Webpack bundling progress: ${progress}%`)
-	},
-	1000,
-	{ trailing: true },
-)
-
-const renderOnProgress: RenderMediaOnProgress = ({ progress }) => {
-	console.log(`Rendering is ${progress * 100}% complete`)
-}
-const throttleRenderOnProgress = throttle(renderOnProgress, 1000, {
-	trailing: true,
-})
 
 const entryPoint = path.join(
 	process.cwd(),

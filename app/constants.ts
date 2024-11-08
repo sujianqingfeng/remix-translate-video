@@ -3,7 +3,7 @@ export const COMMENTS_FILE = 'comments.json'
 export const VIDEO_FILE = 'video.mp4'
 export const TITLE_FILE = 'title.json'
 export const HTML_FILE = 'original.html'
-export const DOWNLOAD_URL = import.meta.env.DOWNLOAD_URL
+export const DOWNLOAD_URL = import.meta.env.VITE_DOWNLOAD_URL
 export const ORIGINAL_VIDEO_FILES = ['original.webm', 'original.mp4']
 
 export const PROXY = 'http://127.0.0.1:7890'
