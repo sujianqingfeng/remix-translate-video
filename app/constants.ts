@@ -4,7 +4,7 @@ export const VIDEO_FILE = 'video.mp4'
 export const TITLE_FILE = 'title.json'
 export const HTML_FILE = 'original.html'
 
-export const DOWNLOAD_URL = 'https://www.youtube.com/watch?v=8mQlLdLxrRE'
+export const DOWNLOAD_URL = import.meta.env.DOWNLOAD_URL
 export const ORIGINAL_VIDEO_FILES = ['original.webm', 'original.mp4']
 
 export const PROXY = 'http://127.0.0.1:7890'

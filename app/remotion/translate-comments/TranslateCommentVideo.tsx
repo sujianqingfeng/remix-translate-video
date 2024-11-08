@@ -46,34 +46,15 @@ export function TranslateCommentVideo({
 	const translatedContentMaxHeight = 85 // 增加翻译内容的最大高度
 
 	return (
-		<AbsoluteFill style={{ backgroundColor: 'white' }}>
+		<AbsoluteFill className="bg-white">
 			<AbsoluteFill>
-				<div
-					style={{
-						display: 'flex',
-						justifyContent: 'center',
-						alignItems: 'center',
-						height: 'calc(100% - 180px)', // 增加底部空间
-					}}
-				>
-					<div
-						style={{
-							width: '250px',
-							flexShrink: 0,
-							height: '100%',
-							display: 'flex',
-							alignItems: 'center',
-							justifyContent: 'center',
-							color: '#F87171',
-							fontSize: '30px',
-							padding: '20px',
-						}}
-					>
+				<div className="flex justify-center items-center h-[calc(100%-180px)]">
+					<div className="text-[#F87171] w-[250px] flex-shrink-0 h-full flex items-center justify-center text-[30px] p-[20px]">
 						{title}
 					</div>
 					<Video
 						loop
-						style={{ flexGrow: 1, objectFit: 'contain', height: '100%' }}
+						className="flex-grow object-contain h-full"
 						startFrom={0}
 						crossOrigin="anonymous"
 						src={staticFile(videoSrc)}
@@ -88,64 +69,31 @@ export function TranslateCommentVideo({
 						from={comment.form}
 						durationInFrames={comment.durationInFrames}
 					>
-						<div
-							style={{
-								position: 'absolute',
-								bottom: 0,
-								left: 0,
-								padding: '20px',
-								height: '180px', // 增加整体评论区域的高度
-								width: '100%',
-							}}
-						>
-							<div
-								style={{
-									fontSize: '12px',
-									lineHeight: '20px',
-									display: 'flex',
-									alignItems: 'center',
-									gap: '10px',
-								}}
-							>
+						<div className="absolute bottom-0 left-0 p-[20px] h-[180px] w-full">
+							<div className="text-[12px] leading-[20px] flex items-center gap-2">
 								<div>{comment.author}</div>
 								<ThumbsUp size={16} />
 								<span>{comment.likes}</span>
 							</div>
 							<p
-								style={{
-									fontSize: `${calculateFontSize(
-										comment.content,
-										commentMaxWidth,
-										commentContentMaxHeight,
-										16,
-										1.6, // 减小行高
-									)}px`,
-									lineHeight: '1.6',
-									marginBottom: '8px',
-									maxHeight: `${commentContentMaxHeight}px`,
-									overflow: 'hidden',
-								}}
+								className={`leading-1.6 mb-[8px] overflow-hidden text-[${calculateFontSize(
+									comment.content,
+									commentMaxWidth,
+									commentContentMaxHeight,
+									16,
+									1.6, // 减小行高
+								)}px] max-h-[${commentContentMaxHeight}px]`}
 							>
 								{comment.content}
 							</p>
 							<p
-								style={{
-									color: '#F87171',
-									fontSize: `${calculateFontSize(
-										comment.translatedContent ?? '',
-										commentMaxWidth,
-										translatedContentMaxHeight,
-										28, // 稍微减小基础字号
-										1.4, // 减小行高以容纳更多内容
-									)}px`,
-									lineHeight: '1.4',
-									maxHeight: `${translatedContentMaxHeight}px`,
-									overflow: 'hidden',
-									display: '-webkit-box',
-									WebkitLineClamp: 3, // 最多显示3行
-									WebkitBoxOrient: 'vertical',
-									textOverflow: 'ellipsis',
-								}}
+								className={`text-[#F87171] leading-1.4 line-clamp-3 overflow-hidden text-[${calculateFontSize(
+									comment.translatedContent ?? '',
+									commentMaxWidth,
+									translatedContentMaxHeight,
+									28,
+									1.4,
+								)}px] mb-[${translatedContentMaxHeight}px]`}
 							>
 								{comment.translatedContent}
 							</p>

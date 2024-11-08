@@ -1,7 +1,7 @@
 import fsp from 'node:fs/promises'
 import path from 'node:path'
 import type { LoaderFunctionArgs, MetaFunction } from '@remix-run/node'
-import { Form, json, useFetcher, useLoaderData } from '@remix-run/react'
+import { json, useFetcher, useLoaderData } from '@remix-run/react'
 import { Player } from '@remotion/player'
 import { HttpsProxyAgent } from 'https-proxy-agent'
 import { Languages } from 'lucide-react'
@@ -9,10 +9,10 @@ import invariant from 'tiny-invariant'
 import { CommentsList } from '~/components/business/CommentsList'
 import { Button } from '~/components/ui/button'
 import { PROXY } from '~/constants'
+import { TranslateCommentVideo } from '~/remotion/translate-comments/TranslateCommentVideo'
 import type { Comment } from '~/types'
 import { getOriginalVideoFile, getOut, getVideoComment } from '~/utils/video'
 import { getYoutubeComments } from '~/utils/youtube-comments'
-import { TranslateCommentVideo } from '../../src-remotion/TranslateCommentVideo'
 
 export const meta: MetaFunction = () => {
 	return [
@@ -109,7 +109,8 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
 
 export default function VideoCommentPage() {
 	const { videoId, comments, title, videoUrl } = useLoaderData<typeof loader>()
-	const fetcher = useFetcher()
+	const renderFetcher = useFetcher()
+	const translateFetcher = useFetcher()
 	const { videoComments, totalDurationInFrames } = getVideoComment(comments)
 
 	return (
@@ -134,22 +135,26 @@ export default function VideoCommentPage() {
 				/>
 
 				<p>{title}</p>
-				<fetcher.Form method="post" action="render">
+				<renderFetcher.Form method="post" action="render">
 					<input type="hidden" name="videoUrl" value={videoUrl} />
-					<Button type="submit" disabled={fetcher.state !== 'idle'}>
-						{fetcher.state === 'submitting' ? 'Loading...' : 'Render'}
+					<Button type="submit" disabled={renderFetcher.state !== 'idle'}>
+						{renderFetcher.state === 'submitting' ? 'Loading...' : 'Render'}
 					</Button>
-				</fetcher.Form>
+				</renderFetcher.Form>
 			</div>
 
 			<div className="overflow-y-auto">
 				<div className="text-xl p-2 flex justify-between items-center">
 					<p className="text-sm">videoId : {videoId}</p>
-					<Form method="post" action="translate">
-						<button type="submit" className="cursor-pointer">
+					<translateFetcher.Form method="post" action="translate">
+						<button
+							type="submit"
+							className="cursor-pointer"
+							disabled={translateFetcher.state !== 'idle'}
+						>
 							<Languages />
 						</button>
-					</Form>
+					</translateFetcher.Form>
 				</div>
 
 				<CommentsList comments={comments} />

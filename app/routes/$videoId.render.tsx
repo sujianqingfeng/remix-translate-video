@@ -1,14 +1,14 @@
 import fsp from 'node:fs/promises'
 import path from 'node:path'
-import { type ActionFunctionArgs, json, redirect } from '@remix-run/node'
+import { type ActionFunctionArgs, json } from '@remix-run/node'
 import { bundle } from '@remotion/bundler'
 import type { RenderMediaOnProgress } from '@remotion/renderer'
 import { renderMedia, selectComposition } from '@remotion/renderer'
 import invariant from 'tiny-invariant'
+import { webpackOverride } from '~/remotion/webpack-override'
 import type { Comment } from '~/types'
 import { throttle } from '~/utils/timer'
 import { getOut, getVideoComment } from '~/utils/video'
-import { webpackOverride } from '../../src-remotion/webpack-override'
 
 const bundleOnProgress = throttle(
 	(progress: number) => {
@@ -24,6 +24,14 @@ const renderOnProgress: RenderMediaOnProgress = ({ progress }) => {
 const throttleRenderOnProgress = throttle(renderOnProgress, 1000, {
 	trailing: true,
 })
+
+const entryPoint = path.join(
+	process.cwd(),
+	'app',
+	'remotion',
+	'translate-comments',
+	'index.ts',
+)
 
 export async function action({ request, params }: ActionFunctionArgs) {
 	invariant(params.videoId, 'videoId is required')
@@ -44,10 +52,8 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
 	const { videoComments, totalDurationInFrames } = getVideoComment(comments)
 
-	const p = path.join(process.cwd(), 'src-remotion', 'index.ts')
-
 	const bundled = await bundle({
-		entryPoint: p,
+		entryPoint,
 		webpackOverride,
 		onProgress: bundleOnProgress,
 	})

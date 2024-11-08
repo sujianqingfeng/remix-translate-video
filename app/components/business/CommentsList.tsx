@@ -13,8 +13,8 @@ export function CommentsList({ comments }: CommentsListProps) {
 		<div>
 			{comments.map((comment) => (
 				<div key={comment.content} className="p-2">
-					<p className="text-sm flex items-center justify-between gap-1">
-						{comment.author}
+					<div className="text-sm flex items-center justify-between gap-1">
+						<span>{comment.author}</span>
 
 						<fetcher.Form method="post" action="delete">
 							<input type="hidden" name="intent" value="delete" />
@@ -30,7 +30,7 @@ export function CommentsList({ comments }: CommentsListProps) {
 								<Trash size={16} />
 							</button>
 						</fetcher.Form>
-					</p>
+					</div>
 					<p className="text-md">{comment.content}</p>
 					<p className="text-md">{comment.translatedContent}</p>
 				</div>
