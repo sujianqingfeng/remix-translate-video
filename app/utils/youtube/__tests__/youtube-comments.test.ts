@@ -1,11 +1,7 @@
 import fsp from 'node:fs/promises'
 import { HttpsProxyAgent } from 'https-proxy-agent'
 import { describe, expect, it } from 'vitest'
-import {
-	findContinuation,
-	getTitle,
-	getYoutubeComments,
-} from '../youtube-comments'
+import { findContinuation, getTitle, getYoutubeComments } from '../comments'
 
 describe('youtube-comment', () => {
 	it.skip('should return html', async () => {

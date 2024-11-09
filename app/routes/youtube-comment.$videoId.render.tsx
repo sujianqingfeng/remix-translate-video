@@ -5,9 +5,12 @@ import { bundle } from '@remotion/bundler'
 import { renderMedia, selectComposition } from '@remotion/renderer'
 import invariant from 'tiny-invariant'
 import { webpackOverride } from '~/remotion/webpack-override'
-import type { Comment } from '~/types'
+import type { YoutubeComment } from '~/types'
 import { bundleOnProgress, throttleRenderOnProgress } from '~/utils/remotion'
-import { getVideoComment, getVideoCommentOut } from '~/utils/video'
+import {
+	generateRemotionVideoComment,
+	getYoutubeCommentOut,
+} from '~/utils/youtube'
 
 const entryPoint = path.join(
 	process.cwd(),
@@ -22,19 +25,20 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
 	const formData = await request.formData()
 	const videoUrl = formData.get('videoUrl')
+	const totalDurationInFrames = formData.get('totalDurationInFrames')
+	const title = formData.get('title')
 
 	invariant(videoUrl, 'videoUrl is required')
+	invariant(title, 'title is required')
+	invariant(totalDurationInFrames, 'totalDurationInFrames is required')
 
 	const { videoId } = params
 
-	const { commentFile, titleFile } = getVideoCommentOut(videoId)
+	const { commentFile } = getYoutubeCommentOut(videoId)
 	const str = await fsp.readFile(commentFile, 'utf-8')
-	const comments: Comment[] = JSON.parse(str)
+	const comments: YoutubeComment[] = JSON.parse(str)
 
-	const titleStr = await fsp.readFile(titleFile, 'utf-8')
-	const title = JSON.parse(titleStr).translatedTitle
-
-	const { videoComments, totalDurationInFrames } = getVideoComment(comments)
+	const remotionVideoComments = generateRemotionVideoComment(comments)
 
 	const bundled = await bundle({
 		entryPoint,
@@ -42,27 +46,25 @@ export async function action({ request, params }: ActionFunctionArgs) {
 		onProgress: bundleOnProgress,
 	})
 
+	const inputProps = {
+		comments: remotionVideoComments,
+		title,
+		videoSrc: videoUrl,
+	}
+
 	const composition = await selectComposition({
 		serveUrl: bundled,
 		id: 'TranslateCommentVideo',
-		inputProps: {
-			comments: videoComments,
-			title,
-			videoSrc: videoUrl,
-		},
+		inputProps,
 	})
 
-	composition.durationInFrames = totalDurationInFrames
+	composition.durationInFrames = +totalDurationInFrames
 
 	await renderMedia({
 		codec: 'h264',
 		composition,
 		serveUrl: bundled,
-		inputProps: {
-			comments: videoComments,
-			title,
-			videoSrc: videoUrl,
-		},
+		inputProps,
 		outputLocation: `out/${videoId}/output.mp4`,
 		onProgress: throttleRenderOnProgress,
 	})

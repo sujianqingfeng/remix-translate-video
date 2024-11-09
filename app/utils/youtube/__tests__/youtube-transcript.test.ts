@@ -1,10 +1,7 @@
 import fsp from 'node:fs/promises'
 import { HttpsProxyAgent } from 'https-proxy-agent'
 import { describe, expect, it } from 'vitest'
-import {
-	getYoutubeTranscript,
-	parseTranscriptCaptionUrl,
-} from '../youtube-transcripts'
+import { getYoutubeTranscript, parseTranscriptCaptionUrl } from '../transcripts'
 
 describe('youtube-transcript', () => {
 	const videoId = 'q6m1T0aZDn4'

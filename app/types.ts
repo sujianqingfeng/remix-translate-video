@@ -1,10 +1,12 @@
-export type Comment = {
+export type YoutubeComment = {
 	content: string
 	author: string
 	translatedContent?: string
+	likes: string
+	authorThumbnail: string
 }
 
-export type VideoComment = {
+export type RemotionVideoComment = {
 	author: string
 	content: string
 	translatedContent?: string
@@ -12,6 +14,13 @@ export type VideoComment = {
 	authorThumbnail: string
 	durationInFrames: number
 	form: number
+}
+
+export type YoutubeInfo = {
+	title: string
+	translatedTitle?: string
+	publishTitle?: string
+	youtubeUrl: string
 }
 
 export type ShortTextInputItem = {

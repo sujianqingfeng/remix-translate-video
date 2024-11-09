@@ -1,8 +1,6 @@
-import fsp from 'node:fs/promises'
 import fetch, { type RequestInit } from 'node-fetch'
 import { USER_AGENT } from '~/constants'
-import type { Comment } from '~/types'
-import { getVideoCommentOut, getYoutubeUrlByVideoId } from './video'
+import type { YoutubeComment } from '~/types'
 
 export function findContinuation(html: string) {
 	const index = html.indexOf('"targetId":"comments-section"')
@@ -14,33 +12,13 @@ export function findContinuation(html: string) {
 	return token[1]
 }
 
-export function getTitle(html: string) {
-	const startIndex = html.indexOf('videoPrimaryInfoRenderer')
-	const end = startIndex + 200
-	const str = html.slice(startIndex, end)
-	const titleMatch = str.match(/"text":"([^"]+)"/)
-	const title = titleMatch ? titleMatch[1] : 'Unknown Title'
-	return title
-}
-
-export async function getYoutubeComments({
-	videoId,
+export async function fetchYoutubeComments({
 	agent,
+	html,
 }: {
-	videoId: string
 	agent?: RequestInit['agent']
-}): Promise<{ title: string; comments: Comment[] }> {
-	const url = getYoutubeUrlByVideoId(videoId)
-
-	const response = await fetch(url, {
-		agent,
-	})
-	const html = await response.text()
-
-	const { htmlFile } = getVideoCommentOut(videoId)
-	fsp.writeFile(htmlFile, html)
-
-	const title = getTitle(html)
+	html: string
+}): Promise<YoutubeComment[]> {
 	const continuation = findContinuation(html)
 
 	const apiUrl = 'https://www.youtube.com/youtubei/v1/next?prettyPrint=false'
@@ -111,5 +89,5 @@ export async function getYoutubeComments({
 		}
 	})
 
-	return { comments, title }
+	return comments
 }

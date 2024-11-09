@@ -1,7 +1,5 @@
-import fsp from 'node:fs/promises'
 import fetch, { type RequestInit } from 'node-fetch'
-import { RE_XML_TRANSCRIPT, USER_AGENT } from '~/constants'
-import { getVideoCommentOut, getYoutubeUrlByVideoId } from './video'
+import { YOUTUBE_RE_XML_TRANSCRIPT } from '~/constants'
 
 export function parseTranscriptCaptionUrl(html: string) {
 	if (!html.includes('"captionTracks":')) {
@@ -22,30 +20,13 @@ export function parseTranscriptCaptionUrl(html: string) {
 }
 
 export async function getYoutubeTranscript({
-	videoId,
+	html,
 	agent,
 }: {
+	html: string
 	videoId: string
 	agent?: RequestInit['agent']
 }) {
-	const url = getYoutubeUrlByVideoId(videoId)
-
-	const response = await fetch(url, {
-		agent,
-		headers: {
-			'User-Agent': USER_AGENT,
-		},
-	})
-	const html = await response.text()
-
-	const { htmlFile, outDir } = getVideoCommentOut(videoId)
-
-	// 确保目录存在
-	await fsp.mkdir(outDir, { recursive: true })
-
-	// 写入 HTML 文件
-	await fsp.writeFile(htmlFile, html)
-
 	// 获取字幕 URL
 	const captionUrl = parseTranscriptCaptionUrl(html)
 	if (!captionUrl) {
@@ -58,7 +39,7 @@ export async function getYoutubeTranscript({
 	})
 	const captionXml = await captionResponse.text()
 
-	const results = [...captionXml.matchAll(RE_XML_TRANSCRIPT)]
+	const results = [...captionXml.matchAll(YOUTUBE_RE_XML_TRANSCRIPT)]
 
 	return results.map((result) => ({
 		text: result[3],

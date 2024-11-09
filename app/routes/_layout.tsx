@@ -1,9 +1,9 @@
-import { Link, Outlet, redirect } from '@remix-run/react'
+import { Link, Outlet } from '@remix-run/react'
 
 export default function LayoutPage() {
 	return (
-		<div className="flex ">
-			<div className="w-[200px]">
+		<div className="flex h-screen">
+			<div className="w-[200px] p-4 border-r">
 				<p>
 					<Link to="/youtube-comment">youtube</Link>
 				</p>
@@ -12,7 +12,7 @@ export default function LayoutPage() {
 				</p>
 			</div>
 
-			<div>
+			<div className="flex-1 p-4">
 				<Outlet />
 			</div>
 		</div>

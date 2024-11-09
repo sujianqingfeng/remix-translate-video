@@ -1,9 +1,9 @@
 import { useFetcher } from '@remix-run/react'
 import { Trash } from 'lucide-react'
-import type { Comment } from '~/types'
+import type { YoutubeComment } from '~/types'
 
 interface CommentsListProps {
-	comments: Comment[]
+	comments: YoutubeComment[]
 }
 
 export function CommentsList({ comments }: CommentsListProps) {

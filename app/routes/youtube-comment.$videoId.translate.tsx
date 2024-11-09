@@ -1,18 +1,21 @@
 import fsp from 'node:fs/promises'
 import { type ActionFunctionArgs, redirect } from '@remix-run/node'
 import invariant from 'tiny-invariant'
-import type { Comment } from '~/types'
+import type { YoutubeComment } from '~/types'
 import { translate } from '~/utils/translate'
-import { getVideoCommentOut, getYoutubeUrlByVideoId } from '~/utils/video'
+import {
+	generateYoutubeUrlByVideoId,
+	getYoutubeCommentOut,
+} from '~/utils/youtube'
 
 export async function action({ params }: ActionFunctionArgs) {
 	invariant(params.videoId, 'missing videoId')
 
 	const videoId = params.videoId
-	const { commentFile, titleFile } = getVideoCommentOut(videoId)
+	const { commentFile, infoFile } = getYoutubeCommentOut(videoId)
 
 	const commentStr = await fsp.readFile(commentFile, 'utf-8')
-	const comments: Comment[] = JSON.parse(commentStr)
+	const comments: YoutubeComment[] = JSON.parse(commentStr)
 
 	const translatedComments = await Promise.all(
 		comments.map(async (comment) => {
@@ -23,16 +26,16 @@ export async function action({ params }: ActionFunctionArgs) {
 	)
 	await fsp.writeFile(commentFile, JSON.stringify(translatedComments, null, 2))
 
-	const titleStr = await fsp.readFile(titleFile, 'utf-8')
-	const title = JSON.parse(titleStr).title
-	const translatedTitle = await translate(title)
+	const infoStr = await fsp.readFile(infoFile, 'utf-8')
+	const info = JSON.parse(infoStr)
+	const translatedTitle = await translate(info.title)
+
 	await fsp.writeFile(
-		titleFile,
+		infoFile,
 		JSON.stringify({
-			title,
+			...info,
 			translatedTitle,
 			publishTitle: `外网真实评论：${translatedTitle}`,
-			youtubeUrl: getYoutubeUrlByVideoId(videoId),
 		}),
 	)
 

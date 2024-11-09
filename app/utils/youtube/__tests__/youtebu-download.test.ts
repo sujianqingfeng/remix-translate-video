@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
+import { downloadYoutubeVideo } from '../download'
 import { getVideoCommentOut } from '../video'
-import { downloadYoutubeVideo } from '../youtube-download'
 
 describe('downloadYoutubeVideo', () => {
 	const videoId = 'q6m1T0aZDn4'
