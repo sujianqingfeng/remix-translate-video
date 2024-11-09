@@ -63,9 +63,9 @@ export function TranslateCommentVideo({
 			</AbsoluteFill>
 
 			<AbsoluteFill>
-				{comments.map((comment) => (
+				{comments.map((comment, index) => (
 					<Sequence
-						key={comment.author}
+						key={`${comment.author}-${index}`}
 						from={comment.form}
 						durationInFrames={comment.durationInFrames}
 					>
