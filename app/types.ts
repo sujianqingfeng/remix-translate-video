@@ -1,3 +1,5 @@
+import type { ShortText } from './z-schema'
+
 export type YoutubeComment = {
 	content: string
 	author: string
@@ -24,7 +26,7 @@ export type YoutubeInfo = {
 	publishTitle?: string
 	youtubeUrl: string
 	viewCount: number
-	dateTime: string
+	dateTime?: string
 }
 
 export type ShortTextInputItem = {
@@ -32,4 +34,9 @@ export type ShortTextInputItem = {
 	end: number
 	text: string
 	score: number
+}
+
+export type GenerateShortTextActionData = {
+	success: boolean
+	shortText: ShortText
 }

@@ -37,7 +37,6 @@ export async function action({ request, params }: ActionFunctionArgs) {
 	invariant(totalDurationInFrames, 'totalDurationInFrames is required')
 	invariant(fps, 'fps is required')
 	invariant(durationInSeconds, 'durationInSeconds is required')
-	invariant(dateTime, 'dateTime is required')
 	invariant(viewCount, 'viewCount is required')
 
 	const { videoId } = params

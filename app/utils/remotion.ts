@@ -13,6 +13,6 @@ export const renderOnProgress: RenderMediaOnProgress = ({ progress }) => {
 	console.log(`Rendering is ${progress * 100}% complete`)
 }
 
-export const throttleRenderOnProgress = throttle(renderOnProgress, 1000, {
+export const throttleRenderOnProgress = throttle(renderOnProgress, 2000, {
 	trailing: true,
 })

@@ -2,7 +2,7 @@ import fsp from 'node:fs/promises'
 import { type ActionFunctionArgs, redirect } from '@remix-run/node'
 import invariant from 'tiny-invariant'
 import type { YoutubeComment } from '~/types'
-import { translate } from '~/utils/translate'
+import { translate } from '~/utils/ai'
 import { getYoutubeCommentOut } from '~/utils/youtube'
 
 export async function action({ params }: ActionFunctionArgs) {
@@ -29,11 +29,15 @@ export async function action({ params }: ActionFunctionArgs) {
 
 	await fsp.writeFile(
 		infoFile,
-		JSON.stringify({
-			...info,
-			translatedTitle,
-			publishTitle: `外网真实评论：${translatedTitle}`,
-		}),
+		JSON.stringify(
+			{
+				...info,
+				translatedTitle,
+				publishTitle: `外网真实评论：${translatedTitle}`,
+			},
+			null,
+			2,
+		),
 	)
 
 	return redirect(`/youtube-comment/${videoId}`)

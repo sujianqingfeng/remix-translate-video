@@ -116,7 +116,7 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
 
 	const { playVideoFile } = await copyOriginalVideoToPublic(videoId)
 	const durationInSeconds = 5
-	const fps = 60
+	const fps = 35
 
 	const remotionVideoComments = generateRemotionVideoComment(
 		comments,
@@ -161,7 +161,7 @@ export default function VideoCommentPage() {
 						comments: remotionVideoComments,
 						title: info.translatedTitle,
 						videoSrc: playVideoFile,
-						dateTime: info.dateTime,
+						dateTime: info.dateTime ?? '',
 						viewCount: info.viewCount,
 					}}
 					durationInFrames={totalDurationInFrames}

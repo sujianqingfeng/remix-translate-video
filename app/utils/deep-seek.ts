@@ -1,30 +1,50 @@
 import { createOpenAI } from '@ai-sdk/openai'
-import { generateText as aiGenerateText } from 'ai'
+import type { Schema } from '@ai-sdk/ui-utils'
+import { generateText as aiGenerateText, generateObject } from 'ai'
+import type { z } from 'zod'
 
 const API_BASE_URL = 'https://api.deepseek.com'
 
 function createDeepSeek({ apiKey }: { apiKey: string }) {
-  const openai = createOpenAI({
-    baseURL: API_BASE_URL,
-    apiKey
-  })
+	const openai = createOpenAI({
+		baseURL: API_BASE_URL,
+		apiKey,
+	})
 
-  return {
-    generateText: async ({
-      system,
-      prompt
-    }: {
-      system: string
-      prompt: string
-    }) => {
-      const { text } = await aiGenerateText({
-        model: openai('deepseek-chat'),
-        system,
-        prompt
-      })
-      return text
-    }
-  }
+	return {
+		generateText: async ({
+			system,
+			prompt,
+		}: {
+			system: string
+			prompt: string
+		}) => {
+			const { text } = await aiGenerateText({
+				model: openai('deepseek-chat'),
+				system,
+				prompt,
+			})
+			return text
+		},
+		generateObject: async <OBJECT>({
+			system,
+			prompt,
+			schema,
+		}: {
+			system: string
+			prompt: string
+			schema: z.Schema<OBJECT, z.ZodTypeDef, any> | Schema<OBJECT>
+		}) => {
+			const { object } = await generateObject({
+				model: openai('deepseek-chat'),
+				schema,
+				system,
+				prompt,
+			})
+
+			return object
+		},
+	}
 }
 
 export default createDeepSeek

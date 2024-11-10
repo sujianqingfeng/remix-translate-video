@@ -1,4 +1,3 @@
-import fsp from 'node:fs/promises'
 import path from 'node:path'
 import {
 	OUT_DIR,
@@ -82,7 +81,7 @@ interface TimeMatches {
 	year?: RegExpMatchArray | null
 }
 
-export function parseYoutubeDateTime(html: string): string | null {
+export function parseYoutubeDateTime(html: string): string {
 	try {
 		// 尝试从 HTML 中提取日期相关信息
 		const dateTextMatch = html.match(/"dateText":\{"simpleText":"([^"]+)"\}/)
@@ -190,10 +189,10 @@ export function parseYoutubeDateTime(html: string): string | null {
 			}
 		}
 
-		return null
+		return ''
 	} catch (error) {
 		console.error('Failed to parse YouTube date:', error)
-		return null
+		return ''
 	}
 }
 

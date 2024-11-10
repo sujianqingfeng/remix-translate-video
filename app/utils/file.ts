@@ -29,7 +29,7 @@ export async function createFileCache<
 	}
 
 	const str = await generator()
-	const strToWrite = isJsonTransform ? JSON.stringify(str) : str
+	const strToWrite = isJsonTransform ? JSON.stringify(str, null, 2) : str
 
 	if (typeof strToWrite !== 'string') {
 		throw new Error('strToWrite is not a string')
