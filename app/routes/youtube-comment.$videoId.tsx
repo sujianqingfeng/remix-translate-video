@@ -18,7 +18,9 @@ import {
 	generateRemotionVideoComment,
 	generateYoutubeUrlByVideoId,
 	getYoutubeCommentOut,
+	parseYoutubeDateTime,
 	parseYoutubeTitle,
+	parseYoutubeViewCount,
 	tryGetYoutubeDownloadFile,
 } from '~/utils/youtube'
 
@@ -62,7 +64,14 @@ async function fetchYoutubeInfo({
 		path: infoFile,
 		generator: async () => {
 			const title = await parseYoutubeTitle(html)
-			return { title, youtubeUrl: generateYoutubeUrlByVideoId(videoId) }
+			const viewCount = await parseYoutubeViewCount(html)
+			const dateTime = await parseYoutubeDateTime(html)
+			return {
+				title,
+				youtubeUrl: generateYoutubeUrlByVideoId(videoId),
+				viewCount,
+				dateTime,
+			}
 		},
 		isJsonTransform: true,
 	})
@@ -106,23 +115,39 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
 	})
 
 	const { playVideoFile } = await copyOriginalVideoToPublic(videoId)
+	const durationInSeconds = 5
+	const fps = 60
 
-	const remotionVideoComments = generateRemotionVideoComment(comments)
+	const remotionVideoComments = generateRemotionVideoComment(
+		comments,
+		fps,
+		durationInSeconds,
+	)
+
+	const totalDurationInFrames =
+		fps * durationInSeconds * remotionVideoComments.length
 
 	return json({
 		videoId,
 		info,
+		fps,
+		durationInSeconds,
 		playVideoFile,
 		remotionVideoComments,
+		totalDurationInFrames,
 	})
 }
 
 export default function VideoCommentPage() {
-	const { videoId, info, playVideoFile, remotionVideoComments } =
-		useLoaderData<typeof loader>()
-
-	const fps = 30
-	const totalDurationInFrames = fps * 10 * remotionVideoComments.length
+	const {
+		videoId,
+		info,
+		playVideoFile,
+		remotionVideoComments,
+		fps,
+		durationInSeconds,
+		totalDurationInFrames,
+	} = useLoaderData<typeof loader>()
 
 	const renderFetcher = useFetcher()
 	const translateFetcher = useFetcher()
@@ -136,6 +161,8 @@ export default function VideoCommentPage() {
 						comments: remotionVideoComments,
 						title: info.translatedTitle,
 						videoSrc: playVideoFile,
+						dateTime: info.dateTime,
+						viewCount: info.viewCount,
 					}}
 					durationInFrames={totalDurationInFrames}
 					compositionWidth={1280}
@@ -151,12 +178,20 @@ export default function VideoCommentPage() {
 				<p>{info.title}</p>
 				<p>{info.translatedTitle}</p>
 				<renderFetcher.Form method="post" action="render">
+					<input type="hidden" name="fps" value={fps} />
+					<input
+						type="hidden"
+						name="durationInSeconds"
+						value={durationInSeconds}
+					/>
 					<input type="hidden" name="videoSrc" value={playVideoFile} />
 					<input
 						type="hidden"
 						name="totalDurationInFrames"
 						value={totalDurationInFrames}
 					/>
+					<input type="hidden" name="dateTime" value={info.dateTime} />
+					<input type="hidden" name="viewCount" value={info.viewCount} />
 					<input type="hidden" name="title" value={info.translatedTitle} />
 					<Button type="submit" disabled={renderFetcher.state !== 'idle'}>
 						{renderFetcher.state === 'submitting' ? 'Loading...' : 'Render'}

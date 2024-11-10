@@ -35,22 +35,40 @@ export function TranslateCommentVideo({
 	comments,
 	title,
 	videoSrc,
+	dateTime,
+	viewCount,
 }: {
 	comments: RemotionVideoComment[]
 	title?: string
 	videoSrc: string
+	dateTime: string
+	viewCount: number
 }) {
 	// 调整评论区域的布局参数
 	const commentMaxWidth = 1920 - 340
 	const commentContentMaxHeight = 45 // 稍微减小原始评论的高度
 	const translatedContentMaxHeight = 85 // 增加翻译内容的最大高度
 
+	const date = new Date(dateTime)
+		.toLocaleDateString('en-US', {
+			year: 'numeric',
+			month: 'numeric',
+			day: 'numeric',
+		})
+		.replace(/,/g, '')
+
+	const viewCountFormat = `${(viewCount / 1000).toFixed(1)}k`
+
 	return (
 		<AbsoluteFill className="bg-white">
 			<AbsoluteFill>
 				<div className="flex justify-center items-center h-[calc(100%-180px)]">
-					<div className="text-[#F87171] w-[250px] flex-shrink-0 h-full flex items-center justify-center text-[30px] p-[20px]">
-						{title}
+					<div className="text-[#F87171] w-[250px] flex-shrink-0 h-full flex flex-col  justify-center text-[30px] p-[20px]">
+						<div className="flex items-center gap-2 text-[16px]">
+							<span>{date}</span>
+							<span>播放量：{viewCountFormat}</span>
+						</div>
+						<p> {title}</p>
 					</div>
 					<Video
 						loop
@@ -71,7 +89,9 @@ export function TranslateCommentVideo({
 					>
 						<div className="absolute bottom-0 left-0 p-[20px] h-[180px] w-full">
 							<div className="text-[12px] leading-[20px] flex items-center gap-2">
-								<div>{comment.author}</div>
+								<div>
+									{comment.author} ({comment.publishedTime})
+								</div>
 								<ThumbsUp size={16} />
 								<span>{comment.likes}</span>
 							</div>

@@ -3,10 +3,7 @@ import { type ActionFunctionArgs, redirect } from '@remix-run/node'
 import invariant from 'tiny-invariant'
 import type { YoutubeComment } from '~/types'
 import { translate } from '~/utils/translate'
-import {
-	generateYoutubeUrlByVideoId,
-	getYoutubeCommentOut,
-} from '~/utils/youtube'
+import { getYoutubeCommentOut } from '~/utils/youtube'
 
 export async function action({ params }: ActionFunctionArgs) {
 	invariant(params.videoId, 'missing videoId')
@@ -39,5 +36,5 @@ export async function action({ params }: ActionFunctionArgs) {
 		}),
 	)
 
-	return redirect(`/${videoId}`)
+	return redirect(`/youtube-comment/${videoId}`)
 }

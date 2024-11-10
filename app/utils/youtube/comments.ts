@@ -63,6 +63,10 @@ export async function fetchYoutubeComments({
 		return comment.payload.commentEntityPayload?.properties?.authorButtonA11y
 	}
 
+	const getPublishedTime = (comment: any) => {
+		return comment.payload.commentEntityPayload?.properties?.publishedTime
+	}
+
 	const getLikes = (comment: any) => {
 		return comment.payload.commentEntityPayload?.toolbar?.likeCountLiked
 	}
@@ -86,6 +90,7 @@ export async function fetchYoutubeComments({
 			author: getAuthor(comment),
 			likes: getLikes(comment),
 			authorThumbnail: getAuthorThumbnail(comment),
+			publishedTime: getPublishedTime(comment),
 		}
 	})
 

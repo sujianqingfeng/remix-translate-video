@@ -24,13 +24,21 @@ export async function action({ request, params }: ActionFunctionArgs) {
 	invariant(params.videoId, 'videoId is required')
 
 	const formData = await request.formData()
-	const videoUrl = formData.get('videoUrl')
+	const videoSrc = formData.get('videoSrc')
 	const totalDurationInFrames = formData.get('totalDurationInFrames')
+	const fps = formData.get('fps')
 	const title = formData.get('title')
+	const durationInSeconds = formData.get('durationInSeconds')
+	const dateTime = formData.get('dateTime')
+	const viewCount = formData.get('viewCount')
 
-	invariant(videoUrl, 'videoUrl is required')
+	invariant(videoSrc, 'videoSrc is required')
 	invariant(title, 'title is required')
 	invariant(totalDurationInFrames, 'totalDurationInFrames is required')
+	invariant(fps, 'fps is required')
+	invariant(durationInSeconds, 'durationInSeconds is required')
+	invariant(dateTime, 'dateTime is required')
+	invariant(viewCount, 'viewCount is required')
 
 	const { videoId } = params
 
@@ -38,7 +46,11 @@ export async function action({ request, params }: ActionFunctionArgs) {
 	const str = await fsp.readFile(commentFile, 'utf-8')
 	const comments: YoutubeComment[] = JSON.parse(str)
 
-	const remotionVideoComments = generateRemotionVideoComment(comments)
+	const remotionVideoComments = generateRemotionVideoComment(
+		comments,
+		+fps,
+		+durationInSeconds,
+	)
 
 	const bundled = await bundle({
 		entryPoint,
@@ -49,7 +61,9 @@ export async function action({ request, params }: ActionFunctionArgs) {
 	const inputProps = {
 		comments: remotionVideoComments,
 		title,
-		videoSrc: videoUrl,
+		videoSrc: videoSrc,
+		dateTime,
+		viewCount,
 	}
 
 	const composition = await selectComposition({
@@ -59,6 +73,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 	})
 
 	composition.durationInFrames = +totalDurationInFrames
+	composition.fps = +fps
 
 	await renderMedia({
 		codec: 'h264',

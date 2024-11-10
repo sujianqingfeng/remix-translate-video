@@ -15,6 +15,8 @@ export function RemotionRoot() {
 					comments: [],
 					title: '',
 					videoSrc: '',
+					dateTime: '',
+					viewCount: 0,
 				}}
 			/>
 		</>
