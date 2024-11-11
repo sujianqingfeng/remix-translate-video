@@ -41,3 +41,5 @@ export type GenerateShortTextActionData = {
 	shortText: ShortText
 	key: string
 }
+
+export type { ShortText }

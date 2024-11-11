@@ -31,7 +31,7 @@ export function TranslateCommentVideo({
 		<AbsoluteFill className="bg-white">
 			<AbsoluteFill>
 				<div className="flex justify-center items-center h-[calc(100%-180px)]">
-					<div className="text-[#F87171] w-[250px] flex-shrink-0 h-full flex flex-col  justify-center text-[30px] p-[20px]">
+					<div className="text-[#ee3f4d] w-[250px] flex-shrink-0 h-full flex flex-col  justify-center text-[30px] p-[20px]">
 						<div className="flex items-center gap-2 text-[16px]">
 							<span>{date}</span>
 							<span>播放量：{viewCountFormat}</span>
@@ -78,7 +78,7 @@ export function TranslateCommentVideo({
 									</p>
 
 									<p
-										className="text-[#F87171] leading-1.4 mt-1 leading-[1.4]  max-h-[110px]"
+										className="text-[#ee3f4d] leading-1.4 mt-1 leading-[1.4]  max-h-[110px]"
 										style={{
 											fontSize: `${fontSize}px`,
 										}}

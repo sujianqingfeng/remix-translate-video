@@ -1,7 +1,30 @@
-import { useFetcher } from '@remix-run/react'
+import { Form, useFetcher } from '@remix-run/react'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
-import type { GenerateShortTextActionData } from '~/types'
+import type { GenerateShortTextActionData, ShortText } from '~/types'
+
+function ShortTextInfo({
+	shortText,
+	uniqueKey,
+}: { shortText: ShortText; uniqueKey: string }) {
+	return (
+		<>
+			<p className="whitespace-pre-wrap">
+				{JSON.stringify(shortText, null, 2)}
+			</p>
+
+			<Form method="post" action="confirm">
+				<input name="key" value={uniqueKey} type="hidden" />
+				<input
+					type="hidden"
+					name="shortText"
+					value={JSON.stringify(shortText, null, 2)}
+				/>
+				<Button type="submit">Confirm</Button>
+			</Form>
+		</>
+	)
+}
 
 export default function ShortTextIndexPage() {
 	const fetcher = useFetcher<GenerateShortTextActionData>()
@@ -24,9 +47,10 @@ export default function ShortTextIndexPage() {
 			{fetcher.data && (
 				<div className="rounded-lg border p-4">
 					{fetcher.data.success ? (
-						<p className="whitespace-pre-wrap">
-							{JSON.stringify(fetcher.data.shortText, null, 2)}
-						</p>
+						<ShortTextInfo
+							uniqueKey={fetcher.data.key}
+							shortText={fetcher.data.shortText}
+						/>
 					) : (
 						<p className="text-red-500">generate failed</p>
 					)}

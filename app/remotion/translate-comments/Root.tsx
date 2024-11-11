@@ -7,10 +7,10 @@ export function RemotionRoot() {
 			<Composition
 				id="TranslateCommentVideo"
 				component={TranslateCommentVideo}
-				durationInFrames={30 * 20}
-				fps={30}
-				width={1280}
-				height={720}
+				durationInFrames={60 * 20}
+				fps={60}
+				width={1920}
+				height={1080}
 				defaultProps={{
 					comments: [],
 					title: '',

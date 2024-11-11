@@ -1,22 +1,33 @@
 import fsp from 'node:fs/promises'
 import path from 'node:path'
-import { OUT_DIR, SHORT_TEXT_DIR, SHORT_TEXT_INPUT_FILE } from '~/constants'
+import {
+	OUT_DIR,
+	SHORT_TEXT_AUDIO_FILE,
+	SHORT_TEXT_INFO_FILE,
+	SHORT_TEXT_TRANSCRIPTS_FILE,
+} from '~/constants'
 import type { ShortTextInputItem } from '~/types'
 
-export function getShortTextOut() {
-	const outDir = path.join(process.cwd(), OUT_DIR)
-	const shortTextDir = path.join(outDir, SHORT_TEXT_DIR)
-	const shortTextInputFile = path.join(shortTextDir, SHORT_TEXT_INPUT_FILE)
+export function getShortTextOut(key: string) {
+	const outDir = path.join(process.cwd(), OUT_DIR, key)
+
 	return {
 		outDir,
-		shortTextDir,
-		shortTextInputFile,
+		get infoFile() {
+			return path.join(outDir, SHORT_TEXT_INFO_FILE)
+		},
+		get transcriptsFile() {
+			return path.join(outDir, SHORT_TEXT_TRANSCRIPTS_FILE)
+		},
+		get audioFile() {
+			return path.join(outDir, SHORT_TEXT_AUDIO_FILE)
+		},
 	}
 }
 
-export async function getShortTexts() {
-	const { shortTextInputFile } = getShortTextOut()
-	const textStr = await fsp.readFile(shortTextInputFile, 'utf-8')
+export async function getShortTexts(key: string) {
+	const { transcriptsFile } = getShortTextOut(key)
+	const textStr = await fsp.readFile(transcriptsFile, 'utf-8')
 	const texts = JSON.parse(textStr) as ShortTextInputItem[]
 	return texts
 }
