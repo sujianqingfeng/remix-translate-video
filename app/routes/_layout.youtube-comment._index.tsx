@@ -4,7 +4,8 @@ import getVideoId from 'get-video-id'
 import invariant from 'tiny-invariant'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
-import { YOUTUBE_DOWNLOAD_URL } from '~/constants'
+import { YOUTUBE_DOWNLOAD_ID } from '~/constants'
+import { generateYoutubeUrlByVideoId } from '~/utils/youtube'
 
 export async function action({ request }: ActionFunctionArgs) {
 	const formData = await request.formData()
@@ -23,7 +24,7 @@ export default function IndexPage() {
 					name="url"
 					className="border p-2 w-96"
 					placeholder="Please enter your YouTube URL"
-					defaultValue={YOUTUBE_DOWNLOAD_URL}
+					defaultValue={generateYoutubeUrlByVideoId(YOUTUBE_DOWNLOAD_ID)}
 				/>
 				<Button type="submit">Start</Button>
 			</Form>

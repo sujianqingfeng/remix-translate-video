@@ -39,4 +39,5 @@ export type ShortTextInputItem = {
 export type GenerateShortTextActionData = {
 	success: boolean
 	shortText: ShortText
+	key: string
 }

@@ -1,1 +1,4 @@
-# Remix translate YouTube comments
+# Remix translate
+
+- translate comments
+- generate short text

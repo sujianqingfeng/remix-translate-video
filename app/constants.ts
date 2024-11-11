@@ -2,7 +2,7 @@ export const OUT_DIR = 'out'
 export const YOUTUBE_COMMENTS_FILE = 'comments.json'
 export const YOUTUBE_INFO_FILE = 'info.json'
 export const YOUTUBE_ORIGINAL_HTML_FILE = 'original.html'
-export const YOUTUBE_DOWNLOAD_URL = import.meta.env.VITE_YOUTUBE_DOWNLOAD_URL
+export const YOUTUBE_DOWNLOAD_ID = import.meta.env.VITE_YOUTUBE_DOWNLOAD_ID
 export const YOUTUBE_MAYBE_ORIGINAL_DOWNLOAD_FILES = [
 	'original.webm',
 	'original.mp4',
