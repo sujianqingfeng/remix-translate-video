@@ -1,5 +1,3 @@
-// https://huggingface.co/spaces/innoai/Edge-TTS-Text-to-Speech
-
 import {
 	AbsoluteFill,
 	Audio,
@@ -8,28 +6,37 @@ import {
 	useCurrentFrame,
 	useVideoConfig,
 } from 'remotion'
-import type { ShortTextInputItem } from '~/types'
+import type { WordTranscript } from '~/types'
 
 import { loadFont } from '@remotion/google-fonts/SourceCodePro'
 
 export function ShortTexts({
-	texts,
+	wordTranscripts,
 	littleDifficultWords,
+	playAudioName,
+	title,
+	titleZh,
 }: {
-	texts: ShortTextInputItem[]
+	wordTranscripts: WordTranscript[]
 	littleDifficultWords: string[]
+	playAudioName: string
+	title: string
+	titleZh: string
 }) {
 	const frame = useCurrentFrame()
 	const { fps } = useVideoConfig()
-	const currentTime = frame / fps
+	const currentTime = (frame / fps) * 1000
 	const BUFFER_TIME = 0.05
 
-	const isHighlighted = (item: ShortTextInputItem) =>
+	const isHighlighted = (item: WordTranscript) =>
 		currentTime >= item.start - BUFFER_TIME &&
 		currentTime < item.end + BUFFER_TIME
 
 	const isDifficultWord = (text: string) => {
-		const cleanText = text.toLowerCase().replace(/[.,!?;:'"()]/g, '')
+		const cleanText = text
+			.trim()
+			.toLowerCase()
+			.replace(/[.,!?;:'"()]/g, '')
 		return littleDifficultWords.some((word) => cleanText === word.toLowerCase())
 	}
 
@@ -43,11 +50,11 @@ export function ShortTexts({
 				style={{ fontFamily }}
 			>
 				<div className="text-[40px] font-bold">
-					My Daily Life
-					<span className="text-[20px]">(我的日常生活)</span>
+					{title}
+					<span className="text-[20px]">({titleZh})</span>
 				</div>
 				<div className="text-2xl text-[#333333] leading-[1.5]">
-					{texts.map((item) => (
+					{wordTranscripts.map((item) => (
 						<span
 							key={item.start}
 							className="px-1 mx-0.5 rounded-md inline-block transition-all duration-300"
@@ -59,15 +66,15 @@ export function ShortTexts({
 								boxShadow: isHighlighted(item)
 									? '0 2px 8px rgba(0,0,0,0.2)'
 									: 'none',
-								color: isDifficultWord(item.text) ? '#F87171' : 'inherit',
+								color: isDifficultWord(item.part) ? '#F87171' : 'inherit',
 							}}
 						>
-							{item.text}
+							{item.part}
 						</span>
 					))}
 				</div>
 
-				<Audio src={staticFile('audio.mp3')} />
+				<Audio src={staticFile(playAudioName)} />
 			</div>
 		</AbsoluteFill>
 	)

@@ -8,7 +8,7 @@ import { Languages } from 'lucide-react'
 import invariant from 'tiny-invariant'
 import { CommentsList } from '~/components/business/CommentsList'
 import { Button } from '~/components/ui/button'
-import { PROXY, USER_AGENT } from '~/constants'
+import { PROXY, PUBLIC_DIR, USER_AGENT, YOUTUBE_NAME_FILE } from '~/constants'
 import { TranslateCommentVideo } from '~/remotion/translate-comments/TranslateCommentVideo'
 import type { YoutubeInfo } from '~/types'
 import { createFileCache } from '~/utils/file'
@@ -33,13 +33,14 @@ async function copyOriginalVideoToPublic(videoId: string) {
 		}
 	}
 
-	const publicDir = path.join(process.cwd(), 'public')
-	const originalFileName = path.basename(playVideoFile)
-	const destPath = path.join(publicDir, originalFileName)
+	const suffixName = path.extname(playVideoFile)
+	const playVideoFileName = `${YOUTUBE_NAME_FILE}${suffixName}`
+
+	const destPath = path.join(PUBLIC_DIR, playVideoFileName)
 	await fsp.copyFile(playVideoFile, destPath)
 
 	return {
-		playVideoFile: originalFileName,
+		playVideoFile: playVideoFileName,
 	}
 }
 
@@ -116,7 +117,7 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
 
 	const { playVideoFile } = await copyOriginalVideoToPublic(videoId)
 	const durationInSeconds = 5
-	const fps = 50
+	const fps = 40
 
 	const remotionVideoComments = generateRemotionVideoComment(
 		comments,

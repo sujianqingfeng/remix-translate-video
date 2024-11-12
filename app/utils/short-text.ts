@@ -6,7 +6,8 @@ import {
 	SHORT_TEXT_INFO_FILE,
 	SHORT_TEXT_TRANSCRIPTS_FILE,
 } from '~/constants'
-import type { ShortTextInputItem } from '~/types'
+import type { ShortText, WordTranscript } from '~/types'
+import { fileExist } from './file'
 
 export function getShortTextOut(key: string) {
 	const outDir = path.join(process.cwd(), OUT_DIR, key)
@@ -25,16 +26,34 @@ export function getShortTextOut(key: string) {
 	}
 }
 
-export async function getShortTexts(key: string) {
-	const { transcriptsFile } = getShortTextOut(key)
-	const textStr = await fsp.readFile(transcriptsFile, 'utf-8')
-	const texts = JSON.parse(textStr) as ShortTextInputItem[]
-	return texts
+export function getTotalDurationInFrames(texts: WordTranscript[], fps = 60) {
+	if (texts.length === 0) return 0
+	return Math.ceil(texts[texts.length - 1].end / 1000) * fps
 }
 
-export function getTotalDurationInFrames(
-	texts: ShortTextInputItem[],
-	fps = 60,
-) {
-	return Math.ceil(texts[texts.length - 1].end) * fps
+export async function buildRemotionRenderData({
+	key,
+	fps,
+}: { key: string; fps: number }) {
+	const { infoFile, audioFile, transcriptsFile } = getShortTextOut(key)
+	const shortTextStr = await fsp.readFile(infoFile, 'utf-8')
+	const shortText = JSON.parse(shortTextStr) as ShortText
+
+	const audioExist = await fileExist(audioFile)
+
+	let wordTranscripts: WordTranscript[] = []
+	if (audioExist) {
+		const transcriptsStr = await fsp.readFile(transcriptsFile, 'utf-8')
+		wordTranscripts = JSON.parse(transcriptsStr)
+	}
+
+	const totalDurationInFrames = getTotalDurationInFrames(wordTranscripts, fps)
+
+	return {
+		totalDurationInFrames,
+		wordTranscripts,
+		shortText,
+		audioExist,
+		audioFile,
+	}
 }

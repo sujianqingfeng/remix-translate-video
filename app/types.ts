@@ -29,11 +29,11 @@ export type YoutubeInfo = {
 	dateTime?: string
 }
 
-export type ShortTextInputItem = {
+export type WordTranscript = {
 	start: number
 	end: number
-	text: string
-	score: number
+	part: string
+	score?: number
 }
 
 export type GenerateShortTextActionData = {

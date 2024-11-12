@@ -1,6 +1,7 @@
 import fsp from 'node:fs/promises'
 import { type ActionFunctionArgs, json } from '@remix-run/node'
 import invariant from 'tiny-invariant'
+import { PROXY } from '~/constants'
 import type { ShortText } from '~/types'
 import { getShortTextOut } from '~/utils/short-text'
 import { generateTTS } from '~/utils/tts/edge'
@@ -14,9 +15,10 @@ export async function action({ request }: ActionFunctionArgs) {
 	const shortTextStr = await fsp.readFile(infoFile, 'utf-8')
 	const shortText = JSON.parse(shortTextStr) as ShortText
 
-	const audio = await generateTTS({
+	await generateTTS({
 		text: shortText.shortText,
 		outPath: audioFile,
+		proxy: PROXY,
 	})
 
 	return json({ success: true })

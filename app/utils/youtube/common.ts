@@ -1,13 +1,13 @@
+import fsp from 'node:fs/promises'
 import path from 'node:path'
 import {
 	OUT_DIR,
 	YOUTUBE_COMMENTS_FILE,
 	YOUTUBE_INFO_FILE,
-	YOUTUBE_MAYBE_ORIGINAL_DOWNLOAD_FILES,
+	YOUTUBE_MAYBE_ORIGINAL_DOWNLOAD_FILE_SUFFIXES,
 	YOUTUBE_ORIGINAL_HTML_FILE,
 } from '~/constants'
 import type { RemotionVideoComment, YoutubeComment } from '~/types'
-import { fileExist } from '../file'
 
 export function getYoutubeCommentOut(videoId: string) {
 	const outDir = path.join(process.cwd(), OUT_DIR, videoId)
@@ -47,10 +47,11 @@ export async function tryGetYoutubeDownloadFile(videoId: string) {
 	let originalVideoFile = ''
 	const { outDir } = getYoutubeCommentOut(videoId)
 
-	for (const file of YOUTUBE_MAYBE_ORIGINAL_DOWNLOAD_FILES) {
-		const filePath = path.join(outDir, file)
-		if (await fileExist(filePath)) {
-			originalVideoFile = filePath
+	for (const suffix of YOUTUBE_MAYBE_ORIGINAL_DOWNLOAD_FILE_SUFFIXES) {
+		const files = await fsp.readdir(outDir)
+		const matchedFile = files.find((file) => file.endsWith(suffix))
+		if (matchedFile) {
+			originalVideoFile = path.join(outDir, matchedFile)
 			break
 		}
 	}

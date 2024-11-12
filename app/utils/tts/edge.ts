@@ -1,18 +1,18 @@
-import { EdgeTTS } from '@andresaya/edge-tts'
-
+import { EdgeTTS } from 'node-edge-tts'
 export async function generateTTS({
 	text,
-	rate = 100,
 	outPath,
-}: { text: string; rate?: number; outPath: string }) {
-	const defaultVoice = 'en-GB-RyanNeural'
-	const tts = new EdgeTTS()
-
-	await tts.synthesize(text, defaultVoice, {
-		rate: `${rate}%`,
-		volume: '0%',
-		pitch: '0Hz',
+	proxy,
+}: { text: string; outPath: string; proxy: string }) {
+	const tts = new EdgeTTS({
+		voice: 'en-US-AriaNeural',
+		lang: 'en-US',
+		outputFormat: 'audio-24khz-96kbitrate-mono-mp3',
+		saveSubtitles: true,
+		proxy,
+		pitch: '-10%',
+		rate: '+10%',
+		timeout: 10000,
 	})
-
-	await tts.toFile(outPath)
+	await tts.ttsPromise(text, outPath)
 }
