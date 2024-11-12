@@ -10,8 +10,7 @@ const deepSeek = createDeepSeek({ apiKey })
 
 export function translate(text: string) {
 	return deepSeek.generateText({
-		system:
-			'You are a helpful assistant that translates text from English to Chinese.',
+		system: '你是一个精通多语言的翻译大师，将文本翻译成中文',
 		prompt: text,
 	})
 }
