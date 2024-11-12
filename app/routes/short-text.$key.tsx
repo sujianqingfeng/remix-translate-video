@@ -17,7 +17,7 @@ async function copyAudioToPublic(audioFile: string) {
 export async function loader({ params }: LoaderFunctionArgs) {
 	invariant(params.key, 'key is required')
 
-	const fps = 60
+	const fps = 200
 
 	const {
 		totalDurationInFrames,
@@ -25,6 +25,8 @@ export async function loader({ params }: LoaderFunctionArgs) {
 		shortText,
 		audioExist,
 		audioFile,
+		audioDuration,
+		sentenceTranscript,
 	} = await buildRemotionRenderData({
 		key: params.key,
 		fps,
@@ -42,6 +44,8 @@ export async function loader({ params }: LoaderFunctionArgs) {
 		totalDurationInFrames,
 		fps,
 		playAudioName: SHORT_TEXT_AUDIO_FILE,
+		audioDuration,
+		sentenceTranscript,
 	})
 }
 
@@ -54,6 +58,8 @@ export default function ShortTextPage() {
 		totalDurationInFrames,
 		fps,
 		playAudioName,
+		audioDuration,
+		sentenceTranscript,
 	} = useLoaderData<typeof loader>()
 
 	const generateAudioFetcher = useFetcher()
@@ -72,6 +78,9 @@ export default function ShortTextPage() {
 								playAudioName,
 								title: shortText.title,
 								titleZh: shortText.titleZh,
+								audioDuration,
+								shortTextZh: shortText.shortTextZh,
+								sentenceTranscript,
 							}}
 							durationInFrames={totalDurationInFrames}
 							compositionWidth={1280}

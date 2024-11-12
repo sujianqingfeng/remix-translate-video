@@ -10,8 +10,6 @@ export async function generateTTS({
 		outputFormat: 'audio-24khz-96kbitrate-mono-mp3',
 		saveSubtitles: true,
 		proxy,
-		pitch: '-10%',
-		rate: '+10%',
 		timeout: 10000,
 	})
 	await tts.ttsPromise(text, outPath)

@@ -33,7 +33,13 @@ export type WordTranscript = {
 	start: number
 	end: number
 	part: string
-	score?: number
+}
+
+export type SentenceTranscript = {
+	start: number
+	end: number
+	part: string
+	partZh?: string
 }
 
 export type GenerateShortTextActionData = {

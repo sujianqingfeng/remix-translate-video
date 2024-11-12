@@ -25,11 +25,16 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
 	invariant(fps, 'fps is required')
 
-	const { totalDurationInFrames, wordTranscripts, shortText } =
-		await buildRemotionRenderData({
-			key,
-			fps: +fps,
-		})
+	const {
+		totalDurationInFrames,
+		wordTranscripts,
+		shortText,
+		audioDuration,
+		sentenceTranscript,
+	} = await buildRemotionRenderData({
+		key,
+		fps: +fps,
+	})
 
 	const inputProps = {
 		wordTranscripts,
@@ -37,6 +42,9 @@ export async function action({ request, params }: ActionFunctionArgs) {
 		playAudioName: SHORT_TEXT_AUDIO_FILE,
 		title: shortText.title,
 		titleZh: shortText.titleZh,
+		shortTextZh: shortText.shortTextZh,
+		audioDuration,
+		sentenceTranscript,
 	}
 
 	const bundled = await bundle({
@@ -52,6 +60,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 	})
 
 	composition.durationInFrames = totalDurationInFrames
+	composition.fps = +fps
 
 	await renderMedia({
 		codec: 'h264',

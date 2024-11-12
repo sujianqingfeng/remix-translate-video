@@ -14,7 +14,8 @@ export const YOUTUBE_RE_XML_TRANSCRIPT =
 
 export const SHORT_TEXT_INFO_FILE = 'info.json'
 export const SHORT_TEXT_AUDIO_FILE = 'audio.webm'
-export const SHORT_TEXT_TRANSCRIPTS_FILE = 'audio.webm.json'
+export const SHORT_TEXT_AUDIO_TRANSCRIPTS_FILE = 'audio.webm.json'
+export const SHORT_TEXT_SENTENCES_FILE = 'sentences.json'
 
 export const PROXY = 'http://127.0.0.1:7890'
 export const USER_AGENT =
