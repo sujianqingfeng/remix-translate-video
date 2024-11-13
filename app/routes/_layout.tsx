@@ -1,15 +1,28 @@
-import { Link, Outlet } from '@remix-run/react'
+import { NavLink, Outlet } from '@remix-run/react'
+import { Headset, SquarePlay } from 'lucide-react'
 
 export default function LayoutPage() {
 	return (
 		<div className="flex h-screen">
 			<div className="w-[200px] p-4 border-r">
-				<p>
-					<Link to="/youtube-comment">youtube</Link>
-				</p>
-				<p>
-					<Link to="/short-text">short text</Link>
-				</p>
+				<NavLink
+					className={({ isActive }) =>
+						`${isActive ? 'text-blue-500' : ''} flex items-center gap-2 px-2 py-1`
+					}
+					to="/youtube-comment"
+				>
+					<SquarePlay />
+					youtube
+				</NavLink>
+				<NavLink
+					className={({ isActive }) =>
+						`${isActive ? 'text-blue-500' : ''} flex items-center gap-2 px-2 py-1`
+					}
+					to="/short-text"
+				>
+					<Headset />
+					short text
+				</NavLink>
 			</div>
 
 			<div className="flex-1 p-4">

@@ -17,7 +17,6 @@ export function CommentsList({ comments }: CommentsListProps) {
 						<span>{comment.author}</span>
 
 						<fetcher.Form method="post" action="delete">
-							<input type="hidden" name="intent" value="delete" />
 							<input
 								type="hidden"
 								name="commentContent"

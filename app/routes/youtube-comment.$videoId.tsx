@@ -4,7 +4,7 @@ import type { LoaderFunctionArgs } from '@remix-run/node'
 import { json, useFetcher, useLoaderData } from '@remix-run/react'
 import { Player } from '@remotion/player'
 import { HttpsProxyAgent } from 'https-proxy-agent'
-import { Languages } from 'lucide-react'
+import { Languages, LoaderCircle } from 'lucide-react'
 import invariant from 'tiny-invariant'
 import { CommentsList } from '~/components/business/CommentsList'
 import { Button } from '~/components/ui/button'
@@ -24,7 +24,11 @@ import {
 	tryGetYoutubeDownloadFile,
 } from '~/utils/youtube'
 
-async function copyOriginalVideoToPublic(videoId: string) {
+async function copyOriginalVideoToPublic({
+	videoId,
+}: {
+	videoId: string
+}) {
 	const playVideoFile = await tryGetYoutubeDownloadFile(videoId)
 
 	if (!playVideoFile) {
@@ -115,7 +119,9 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
 		html,
 	})
 
-	const { playVideoFile } = await copyOriginalVideoToPublic(videoId)
+	const { playVideoFile } = await copyOriginalVideoToPublic({
+		videoId,
+	})
 	const durationInSeconds = 5
 	const fps = 40
 
@@ -152,6 +158,7 @@ export default function VideoCommentPage() {
 
 	const renderFetcher = useFetcher()
 	const translateFetcher = useFetcher()
+	const downloadFetcher = useFetcher()
 
 	return (
 		<div className="p-4 h-screen w-full flex justify-center gap-2">
@@ -178,26 +185,39 @@ export default function VideoCommentPage() {
 
 				<p>{info.title}</p>
 				<p>{info.translatedTitle}</p>
-				<renderFetcher.Form method="post" action="render">
-					<input type="hidden" name="fps" value={fps} />
-					<input
-						type="hidden"
-						name="durationInSeconds"
-						value={durationInSeconds}
-					/>
-					<input type="hidden" name="videoSrc" value={playVideoFile} />
-					<input
-						type="hidden"
-						name="totalDurationInFrames"
-						value={totalDurationInFrames}
-					/>
-					<input type="hidden" name="dateTime" value={info.dateTime} />
-					<input type="hidden" name="viewCount" value={info.viewCount} />
-					<input type="hidden" name="title" value={info.translatedTitle} />
-					<Button type="submit" disabled={renderFetcher.state !== 'idle'}>
-						{renderFetcher.state === 'submitting' ? 'Loading...' : 'Render'}
-					</Button>
-				</renderFetcher.Form>
+
+				<div className="flex items-center gap-2">
+					{!playVideoFile && (
+						<downloadFetcher.Form method="post" action="download">
+							<Button type="submit" disabled={downloadFetcher.state !== 'idle'}>
+								{downloadFetcher.state === 'submitting'
+									? 'Loading...'
+									: 'Download'}
+							</Button>
+						</downloadFetcher.Form>
+					)}
+
+					<renderFetcher.Form method="post" action="render">
+						<input type="hidden" name="fps" value={fps} />
+						<input
+							type="hidden"
+							name="durationInSeconds"
+							value={durationInSeconds}
+						/>
+						<input type="hidden" name="videoSrc" value={playVideoFile} />
+						<input
+							type="hidden"
+							name="totalDurationInFrames"
+							value={totalDurationInFrames}
+						/>
+						<input type="hidden" name="dateTime" value={info.dateTime} />
+						<input type="hidden" name="viewCount" value={info.viewCount} />
+						<input type="hidden" name="title" value={info.translatedTitle} />
+						<Button type="submit" disabled={renderFetcher.state !== 'idle'}>
+							{renderFetcher.state === 'submitting' ? 'Loading...' : 'Render'}
+						</Button>
+					</renderFetcher.Form>
+				</div>
 			</div>
 
 			<div className="overflow-y-auto">
@@ -209,7 +229,11 @@ export default function VideoCommentPage() {
 							className="cursor-pointer"
 							disabled={translateFetcher.state !== 'idle'}
 						>
-							<Languages />
+							{translateFetcher.state === 'submitting' ? (
+								<LoaderCircle className="animate-spin" />
+							) : (
+								<Languages />
+							)}
 						</button>
 					</translateFetcher.Form>
 				</div>

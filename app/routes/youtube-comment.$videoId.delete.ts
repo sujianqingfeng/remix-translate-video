@@ -6,10 +6,9 @@ import { getYoutubeCommentOut } from '~/utils/youtube'
 
 export async function action({ request, params }: ActionFunctionArgs) {
 	const formData = await request.formData()
-	const intent = formData.get('intent')
 	const commentContent = formData.get('commentContent')
 
-	if (intent === 'delete' && commentContent) {
+	if (commentContent) {
 		const videoId = params.videoId
 		invariant(videoId, 'videoId is required')
 
