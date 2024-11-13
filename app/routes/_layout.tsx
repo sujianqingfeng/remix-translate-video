@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from '@remix-run/react'
-import { Headset, SquarePlay } from 'lucide-react'
+import { Headset, Languages, SquarePlay } from 'lucide-react'
 
 export default function LayoutPage() {
 	return (
@@ -22,6 +22,16 @@ export default function LayoutPage() {
 				>
 					<Headset />
 					short text
+				</NavLink>
+
+				<NavLink
+					className={({ isActive }) =>
+						`${isActive ? 'text-blue-500' : ''} flex items-center gap-2 px-2 py-1`
+					}
+					to="/translate-video"
+				>
+					<Languages />
+					translate video
 				</NavLink>
 			</div>
 

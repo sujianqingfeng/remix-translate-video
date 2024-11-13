@@ -29,6 +29,22 @@ export type YoutubeInfo = {
 	dateTime?: string
 }
 
+// translate video
+export type YoutubeTranscript = {
+	text: string
+	duration: number
+	offset: number
+}
+
+export type RemotionYoutubeTranscript = {
+	textZh: string
+	text: string
+	duration: number
+	offset: number
+}
+
+// short text
+
 export type WordTranscript = {
 	start: number
 	end: number

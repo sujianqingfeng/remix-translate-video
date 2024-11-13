@@ -43,10 +43,8 @@ export function generateRemotionVideoComment(
 	return remotionVideoComments
 }
 
-export async function tryGetYoutubeDownloadFile(videoId: string) {
+export async function tryGetYoutubeDownloadFile(outDir: string) {
 	let originalVideoFile = ''
-	const { outDir } = getYoutubeCommentOut(videoId)
-
 	for (const suffix of YOUTUBE_MAYBE_ORIGINAL_DOWNLOAD_FILE_SUFFIXES) {
 		const files = await fsp.readdir(outDir)
 		const matchedFile = files.find((file) => file.endsWith(suffix))
@@ -55,7 +53,6 @@ export async function tryGetYoutubeDownloadFile(videoId: string) {
 			break
 		}
 	}
-
 	return originalVideoFile
 }
 

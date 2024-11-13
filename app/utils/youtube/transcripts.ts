@@ -1,5 +1,6 @@
 import fetch, { type RequestInit } from 'node-fetch'
 import { YOUTUBE_RE_XML_TRANSCRIPT } from '~/constants'
+import type { YoutubeTranscript } from '~/types'
 
 export function parseTranscriptCaptionUrl(html: string) {
 	if (!html.includes('"captionTracks":')) {
@@ -19,14 +20,13 @@ export function parseTranscriptCaptionUrl(html: string) {
 	return url
 }
 
-export async function getYoutubeTranscript({
+export async function downloadYoutubeTranscripts({
 	html,
 	agent,
 }: {
 	html: string
-	videoId: string
 	agent?: RequestInit['agent']
-}) {
+}): Promise<YoutubeTranscript[]> {
 	// 获取字幕 URL
 	const captionUrl = parseTranscriptCaptionUrl(html)
 	if (!captionUrl) {
