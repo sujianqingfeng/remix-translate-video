@@ -17,8 +17,8 @@ function calculateOptimalFontSize({
 	availableWidth,
 	availableHeight,
 	minFontSize = 10,
-	maxFontSize = 90,
-	lineHeightRatio = 1.5,
+	maxFontSize = 75,
+	lineHeightRatio = 1.2,
 	charWidthRatio = 1.2,
 }: CalculateFontSizeParams): number {
 	let currentMin = minFontSize
@@ -72,14 +72,14 @@ export function TranslateCommentVideo({
 	return (
 		<AbsoluteFill className="bg-white">
 			<AbsoluteFill>
-				<div className="flex justify-center items-center gap-4 h-[60%]">
-					<div className="text-[#ee3f4d] w-[400px] flex-shrink-0 h-full flex flex-col items-center justify-center  p-[20px]">
+				<div className="flex justify-center items-center gap-10 h-[60%] p-4">
+					<div className="text-[#ee3f4d] w-[400px] flex-shrink-0 h-full flex flex-col items-center justify-center p-[20px]">
 						<div>
 							<div className="flex items-center gap-2 text-3xl">
 								<span>{date}</span>
 								<span>播放量：{viewCountFormat}</span>
 							</div>
-							<p className="text-5xl mt-2 leading-6xl"> {title}</p>
+							<p className="text-5xl mt-2 leading-[1.5]"> {title}</p>
 						</div>
 					</div>
 					<Video
@@ -97,7 +97,7 @@ export function TranslateCommentVideo({
 					const fontSize = calculateOptimalFontSize({
 						text: comment.translatedContent || '',
 						availableWidth: 1920 - 32,
-						availableHeight: 450,
+						availableHeight: 440,
 					})
 
 					return (
@@ -121,7 +121,7 @@ export function TranslateCommentVideo({
 									</p>
 
 									<p
-										className="text-[#ee3f4d] leading-1.4 mt-1"
+										className="text-[#ee3f4d] leading-[1.2] mt-1"
 										style={{
 											fontSize: `${fontSize}px`,
 										}}

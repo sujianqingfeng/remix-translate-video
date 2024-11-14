@@ -1,17 +1,23 @@
 import fsp from 'node:fs/promises'
 import { type LoaderFunctionArgs, json } from '@remix-run/node'
-import { useLoaderData } from '@remix-run/react'
+import { useFetcher, useLoaderData } from '@remix-run/react'
+import { parseMedia } from '@remotion/media-parser'
+import { nodeReader } from '@remotion/media-parser/node'
+import { Player } from '@remotion/player'
 import { HttpsProxyAgent } from 'https-proxy-agent'
 import invariant from 'tiny-invariant'
 import BackPrevious from '~/components/business/BackPrevious'
 import { Button } from '~/components/ui/button'
 import { PROXY, USER_AGENT } from '~/constants'
+import TranslateVideos from '~/remotion/translate-videos/TranslateVideos'
 import type { YoutubeTranscript } from '~/types'
 import { copyMaybeOriginalVideoToPublic } from '~/utils'
 import { fileExist } from '~/utils/file'
 import { getTranslateVideoOut } from '~/utils/translate-video'
 import { downloadYoutubeHtml } from '~/utils/youtube'
 import { downloadYoutubeTranscripts } from '~/utils/youtube/transcripts'
+
+const fps = 60
 
 export async function loader({ params }: LoaderFunctionArgs) {
 	const { id } = params
@@ -45,22 +51,69 @@ export async function loader({ params }: LoaderFunctionArgs) {
 		transcripts = JSON.parse(transcriptsStr)
 	}
 
-	const { playVideoFileName } = await copyMaybeOriginalVideoToPublic({
-		outDir,
+	const { playVideoFileName, maybePlayVideoFile } =
+		await copyMaybeOriginalVideoToPublic({
+			outDir,
+		})
+
+	const { durationInSeconds } = await parseMedia({
+		src: maybePlayVideoFile,
+		fields: {
+			durationInSeconds: true,
+		},
+		reader: nodeReader,
 	})
 
-	return json({ transcripts, playVideoFileName })
+	if (!durationInSeconds) {
+		throw new Error('durationInSeconds is required')
+	}
+
+	const totalDurationInFrames = Math.ceil(durationInSeconds * fps)
+
+	return json({ transcripts, playVideoFileName, fps, totalDurationInFrames })
 }
 
 export default function TranslateVideoPage() {
-	const { transcripts, playVideoFileName } = useLoaderData<typeof loader>()
+	const { transcripts, playVideoFileName, fps, totalDurationInFrames } =
+		useLoaderData<typeof loader>()
+
+	const downloadFetcher = useFetcher()
+
 	return (
-		<div>
+		<div className="p-4">
 			<BackPrevious />
 
 			<div className="flex gap-4">
 				<div>
-					<div>{!playVideoFileName && <Button>Download</Button>}</div>
+					<div>
+						<Player
+							component={TranslateVideos}
+							inputProps={{
+								playVideoFileName: playVideoFileName,
+								transcripts,
+							}}
+							durationInFrames={totalDurationInFrames}
+							compositionWidth={1920}
+							compositionHeight={1080}
+							fps={+fps}
+							style={{
+								width: 1280,
+								height: 720,
+							}}
+							controls
+						/>
+					</div>
+					<div>
+						{!playVideoFileName && (
+							<downloadFetcher.Form method="post" action="download">
+								<Button disabled={downloadFetcher.state !== 'idle'}>
+									{downloadFetcher.state === 'submitting'
+										? 'Loading...'
+										: 'Download'}
+								</Button>
+							</downloadFetcher.Form>
+						)}
+					</div>
 				</div>
 
 				<div>{JSON.stringify(transcripts, null, 2)}</div>

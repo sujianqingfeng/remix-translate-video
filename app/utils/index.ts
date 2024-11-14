@@ -23,6 +23,7 @@ export async function copyMaybeOriginalVideoToPublic({
 
 	if (!maybePlayVideoFile) {
 		return {
+			maybePlayVideoFile: '',
 			playVideoFileName: '',
 		}
 	}
@@ -34,6 +35,7 @@ export async function copyMaybeOriginalVideoToPublic({
 	await fsp.copyFile(maybePlayVideoFile, destPath)
 
 	return {
+		maybePlayVideoFile,
 		playVideoFileName,
 	}
 }
