@@ -15,14 +15,17 @@ function createDeepSeek({ apiKey }: { apiKey: string }) {
 		generateText: async ({
 			system,
 			prompt,
+			maxTokens,
 		}: {
 			system: string
 			prompt: string
+			maxTokens?: number
 		}) => {
 			const { text } = await aiGenerateText({
 				model: openai('deepseek-chat'),
 				system,
 				prompt,
+				maxTokens,
 			})
 			return text
 		},

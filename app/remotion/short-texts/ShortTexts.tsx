@@ -88,7 +88,7 @@ export function ShortTexts({
 					</div>
 
 					{currentSentence && (
-						<div className="absolute bottom-10 left-[50%] -translate-x-1/2 w-[90%] text-2xl text-[#333333] leading-[1.5]">
+						<div className="absolute bottom-10 left-[50%] -translate-x-1/2 w-[96%] text-2xl text-[#333333] leading-[1.5]">
 							<div className="text-center">{currentSentence.part}</div>
 							<div className="text-center">{currentSentence.partZh}</div>
 						</div>
