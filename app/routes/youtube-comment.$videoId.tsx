@@ -22,54 +22,39 @@ import {
 	generateYoutubeUrlByVideoId,
 } from '~/utils/youtube'
 
-export const loader = async ({ params, request }: LoaderFunctionArgs) => {
+async function fetchVideoInfo(videoId: string) {
+	const proxyAgent = new ProxyAgent({
+		uri: PROXY,
+	})
+	const innertube = await createProxyYoutubeInnertube(proxyAgent)
+	const youtubeInfo = await innertube.getBasicInfo(videoId)
+
+	return {
+		title: youtubeInfo.basic_info.title || '',
+		viewCount: youtubeInfo.basic_info?.view_count ?? 0,
+		youtubeUrl: generateYoutubeUrlByVideoId(videoId),
+	}
+}
+
+export const loader = async ({ params }: LoaderFunctionArgs) => {
 	invariant(params.videoId, 'videoId is required')
 
 	const videoId = params.videoId
 	const { commentFile, infoFile, outDir } = getYoutubeCommentOut(videoId)
 
-	let comments: YoutubeComment[] = []
 	let info: YoutubeInfo | null = null
-	if (!(await fileExist(commentFile))) {
-		const proxyAgent = new ProxyAgent({
-			uri: PROXY,
-		})
-		const innertube = await createProxyYoutubeInnertube(proxyAgent)
-
-		const youtubeInfo = await innertube.getBasicInfo(videoId)
-
-		info = {
-			title: youtubeInfo.basic_info.title || '',
-			viewCount: youtubeInfo.basic_info?.view_count ?? 0,
-			youtubeUrl: generateYoutubeUrlByVideoId(videoId),
-		}
-
-		const youtubeComments = await innertube.getComments(videoId)
-
-		const mapComment = (item: any) => {
-			return {
-				content: item?.comment?.content?.text ?? '',
-				author: item?.comment?.author?.name ?? '',
-				likes: item?.comment?.like_count ?? '',
-				authorThumbnail: item?.comment?.author?.thumbnails[0].url ?? '',
-				publishedTime: item?.comment?.published_time ?? '',
-			}
-		}
-		comments = youtubeComments.contents.map(mapComment)
-
-		if (youtubeComments.has_continuation) {
-			const continuation = await youtubeComments.getContinuation()
-			comments = comments.concat(continuation.contents.map(mapComment))
-		}
-
-		await fsp.writeFile(commentFile, JSON.stringify(comments, null, 2))
+	if (!(await fileExist(infoFile))) {
+		info = await fetchVideoInfo(videoId)
 		await fsp.writeFile(infoFile, JSON.stringify(info, null, 2))
 	} else {
-		const commentsStr = await fsp.readFile(commentFile, 'utf-8')
-		comments = JSON.parse(commentsStr) as YoutubeComment[]
-
 		const infoStr = await fsp.readFile(infoFile, 'utf-8')
 		info = JSON.parse(infoStr) as YoutubeInfo
+	}
+
+	let comments: YoutubeComment[] = []
+	if (await fileExist(commentFile)) {
+		const commentsStr = await fsp.readFile(commentFile, 'utf-8')
+		comments = JSON.parse(commentsStr) as YoutubeComment[]
 	}
 
 	const { playVideoFileName } = await copyMaybeOriginalVideoToPublic({
@@ -113,6 +98,7 @@ export default function VideoCommentPage() {
 	const renderFetcher = useFetcher()
 	const translateFetcher = useFetcher()
 	const downloadFetcher = useFetcher()
+	const downloadCommentsFetcher = useFetcher()
 
 	return (
 		<div className="p-4 h-screen w-full ">
@@ -128,7 +114,7 @@ export default function VideoCommentPage() {
 							dateTime: info.dateTime ?? '',
 							viewCount: info.viewCount,
 						}}
-						durationInFrames={totalDurationInFrames}
+						durationInFrames={totalDurationInFrames || 10}
 						compositionWidth={1920}
 						compositionHeight={1080}
 						fps={fps}
@@ -169,8 +155,6 @@ export default function VideoCommentPage() {
 								name="totalDurationInFrames"
 								value={totalDurationInFrames}
 							/>
-							<input type="hidden" name="viewCount" value={info.viewCount} />
-							<input type="hidden" name="title" value={info.translatedTitle} />
 							<Button type="submit" disabled={renderFetcher.state !== 'idle'}>
 								{renderFetcher.state === 'submitting' ? 'Loading...' : 'Render'}
 							</Button>
@@ -196,7 +180,27 @@ export default function VideoCommentPage() {
 						</translateFetcher.Form>
 					</div>
 
-					<CommentsList comments={remotionVideoComments} />
+					{remotionVideoComments.length ? (
+						<CommentsList comments={remotionVideoComments} />
+					) : (
+						<div className="flex flex-col gpa-2 justify-center items-center">
+							<p>No comments</p>
+
+							<downloadCommentsFetcher.Form
+								method="post"
+								action="download-comments"
+							>
+								<Button
+									type="submit"
+									disabled={downloadCommentsFetcher.state !== 'idle'}
+								>
+									{downloadCommentsFetcher.state === 'submitting'
+										? 'Loading...'
+										: 'Download Comments'}
+								</Button>
+							</downloadCommentsFetcher.Form>
+						</div>
+					)}
 				</div>
 			</div>
 		</div>

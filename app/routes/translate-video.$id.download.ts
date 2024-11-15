@@ -12,7 +12,9 @@ export async function action({ params }: ActionFunctionArgs) {
 	const { outDir } = getTranslateVideoOut(id)
 	const youtubeUrl = generateYoutubeUrlByVideoId(id)
 
-	await execCommand(`cd ${outDir} && yt-dlp ${youtubeUrl}`)
+	await execCommand(
+		`cd ${outDir} && yt-dlp ${youtubeUrl} -o "original.%(ext)s"`,
+	)
 
 	return json({ success: true })
 }

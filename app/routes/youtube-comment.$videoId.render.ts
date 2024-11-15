@@ -6,7 +6,7 @@ import { renderMedia, selectComposition } from '@remotion/renderer'
 import invariant from 'tiny-invariant'
 import { YOUTUBE_COMMENT_ID_PREFIX } from '~/constants'
 import { webpackOverride } from '~/remotion/webpack-override'
-import type { YoutubeComment } from '~/types'
+import type { YoutubeComment, YoutubeInfo } from '~/types'
 import { publicPlayVideoFile } from '~/utils'
 import { execCommand } from '~/utils/exec'
 import { bundleOnProgress, throttleRenderOnProgress } from '~/utils/remotion'
@@ -31,31 +31,32 @@ export async function action({ request, params }: ActionFunctionArgs) {
 	const videoSrc = formData.get('videoSrc')
 	const totalDurationInFrames = formData.get('totalDurationInFrames')
 	const fps = formData.get('fps')
-	const title = formData.get('title')
 	const durationInSeconds = formData.get('durationInSeconds')
-	const viewCount = formData.get('viewCount')
 
 	invariant(videoSrc, 'videoSrc is required')
-	invariant(title, 'title is required')
 	invariant(totalDurationInFrames, 'totalDurationInFrames is required')
 	invariant(fps, 'fps is required')
 	invariant(durationInSeconds, 'durationInSeconds is required')
-	invariant(viewCount, 'viewCount is required')
 
 	const { videoId } = params
 
-	const { commentFile, outDir } = getYoutubeCommentOut(videoId)
+	const { commentFile, infoFile, outDir } = getYoutubeCommentOut(videoId)
 
-	const str = await fsp.readFile(commentFile, 'utf-8')
-	const comments: YoutubeComment[] = JSON.parse(str)
+	const commentStr = await fsp.readFile(commentFile, 'utf-8')
+	const comments: YoutubeComment[] = JSON.parse(commentStr)
+
+	const infoStr = await fsp.readFile(infoFile, 'utf-8')
+	const info: YoutubeInfo = JSON.parse(infoStr)
 
 	const maybePlayVideoFile = await tryGetYoutubeDownloadFile(outDir)
-	const { destPath } = publicPlayVideoFile(maybePlayVideoFile)
-	const end = comments.length * +durationInSeconds
-	const command = `ffmpeg -y -ss 0 -i ${maybePlayVideoFile} -t ${end} -c copy ${destPath} -progress pipe:1`
-	console.log('processing video...')
-	await execCommand(command)
-	console.log('video processed')
+	if (maybePlayVideoFile) {
+		const { destPath } = publicPlayVideoFile(maybePlayVideoFile)
+		const end = comments.length * +durationInSeconds
+		const command = `ffmpeg -y -ss 0 -i ${maybePlayVideoFile} -t ${end} -c copy ${destPath} -progress pipe:1`
+		console.log('processing video...')
+		await execCommand(command)
+		console.log('video processed')
+	}
 
 	const remotionVideoComments = generateRemotionVideoComment(
 		comments,
@@ -71,9 +72,9 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
 	const inputProps = {
 		comments: remotionVideoComments,
-		title,
+		title: info.translatedTitle,
 		videoSrc: videoSrc,
-		viewCount,
+		viewCount: info.viewCount,
 	}
 
 	const composition = await selectComposition({
