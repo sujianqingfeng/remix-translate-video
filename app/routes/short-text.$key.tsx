@@ -64,6 +64,10 @@ export default function ShortTextPage() {
 
 	const generateAudioFetcher = useFetcher()
 	const renderFetcher = useFetcher()
+	const toggleDirectionFetcher = useFetcher()
+
+	const width = shortText.direction ? 1280 : 720
+	const height = shortText.direction ? 720 : 1280
 
 	return (
 		<div className="h-screen p-4">
@@ -83,12 +87,12 @@ export default function ShortTextPage() {
 								sentenceTranscript,
 							}}
 							durationInFrames={totalDurationInFrames}
-							compositionWidth={1280}
-							compositionHeight={720}
+							compositionWidth={width}
+							compositionHeight={height}
 							fps={fps}
 							style={{
-								width: 1280,
-								height: 720,
+								width,
+								height,
 							}}
 							controls
 						/>
@@ -97,11 +101,31 @@ export default function ShortTextPage() {
 					<div>
 						{!audioExist && <p>Audio not found</p>}
 
-						<div className="mt-4">
+						<div className="mt-4 flex gap-2">
 							<generateAudioFetcher.Form action="generate-audio" method="post">
 								<input name="key" value={key} hidden readOnly />
 								<Button>generate audio</Button>
 							</generateAudioFetcher.Form>
+
+							<toggleDirectionFetcher.Form
+								action="toggle-direction"
+								method="post"
+							>
+								<input
+									name="direction"
+									value={shortText.direction ?? 0}
+									hidden
+									readOnly
+								/>
+								<Button
+									type="submit"
+									disabled={toggleDirectionFetcher.state !== 'idle'}
+								>
+									{toggleDirectionFetcher.state === 'submitting'
+										? 'Loading...'
+										: 'Toggle direction'}
+								</Button>
+							</toggleDirectionFetcher.Form>
 						</div>
 
 						<div className="mt-4">

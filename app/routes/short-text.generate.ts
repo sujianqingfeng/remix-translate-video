@@ -10,7 +10,7 @@ export async function action({ request }: ActionFunctionArgs) {
 	invariant(theme, 'theme is required')
 
 	const shortText = await generateShortText(theme as string)
-	const key = generateUniqueKey('short-text')
+	const key = generateUniqueKey('st-')
 
 	return json<GenerateShortTextActionData>({ success: true, shortText, key })
 }

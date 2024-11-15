@@ -56,20 +56,20 @@ export function ShortTexts({
 	return (
 		<AbsoluteFill>
 			<AbsoluteFill>
-				<Img src={staticFile('audio.png')} />
+				<Img
+					className="h-full w-full object-cover"
+					src={staticFile('audio.png')}
+				/>
 				<Audio src={staticFile(playAudioName)} />
 			</AbsoluteFill>
 			<AbsoluteFill>
 				<Sequence from={0} durationInFrames={audioDuration}>
 					<div
-						className="absolute top-0 right-0 bottom-0 left-0 h-full flex flex-col justify-center items-center gap-4 p-4"
+						className="absolute top-0 right-0 left-0 h-[calc(100%-180px)] flex flex-col justify-center items-center gap-4 px-8"
 						style={{ fontFamily }}
 					>
-						<div className="text-[40px] font-bold">
-							{title}
-							<span className="text-[20px]">({titleZh})</span>
-						</div>
-						<div className="text-3xl text-[#333333] leading-[1.5]">
+						<div className="text-[40px] font-bold">{title}</div>
+						<div className="text-[36px] text-[#333333] leading-[1.5]">
 							{wordTranscripts.map((item) => (
 								<span
 									key={item.start}
@@ -88,23 +88,26 @@ export function ShortTexts({
 					</div>
 
 					{currentSentence && (
-						<div className="absolute bottom-10 left-[50%] -translate-x-1/2 w-[96%] text-2xl text-[#333333] leading-[1.5]">
-							<div className="text-center">{currentSentence.part}</div>
-							<div className="text-center">{currentSentence.partZh}</div>
+						<div className="absolute bottom-[120px] left-[50%] -translate-x-1/2 w-[96%] text-[#333333] leading-[1.5] ">
+							<div className="text-center text-xl">{currentSentence.part}</div>
+							<div className="text-center text-2xl">
+								{currentSentence.partZh}
+							</div>
 						</div>
 					)}
 
-					<div className="absolute top-4 right-4 font-bold">
-						全文释义在视频末尾
+					<div className="absolute top-4 right-4 font-bold text-right">
+						参考释义在视频末尾
+						<p className="text-[20px]">{titleZh}</p>
 					</div>
 				</Sequence>
 			</AbsoluteFill>
 
 			<AbsoluteFill>
 				<Sequence from={audioDuration}>
-					<div className="flex flex-col justify-center items-center gap-4 px-20">
+					<div className="flex flex-col justify-center items-center gap-4 px-20 leading-2">
 						<div className="font-bold text-[3rem]">{titleZh}</div>
-						<div className="text-[2rem]"> {shortTextZh}</div>
+						<div className="text-[2.5rem]"> {shortTextZh}</div>
 					</div>
 				</Sequence>
 			</AbsoluteFill>

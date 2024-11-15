@@ -6,6 +6,7 @@ export const ShortTextSchema = z.object({
 	shortText: z.string(),
 	shortTextZh: z.string(),
 	words: z.array(z.string()),
+	direction: z.number(),
 })
 
 export type ShortText = z.infer<typeof ShortTextSchema>

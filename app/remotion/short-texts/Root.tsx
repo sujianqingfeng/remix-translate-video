@@ -13,8 +13,14 @@ export function RemotionRoot() {
 				width={1280}
 				height={720}
 				defaultProps={{
-					texts: [],
+					title: '',
+					titleZh: '',
+					playAudioName: '',
+					audioDuration: 1,
+					wordTranscripts: [],
 					littleDifficultWords: [],
+					sentenceTranscript: [],
+					shortTextZh: '',
 				}}
 			/>
 		</>

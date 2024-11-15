@@ -59,8 +59,13 @@ export async function action({ request, params }: ActionFunctionArgs) {
 		inputProps,
 	})
 
+	const height = shortText.direction ? 720 : 1280
+	const width = shortText.direction ? 1280 : 720
+
 	composition.durationInFrames = totalDurationInFrames
 	composition.fps = +fps
+	composition.width = width
+	composition.height = height
 
 	await renderMedia({
 		codec: 'h264',
