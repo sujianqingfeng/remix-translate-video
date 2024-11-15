@@ -9,6 +9,8 @@ export const YOUTUBE_ORIGINAL_HTML_FILE = 'original.html'
 export const YOUTUBE_MAYBE_ORIGINAL_DOWNLOAD_FILE_SUFFIXES = ['.webm', '.mp4']
 export const YOUTUBE_NAME_FILE = 'original'
 
+export const YOUTUBE_COMMENT_ID_PREFIX = 'yc-'
+
 export const YOUTUBE_RE_XML_TRANSCRIPT =
 	/<text start="([^"]*)" dur="([^"]*)">([^<]*)<\/text>/g
 

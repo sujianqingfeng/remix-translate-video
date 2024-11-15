@@ -2,101 +2,78 @@ import fsp from 'node:fs/promises'
 import type { LoaderFunctionArgs } from '@remix-run/node'
 import { json, useFetcher, useLoaderData } from '@remix-run/react'
 import { Player } from '@remotion/player'
-import { HttpsProxyAgent } from 'https-proxy-agent'
 import { Languages, LoaderCircle } from 'lucide-react'
 import invariant from 'tiny-invariant'
+import { ProxyAgent } from 'undici'
 import BackPrevious from '~/components/business/BackPrevious'
 import { CommentsList } from '~/components/business/CommentsList'
 import { Button } from '~/components/ui/button'
-import { PROXY, USER_AGENT } from '~/constants'
-import { TranslateCommentVideo } from '~/remotion/translate-comments/TranslateCommentVideo'
-import type { YoutubeInfo } from '~/types'
+import { PROXY } from '~/constants'
+import TranslateComment from '~/remotion/translate-comments/TranslateComment'
+import type { YoutubeComment, YoutubeInfo } from '~/types'
 import { copyMaybeOriginalVideoToPublic } from '~/utils'
-import { createFileCache } from '~/utils/file'
+import { fileExist } from '~/utils/file'
 import {
-	downloadYoutubeHtml,
-	fetchYoutubeComments,
 	generateRemotionVideoComment,
-	generateYoutubeUrlByVideoId,
 	getYoutubeCommentOut,
-	parseYoutubeDateTime,
-	parseYoutubeTitle,
-	parseYoutubeViewCount,
+} from '~/utils/translate-comment'
+import {
+	createProxyYoutubeInnertube,
+	generateYoutubeUrlByVideoId,
 } from '~/utils/youtube'
-
-async function fetchComments({
-	commentFile,
-	html,
-}: { commentFile: string; html: string }) {
-	return createFileCache({
-		path: commentFile,
-		generator: () =>
-			fetchYoutubeComments({ html, agent: new HttpsProxyAgent(PROXY) }),
-		isJsonTransform: true,
-	})
-}
-
-async function fetchYoutubeInfo({
-	videoId,
-	infoFile,
-	html,
-}: { videoId: string; infoFile: string; html: string }): Promise<YoutubeInfo> {
-	return createFileCache({
-		path: infoFile,
-		generator: async () => {
-			const title = await parseYoutubeTitle(html)
-			const viewCount = await parseYoutubeViewCount(html)
-			const dateTime = await parseYoutubeDateTime(html)
-			return {
-				title,
-				youtubeUrl: generateYoutubeUrlByVideoId(videoId),
-				viewCount,
-				dateTime,
-			}
-		},
-		isJsonTransform: true,
-	})
-}
-
-async function fetchYoutubeHtml({
-	videoId,
-	originalHtmlFile,
-}: { videoId: string; originalHtmlFile: string }) {
-	return createFileCache({
-		path: originalHtmlFile,
-		generator: () =>
-			downloadYoutubeHtml(videoId, {
-				agent: new HttpsProxyAgent(PROXY),
-				userAgent: USER_AGENT,
-			}),
-	})
-}
 
 export const loader = async ({ params, request }: LoaderFunctionArgs) => {
 	invariant(params.videoId, 'videoId is required')
 
 	const videoId = params.videoId
-	const youtubeCommentOut = getYoutubeCommentOut(videoId)
-	await fsp.mkdir(youtubeCommentOut.outDir, { recursive: true })
+	const { commentFile, infoFile, outDir } = getYoutubeCommentOut(videoId)
 
-	const html = await fetchYoutubeHtml({
-		videoId,
-		originalHtmlFile: youtubeCommentOut.originalHtmlFile,
-	})
+	let comments: YoutubeComment[] = []
+	let info: YoutubeInfo | null = null
+	if (!(await fileExist(commentFile))) {
+		const proxyAgent = new ProxyAgent({
+			uri: PROXY,
+		})
+		const innertube = await createProxyYoutubeInnertube(proxyAgent)
 
-	const comments = await fetchComments({
-		html,
-		commentFile: youtubeCommentOut.commentFile,
-	})
+		const youtubeInfo = await innertube.getBasicInfo(videoId)
 
-	const info = await fetchYoutubeInfo({
-		videoId,
-		infoFile: youtubeCommentOut.infoFile,
-		html,
-	})
+		info = {
+			title: youtubeInfo.basic_info.title || '',
+			viewCount: youtubeInfo.basic_info?.view_count ?? 0,
+			youtubeUrl: generateYoutubeUrlByVideoId(videoId),
+		}
+
+		const youtubeComments = await innertube.getComments(videoId)
+
+		const mapComment = (item: any) => {
+			return {
+				content: item?.comment?.content?.text ?? '',
+				author: item?.comment?.author?.name ?? '',
+				likes: item?.comment?.like_count ?? '',
+				authorThumbnail: item?.comment?.author?.thumbnails[0].url ?? '',
+				publishedTime: item?.comment?.published_time ?? '',
+			}
+		}
+		comments = youtubeComments.contents.map(mapComment)
+
+		if (youtubeComments.has_continuation) {
+			const continuation = await youtubeComments.getContinuation()
+			comments = comments.concat(continuation.contents.map(mapComment))
+		}
+
+		await fsp.writeFile(commentFile, JSON.stringify(comments, null, 2))
+		await fsp.writeFile(infoFile, JSON.stringify(info, null, 2))
+	} else {
+		const commentsStr = await fsp.readFile(commentFile, 'utf-8')
+		comments = JSON.parse(commentsStr) as YoutubeComment[]
+
+		const infoStr = await fsp.readFile(infoFile, 'utf-8')
+		info = JSON.parse(infoStr) as YoutubeInfo
+	}
 
 	const { playVideoFileName } = await copyMaybeOriginalVideoToPublic({
-		outDir: youtubeCommentOut.outDir,
+		outDir,
 	})
 
 	const durationInSeconds = 5
@@ -143,7 +120,7 @@ export default function VideoCommentPage() {
 			<div className="flex justify-center gap-2">
 				<div className="flex flex-col gap-2">
 					<Player
-						component={TranslateCommentVideo}
+						component={TranslateComment}
 						inputProps={{
 							comments: remotionVideoComments,
 							title: info.translatedTitle,
@@ -192,7 +169,6 @@ export default function VideoCommentPage() {
 								name="totalDurationInFrames"
 								value={totalDurationInFrames}
 							/>
-							<input type="hidden" name="dateTime" value={info.dateTime} />
 							<input type="hidden" name="viewCount" value={info.viewCount} />
 							<input type="hidden" name="title" value={info.translatedTitle} />
 							<Button type="submit" disabled={renderFetcher.state !== 'idle'}>

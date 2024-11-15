@@ -1,35 +1,27 @@
-import { exec as nodeExec } from 'node:child_process'
-import { promisify } from 'node:util'
+import { exec } from 'node:child_process'
 
-const exec = promisify(nodeExec)
-
-type ExecResult = {
-	stdout: string
-	stderr: string
+interface ExecOptions {
+	onProgress?: (data: string) => void
 }
 
-/**
- * 执行命令行命令
- * @param command 要执行的命令
- * @param options 执行选项
- * @returns Promise<ExecResult>
- */
-export async function execCommand(
-	command: string,
-	options: { cwd?: string } = {},
-): Promise<ExecResult> {
-	try {
-		const { stdout, stderr } = await exec(command, {
-			cwd: options.cwd || process.cwd(),
+export function execCommand(command: string, options: ExecOptions = {}) {
+	return new Promise((resolve, reject) => {
+		const child = exec(command)
+
+		child.stdout?.on('data', (data) => {
+			options.onProgress?.(data.toString())
 		})
-		return {
-			stdout: stdout.trim(),
-			stderr: stderr.trim(),
-		}
-	} catch (error: unknown) {
-		if (error instanceof Error) {
-			throw new Error(`命令执行失败: ${error.message}`)
-		}
-		throw new Error('命令执行失败: 未知错误')
-	}
+
+		child.stderr?.on('data', (data) => {
+			console.error(`stderr: ${data}`)
+		})
+
+		child.on('close', (code) => {
+			if (code === 0) {
+				resolve(code)
+			} else {
+				reject(new Error(`Command failed with code ${code}`))
+			}
+		})
+	})
 }

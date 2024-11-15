@@ -4,13 +4,17 @@ import { type ActionFunctionArgs, json } from '@remix-run/node'
 import { bundle } from '@remotion/bundler'
 import { renderMedia, selectComposition } from '@remotion/renderer'
 import invariant from 'tiny-invariant'
+import { YOUTUBE_COMMENT_ID_PREFIX } from '~/constants'
 import { webpackOverride } from '~/remotion/webpack-override'
 import type { YoutubeComment } from '~/types'
+import { publicPlayVideoFile } from '~/utils'
+import { execCommand } from '~/utils/exec'
 import { bundleOnProgress, throttleRenderOnProgress } from '~/utils/remotion'
 import {
 	generateRemotionVideoComment,
 	getYoutubeCommentOut,
-} from '~/utils/youtube'
+} from '~/utils/translate-comment'
+import { tryGetYoutubeDownloadFile } from '~/utils/youtube'
 
 const entryPoint = path.join(
 	process.cwd(),
@@ -29,7 +33,6 @@ export async function action({ request, params }: ActionFunctionArgs) {
 	const fps = formData.get('fps')
 	const title = formData.get('title')
 	const durationInSeconds = formData.get('durationInSeconds')
-	const dateTime = formData.get('dateTime')
 	const viewCount = formData.get('viewCount')
 
 	invariant(videoSrc, 'videoSrc is required')
@@ -41,9 +44,18 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
 	const { videoId } = params
 
-	const { commentFile } = getYoutubeCommentOut(videoId)
+	const { commentFile, outDir } = getYoutubeCommentOut(videoId)
+
 	const str = await fsp.readFile(commentFile, 'utf-8')
 	const comments: YoutubeComment[] = JSON.parse(str)
+
+	const maybePlayVideoFile = await tryGetYoutubeDownloadFile(outDir)
+	const { destPath } = publicPlayVideoFile(maybePlayVideoFile)
+	const end = comments.length * +durationInSeconds
+	const command = `ffmpeg -y -ss 0 -i ${maybePlayVideoFile} -t ${end} -c copy ${destPath} -progress pipe:1`
+	console.log('processing video...')
+	await execCommand(command)
+	console.log('video processed')
 
 	const remotionVideoComments = generateRemotionVideoComment(
 		comments,
@@ -61,13 +73,12 @@ export async function action({ request, params }: ActionFunctionArgs) {
 		comments: remotionVideoComments,
 		title,
 		videoSrc: videoSrc,
-		dateTime,
 		viewCount,
 	}
 
 	const composition = await selectComposition({
 		serveUrl: bundled,
-		id: 'TranslateCommentVideo',
+		id: 'TranslateComment',
 		inputProps,
 	})
 
@@ -79,7 +90,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 		composition,
 		serveUrl: bundled,
 		inputProps,
-		outputLocation: `out/${videoId}/output.mp4`,
+		outputLocation: `out/${YOUTUBE_COMMENT_ID_PREFIX}${videoId}/output.mp4`,
 		onProgress: throttleRenderOnProgress,
 	})
 

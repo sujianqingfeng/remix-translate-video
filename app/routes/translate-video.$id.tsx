@@ -4,7 +4,6 @@ import { useFetcher, useLoaderData } from '@remix-run/react'
 import { parseMedia } from '@remotion/media-parser'
 import { nodeReader } from '@remotion/media-parser/node'
 import { Player } from '@remotion/player'
-import { HttpsProxyAgent } from 'https-proxy-agent'
 import invariant from 'tiny-invariant'
 import BackPrevious from '~/components/business/BackPrevious'
 import { Button } from '~/components/ui/button'
@@ -15,7 +14,6 @@ import { copyMaybeOriginalVideoToPublic } from '~/utils'
 import { fileExist } from '~/utils/file'
 import { getTranslateVideoOut } from '~/utils/translate-video'
 import { downloadYoutubeHtml } from '~/utils/youtube'
-import { downloadYoutubeTranscripts } from '~/utils/youtube/transcripts'
 
 const fps = 60
 
@@ -29,23 +27,11 @@ export async function loader({ params }: LoaderFunctionArgs) {
 
 	const isExist = await fileExist(originalHtmlFile)
 	if (!isExist) {
-		const agent = new HttpsProxyAgent(PROXY)
-
 		const html = await downloadYoutubeHtml(id, {
-			agent,
+			proxyUrl: PROXY,
 			userAgent: USER_AGENT,
 		})
 		await fsp.writeFile(originalHtmlFile, html, 'utf-8')
-
-		transcripts = await downloadYoutubeTranscripts({
-			html,
-			agent,
-		})
-		await fsp.writeFile(
-			transcriptsFile,
-			JSON.stringify(transcripts, null, 2),
-			'utf-8',
-		)
 	} else {
 		const transcriptsStr = await fsp.readFile(transcriptsFile, 'utf-8')
 		transcripts = JSON.parse(transcriptsStr)

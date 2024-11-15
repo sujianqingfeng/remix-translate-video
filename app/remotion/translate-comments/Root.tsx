@@ -1,12 +1,12 @@
 import { Composition } from 'remotion'
-import { TranslateCommentVideo } from './TranslateCommentVideo'
+import TranslateComment from './TranslateComment'
 
 export function RemotionRoot() {
 	return (
 		<>
 			<Composition
-				id="TranslateCommentVideo"
-				component={TranslateCommentVideo}
+				id="TranslateComment"
+				component={TranslateComment}
 				durationInFrames={60 * 20}
 				fps={60}
 				width={1920}
@@ -15,7 +15,6 @@ export function RemotionRoot() {
 					comments: [],
 					title: '',
 					videoSrc: '',
-					dateTime: '',
 					viewCount: 0,
 				}}
 			/>

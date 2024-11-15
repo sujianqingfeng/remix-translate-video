@@ -14,6 +14,13 @@ export function generateUniqueKey(prefix = ''): string {
 	return `${prefix}${timestamp}-${random}`
 }
 
+export function publicPlayVideoFile(maybePlayVideoFile: string) {
+	const suffixName = path.extname(maybePlayVideoFile)
+	const playVideoFileName = `${YOUTUBE_NAME_FILE}${suffixName}`
+	const destPath = path.join(PUBLIC_DIR, playVideoFileName)
+	return { playVideoFileName, destPath }
+}
+
 export async function copyMaybeOriginalVideoToPublic({
 	outDir,
 }: {
@@ -28,10 +35,9 @@ export async function copyMaybeOriginalVideoToPublic({
 		}
 	}
 
-	const suffixName = path.extname(maybePlayVideoFile)
-	const playVideoFileName = `${YOUTUBE_NAME_FILE}${suffixName}`
+	const { playVideoFileName, destPath } =
+		publicPlayVideoFile(maybePlayVideoFile)
 
-	const destPath = path.join(PUBLIC_DIR, playVideoFileName)
 	await fsp.copyFile(maybePlayVideoFile, destPath)
 
 	return {

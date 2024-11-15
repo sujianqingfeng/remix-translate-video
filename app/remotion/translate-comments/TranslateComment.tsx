@@ -44,39 +44,36 @@ function calculateOptimalFontSize({
 	return currentMin
 }
 
-export function TranslateCommentVideo({
+export default function TranslateComment({
 	comments,
 	title,
 	videoSrc,
-	dateTime,
 	viewCount,
 }: {
 	comments: RemotionVideoComment[]
 	title?: string
 	videoSrc: string
-	dateTime?: string
 	viewCount: number
 }) {
-	const date = dateTime
-		? new Date(dateTime)
-				.toLocaleDateString('en-US', {
-					year: 'numeric',
-					month: 'numeric',
-					day: 'numeric',
-				})
-				.replace(/,/g, '')
-		: ''
+	// const date = dateTime
+	// 	? new Date(dateTime)
+	// 			.toLocaleDateString('en-US', {
+	// 				year: 'numeric',
+	// 				month: 'numeric',
+	// 				day: 'numeric',
+	// 			})
+	// 			.replace(/,/g, '')
+	// 	: ''
 
 	const viewCountFormat = `${(viewCount / 1000).toFixed(1)}k`
 
 	return (
 		<AbsoluteFill className="bg-white">
 			<AbsoluteFill>
-				<div className="flex justify-center items-center gap-10 h-[60%] p-4">
-					<div className="text-[#ee3f4d] w-[400px] flex-shrink-0 h-full flex flex-col items-center justify-center p-[20px]">
+				<div className="flex justify-center items-center gap-[100px] h-[60%] p-4">
+					<div className="text-[#ee3f4d] w-[450px] flex-shrink-0 h-full flex flex-col items-center justify-center p-[20px]">
 						<div>
 							<div className="flex items-center gap-2 text-3xl">
-								<span>{date}</span>
 								<span>播放量：{viewCountFormat}</span>
 							</div>
 							<p className="text-5xl mt-2 leading-[1.5]"> {title}</p>
