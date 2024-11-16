@@ -2,7 +2,7 @@ import fsp from 'node:fs/promises'
 import { type ActionFunctionArgs, json } from '@remix-run/node'
 import invariant from 'tiny-invariant'
 import type { YoutubeComment } from '~/types'
-import { getYoutubeCommentOut } from '~/utils/youtube'
+import { getYoutubeCommentOut } from '~/utils/translate-comment'
 
 export async function action({ request, params }: ActionFunctionArgs) {
 	const formData = await request.formData()
