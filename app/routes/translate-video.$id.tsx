@@ -13,7 +13,6 @@ import type { YoutubeTranscript } from '~/types'
 import { copyMaybeOriginalVideoToPublic } from '~/utils'
 import { fileExist } from '~/utils/file'
 import { getTranslateVideoOut } from '~/utils/translate-video'
-import { downloadYoutubeHtml } from '~/utils/youtube'
 
 const fps = 60
 
@@ -21,18 +20,12 @@ export async function loader({ params }: LoaderFunctionArgs) {
 	const { id } = params
 	invariant(id, 'id is required')
 
-	const { originalHtmlFile, transcriptsFile, outDir } = getTranslateVideoOut(id)
+	const { transcriptsFile, outDir } = getTranslateVideoOut(id)
 
 	let transcripts: YoutubeTranscript[] = []
 
-	const isExist = await fileExist(originalHtmlFile)
-	if (!isExist) {
-		const html = await downloadYoutubeHtml(id, {
-			proxyUrl: PROXY,
-			userAgent: USER_AGENT,
-		})
-		await fsp.writeFile(originalHtmlFile, html, 'utf-8')
-	} else {
+	const isExist = await fileExist(transcriptsFile)
+	if (isExist) {
 		const transcriptsStr = await fsp.readFile(transcriptsFile, 'utf-8')
 		transcripts = JSON.parse(transcriptsStr)
 	}
@@ -42,19 +35,22 @@ export async function loader({ params }: LoaderFunctionArgs) {
 			outDir,
 		})
 
-	const { durationInSeconds } = await parseMedia({
-		src: maybePlayVideoFile,
-		fields: {
-			durationInSeconds: true,
-		},
-		reader: nodeReader,
-	})
+	let totalDurationInFrames = 100
+	if (maybePlayVideoFile) {
+		const { durationInSeconds } = await parseMedia({
+			src: maybePlayVideoFile,
+			fields: {
+				durationInSeconds: true,
+			},
+			reader: nodeReader,
+		})
 
-	if (!durationInSeconds) {
-		throw new Error('durationInSeconds is required')
+		if (!durationInSeconds) {
+			throw new Error('durationInSeconds is required')
+		}
+
+		totalDurationInFrames = Math.ceil(durationInSeconds * fps)
 	}
-
-	const totalDurationInFrames = Math.ceil(durationInSeconds * fps)
 
 	return json({ transcripts, playVideoFileName, fps, totalDurationInFrames })
 }
@@ -102,7 +98,15 @@ export default function TranslateVideoPage() {
 					</div>
 				</div>
 
-				<div>{JSON.stringify(transcripts, null, 2)}</div>
+				<div>
+					{transcripts.map((item) => (
+						<div key={item.text}>
+							{item.text}
+							{item.timestamp[0]}
+							{item.timestamp[1]}
+						</div>
+					))}
+				</div>
 			</div>
 		</div>
 	)

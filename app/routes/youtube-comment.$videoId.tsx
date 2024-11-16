@@ -30,6 +30,7 @@ async function fetchVideoInfo(videoId: string) {
 	const youtubeInfo = await innertube.getBasicInfo(videoId)
 
 	return {
+		author: youtubeInfo.basic_info.author || '',
 		title: youtubeInfo.basic_info.title || '',
 		viewCount: youtubeInfo.basic_info?.view_count ?? 0,
 		youtubeUrl: generateYoutubeUrlByVideoId(videoId),
@@ -62,7 +63,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 	})
 
 	const durationInSeconds = 5
-	const fps = 50
+	const fps = 45
 
 	const remotionVideoComments = generateRemotionVideoComment(
 		comments,
@@ -70,7 +71,11 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 		durationInSeconds,
 	)
 
+	const coverDuration = 3
+	const coverDurationInFrames = coverDuration * fps
+
 	const totalDurationInFrames =
+		coverDurationInFrames +
 		fps * durationInSeconds * remotionVideoComments.length
 
 	return json({
@@ -81,6 +86,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 		playVideoFileName,
 		remotionVideoComments,
 		totalDurationInFrames,
+		coverDuration,
 	})
 }
 
@@ -93,6 +99,7 @@ export default function VideoCommentPage() {
 		fps,
 		durationInSeconds,
 		totalDurationInFrames,
+		coverDuration,
 	} = useLoaderData<typeof loader>()
 
 	const renderFetcher = useFetcher()
@@ -113,8 +120,10 @@ export default function VideoCommentPage() {
 							videoSrc: playVideoFileName,
 							dateTime: info.dateTime ?? '',
 							viewCount: info.viewCount,
+							coverDuration,
+							author: info.author,
 						}}
-						durationInFrames={totalDurationInFrames || 10}
+						durationInFrames={totalDurationInFrames}
 						compositionWidth={1920}
 						compositionHeight={1080}
 						fps={fps}
@@ -155,6 +164,7 @@ export default function VideoCommentPage() {
 								name="totalDurationInFrames"
 								value={totalDurationInFrames}
 							/>
+							<input type="hidden" name="coverDuration" value={coverDuration} />
 							<Button type="submit" disabled={renderFetcher.state !== 'idle'}>
 								{renderFetcher.state === 'submitting' ? 'Loading...' : 'Render'}
 							</Button>

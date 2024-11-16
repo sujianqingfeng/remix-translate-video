@@ -27,11 +27,14 @@ export type YoutubeInfo = {
 	youtubeUrl: string
 	viewCount: number
 	dateTime?: string
+	author: string
 }
 
 // translate video
 export type YoutubeTranscript = {
 	text: string
+	timestamp: [number, number]
+
 	duration: number
 	offset: number
 }

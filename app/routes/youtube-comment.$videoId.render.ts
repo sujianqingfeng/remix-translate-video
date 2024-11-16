@@ -32,11 +32,13 @@ export async function action({ request, params }: ActionFunctionArgs) {
 	const totalDurationInFrames = formData.get('totalDurationInFrames')
 	const fps = formData.get('fps')
 	const durationInSeconds = formData.get('durationInSeconds')
+	const coverDuration = formData.get('coverDuration')
 
 	invariant(videoSrc, 'videoSrc is required')
 	invariant(totalDurationInFrames, 'totalDurationInFrames is required')
 	invariant(fps, 'fps is required')
 	invariant(durationInSeconds, 'durationInSeconds is required')
+	invariant(coverDuration, 'coverDuration is required')
 
 	const { videoId } = params
 
@@ -75,6 +77,8 @@ export async function action({ request, params }: ActionFunctionArgs) {
 		title: info.translatedTitle,
 		videoSrc: videoSrc,
 		viewCount: info.viewCount,
+		coverDuration: +coverDuration,
+		author: info.author,
 	}
 
 	const composition = await selectComposition({

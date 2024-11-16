@@ -22,7 +22,7 @@ export const SHORT_TEXT_SENTENCES_FILE = 'sentences.json'
 export const TRANSLATE_VIDEO_ID_PREFIX = 'tv-'
 export const TRANSLATE_VIDEO_INFO_FILE = 'info.json'
 export const TRANSLATE_VIDEO_ORIGINAL_HTML_FILE = 'original.html'
-export const TRANSLATE_VIDEO_TRANSCRIPTS_FILE = 'transcripts.json'
+export const TRANSLATE_VIDEO_TRANSCRIPTS_FILE = 'transcript.json'
 
 export const PROXY = 'http://127.0.0.1:7890'
 export const USER_AGENT =
