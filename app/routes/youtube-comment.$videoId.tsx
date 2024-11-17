@@ -63,7 +63,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 	})
 
 	const durationInSeconds = 5
-	const fps = 45
+	const fps = 30
 
 	const remotionVideoComments = generateRemotionVideoComment(
 		comments,

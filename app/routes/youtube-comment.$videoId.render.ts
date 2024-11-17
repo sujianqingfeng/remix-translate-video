@@ -96,6 +96,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 		serveUrl: bundled,
 		inputProps,
 		outputLocation: `out/${YOUTUBE_COMMENT_ID_PREFIX}${videoId}/output.mp4`,
+		concurrency: 2,
 		onProgress: throttleRenderOnProgress,
 	})
 
