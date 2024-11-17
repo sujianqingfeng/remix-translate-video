@@ -20,6 +20,7 @@ export function ShortTexts({
 	audioDuration,
 	shortTextZh,
 	sentenceTranscript,
+	direction,
 }: {
 	wordTranscripts: WordTranscript[]
 	sentenceTranscript: SentenceTranscript[]
@@ -29,6 +30,7 @@ export function ShortTexts({
 	titleZh: string
 	audioDuration: number
 	shortTextZh: string
+	direction: number
 }) {
 	const frame = useCurrentFrame()
 	const { fps } = useVideoConfig()
@@ -48,7 +50,8 @@ export function ShortTexts({
 	}
 
 	const currentSentence = sentenceTranscript.find((item) => {
-		return currentTime >= item.start && currentTime < item.end
+		const current = currentTime * 0.9
+		return current >= item.start && current < item.end
 	})
 
 	const { fontFamily } = loadFont()
@@ -65,36 +68,74 @@ export function ShortTexts({
 			<AbsoluteFill>
 				<Sequence from={0} durationInFrames={audioDuration}>
 					<div
-						className="absolute top-0 right-0 left-0 h-[calc(100%-180px)] flex flex-col justify-center items-center gap-4 px-8"
-						style={{ fontFamily }}
+						className={`flex w-full h-full ${direction ? 'flex-row' : 'flex-col'}`}
 					>
-						<div className="text-[40px] font-bold">{title}</div>
-						<div className="text-[36px] text-[#333333] leading-[1.5]">
-							{wordTranscripts.map((item) => (
-								<span
-									key={item.start}
-									className="px-1 mx-0.5 rounded-md inline-block transition-all duration-300"
+						<div
+							className={`${direction ? 'w-[400px] relative' : 'h-[400px] relative'}`}
+						>
+							<Img
+								className={`${direction ? 'h-full' : 'h-full w-full'} object-cover`}
+								src={staticFile('short-text-cover.png')}
+							/>
+							{direction ? (
+								<div
+									className="absolute top-0 right-0 h-full w-[200px]"
 									style={{
-										backgroundColor: isHighlighted(item)
-											? '#f2ce2b'
-											: 'transparent',
-										color: isDifficultWord(item.part) ? '#ee3f4d' : 'inherit',
+										background:
+											'linear-gradient(to right, transparent, #EAE0CD)',
 									}}
-								>
-									{item.part}
-								</span>
-							))}
+								/>
+							) : (
+								<div
+									className="absolute bottom-0 left-0 w-full h-[100px]"
+									style={{
+										background:
+											'linear-gradient(to bottom, transparent, #EFEADB)',
+									}}
+								/>
+							)}
 						</div>
-					</div>
 
-					{currentSentence && (
-						<div className="absolute bottom-[120px] left-[50%] -translate-x-1/2 w-[96%] text-[#333333] leading-[1.5] ">
-							<div className="text-center text-xl">{currentSentence.part}</div>
-							<div className="text-center text-2xl">
-								{currentSentence.partZh}
+						<div className="flex-1 flex flex-col justify-center items-center">
+							<div
+								className="flex-1 flex flex-col justify-center items-center gap-4 pl-12 pr-8"
+								style={{ fontFamily }}
+							>
+								<div className="text-[40px] font-bold">{title}</div>
+								<div className="text-[32px] text-[#333333] leading-[1.5]">
+									{wordTranscripts.map((item) => (
+										<span
+											key={item.start}
+											className="px-1 mx-0.5 rounded-md inline-block transition-all duration-300"
+											style={{
+												backgroundColor: isHighlighted(item)
+													? '#f2ce2b'
+													: 'transparent',
+												color: isDifficultWord(item.part)
+													? '#ee3f4d'
+													: 'inherit',
+											}}
+										>
+											{item.part}
+										</span>
+									))}
+								</div>
+							</div>
+
+							<div className="h-[120px] text-[#333333] leading-[1.5] ">
+								{currentSentence && (
+									<div className="bg-[#f2ce2b] px-2 py-1 rounded-md">
+										<div className="text-center text-xl">
+											{currentSentence.part}
+										</div>
+										<div className="text-center text-2xl">
+											{currentSentence.partZh}
+										</div>
+									</div>
+								)}
 							</div>
 						</div>
-					)}
+					</div>
 
 					<div className="absolute top-4 right-4 font-bold text-right">
 						参考释义在视频末尾

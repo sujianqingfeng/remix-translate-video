@@ -45,6 +45,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 		shortTextZh: shortText.shortTextZh,
 		audioDuration,
 		sentenceTranscript,
+		direction: shortText.direction,
 	}
 
 	const bundled = await bundle({
@@ -59,8 +60,8 @@ export async function action({ request, params }: ActionFunctionArgs) {
 		inputProps,
 	})
 
-	const height = shortText.direction ? 720 : 1280
 	const width = shortText.direction ? 1280 : 720
+	const height = shortText.direction ? 720 : 1280
 
 	composition.durationInFrames = totalDurationInFrames
 	composition.fps = +fps

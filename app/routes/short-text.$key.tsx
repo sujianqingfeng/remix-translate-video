@@ -85,6 +85,7 @@ export default function ShortTextPage() {
 								audioDuration,
 								shortTextZh: shortText.shortTextZh,
 								sentenceTranscript,
+								direction: shortText.direction,
 							}}
 							durationInFrames={totalDurationInFrames}
 							compositionWidth={width}
