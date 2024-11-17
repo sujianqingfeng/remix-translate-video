@@ -50,8 +50,7 @@ export function ShortTexts({
 	}
 
 	const currentSentence = sentenceTranscript.find((item) => {
-		const current = currentTime * 0.9
-		return current >= item.start && current < item.end
+		return currentTime >= item.start && currentTime < item.end
 	})
 
 	const { fontFamily } = loadFont()
@@ -102,7 +101,7 @@ export function ShortTexts({
 								style={{ fontFamily }}
 							>
 								<div className="text-[40px] font-bold">{title}</div>
-								<div className="text-[32px] text-[#333333] leading-[1.5]">
+								<div className="text-[36px] text-[#333333] leading-[1.5]">
 									{wordTranscripts.map((item) => (
 										<span
 											key={item.start}
@@ -122,13 +121,13 @@ export function ShortTexts({
 								</div>
 							</div>
 
-							<div className="h-[120px] text-[#333333] leading-[1.5] ">
+							<div className="h-[160px] text-[#333333] leading-[1.5] ">
 								{currentSentence && (
 									<div className="bg-[#f2ce2b] px-2 py-1 rounded-md">
-										<div className="text-center text-xl">
+										<div className="text-center text-2xl">
 											{currentSentence.part}
 										</div>
-										<div className="text-center text-2xl">
+										<div className="text-center text-3xl">
 											{currentSentence.partZh}
 										</div>
 									</div>

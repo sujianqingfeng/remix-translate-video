@@ -11,7 +11,7 @@ export async function generateTTS({
 		saveSubtitles: true,
 		proxy,
 		timeout: 10000,
-		rate: '-10%',
+		rate: '-20%',
 	})
 	await tts.ttsPromise(text, outPath)
 }
