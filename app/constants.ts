@@ -18,6 +18,8 @@ export const SHORT_TEXT_INFO_FILE = 'info.json'
 export const SHORT_TEXT_AUDIO_FILE = 'audio.webm'
 export const SHORT_TEXT_AUDIO_TRANSCRIPTS_FILE = 'audio.webm.json'
 export const SHORT_TEXT_SENTENCES_FILE = 'sentences.json'
+export const SHORT_TEXT_COVER_FILE = 'cover.png'
+export const SHORT_TEXT_PUBLIC_COVER_FILE = 'short-text-cover.png'
 
 export const TRANSLATE_VIDEO_ID_PREFIX = 'tv-'
 export const TRANSLATE_VIDEO_INFO_FILE = 'info.json'
@@ -27,3 +29,5 @@ export const TRANSLATE_VIDEO_TRANSCRIPTS_FILE = 'transcript.json'
 export const PROXY = 'http://127.0.0.1:7890'
 export const USER_AGENT =
 	'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36'
+
+export const SILICON_FLOW_API_KEY = process.env.SILICON_FLOW_API_KEY

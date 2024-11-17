@@ -4,6 +4,7 @@ import {
 	OUT_DIR,
 	SHORT_TEXT_AUDIO_FILE,
 	SHORT_TEXT_AUDIO_TRANSCRIPTS_FILE,
+	SHORT_TEXT_COVER_FILE,
 	SHORT_TEXT_INFO_FILE,
 	SHORT_TEXT_SENTENCES_FILE,
 } from '~/constants'
@@ -27,6 +28,9 @@ export function getShortTextOut(key: string) {
 		},
 		get sentencesFile() {
 			return path.join(outDir, SHORT_TEXT_SENTENCES_FILE)
+		},
+		get coverFile() {
+			return path.join(outDir, SHORT_TEXT_COVER_FILE)
 		},
 	}
 }
