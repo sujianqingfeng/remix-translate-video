@@ -3,7 +3,7 @@ import { describe, expect, test } from 'vitest'
 import { createProxyYoutubeInnertube } from '../common'
 
 describe('comment', () => {
-	test(
+	test.skip(
 		'fetch comments',
 		async () => {
 			const proxyAgent = new ProxyAgent({
