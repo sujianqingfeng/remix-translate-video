@@ -4,7 +4,7 @@ import type { LoaderFunctionArgs } from '@remix-run/node'
 import { json, useFetcher, useLoaderData } from '@remix-run/react'
 import { Player } from '@remotion/player'
 import invariant from 'tiny-invariant'
-import { Button } from '~/components/ui/button'
+import LoadingButtonWithState from '~/components/LoadingButtonWithState'
 import { PUBLIC_DIR, SHORT_TEXT_AUDIO_FILE } from '~/constants'
 import { ShortTexts } from '~/remotion/short-texts/ShortTexts'
 import { buildRemotionRenderData } from '~/utils/short-text'
@@ -65,6 +65,7 @@ export default function ShortTextPage() {
 	const generateAudioFetcher = useFetcher()
 	const renderFetcher = useFetcher()
 	const toggleDirectionFetcher = useFetcher()
+	const generateImageFetcher = useFetcher()
 
 	const width = shortText.direction ? 1280 : 720
 	const height = shortText.direction ? 720 : 1280
@@ -104,8 +105,19 @@ export default function ShortTextPage() {
 						<div className="mt-4 flex gap-2">
 							<generateAudioFetcher.Form action="generate-audio" method="post">
 								<input name="key" value={key} hidden readOnly />
-								<Button>generate audio</Button>
+								<LoadingButtonWithState
+									state={generateAudioFetcher.state}
+									idleText="Generate audio"
+								/>
 							</generateAudioFetcher.Form>
+
+							<generateImageFetcher.Form action="generate-image" method="post">
+								<input name="key" value={key} hidden readOnly />
+								<LoadingButtonWithState
+									state={generateImageFetcher.state}
+									idleText="Generate image"
+								/>
+							</generateImageFetcher.Form>
 
 							<toggleDirectionFetcher.Form
 								action="toggle-direction"
@@ -117,25 +129,20 @@ export default function ShortTextPage() {
 									hidden
 									readOnly
 								/>
-								<Button
-									type="submit"
-									disabled={toggleDirectionFetcher.state !== 'idle'}
-								>
-									{toggleDirectionFetcher.state === 'submitting'
-										? 'Loading...'
-										: 'Toggle direction'}
-								</Button>
+								<LoadingButtonWithState
+									state={toggleDirectionFetcher.state}
+									idleText="Toggle direction"
+								/>
 							</toggleDirectionFetcher.Form>
 						</div>
 
 						<div className="mt-4">
 							<renderFetcher.Form method="post" action="render">
 								<input name="fps" value={fps} hidden readOnly />
-								<Button type="submit" disabled={renderFetcher.state !== 'idle'}>
-									{renderFetcher.state === 'submitting'
-										? 'Loading...'
-										: 'Render'}
-								</Button>
+								<LoadingButtonWithState
+									state={renderFetcher.state}
+									idleText="Render"
+								/>
 							</renderFetcher.Form>
 						</div>
 					</div>
