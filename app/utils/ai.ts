@@ -20,12 +20,11 @@ export function translate(text: string) {
 export function generateShortText(theme: string) {
 	return deepSeek.generateObject({
 		system: `你是一个精通英文的文案写手，我会给你一个主题。
-       - 生成一段关于这个主题120字左右的文案，初中生水平，简单句型。
+       - 生成一篇120字左右的连贯的英语启蒙短文，中国小学生水平，简单句型。
        - 将英语文案需要翻译成中文
        - 需要一个英文标题
        - 英语标题需要翻译成中文
-       - 列出英文短文中7-8个有一定难度的单词
-       `,
+       - 列出英文短文中7-8个有一定难度的单词`,
 		prompt: `主题：${theme}`,
 		schema: ShortTextSchema,
 	})
