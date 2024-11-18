@@ -17,7 +17,7 @@ export async function action({ params }: ActionFunctionArgs) {
 	const literalPrompt =
 		'你是一个精通英语的翻译大师， 根据内容直译成中文，不要遗漏任何信息'
 	const interpretationPrompt =
-		'你是一个精通中文的翻译大师， 根据直译的结果重新意译，遵守原意的前提下让内容更通俗易懂，符合中文表达习惯'
+		'你是一个精通中文的翻译大师，根据直译的结果重新意译，遵守原意的前提下让内容更通俗易懂，符合中文表达习惯，内容更加精简。'
 
 	await Promise.all(
 		data

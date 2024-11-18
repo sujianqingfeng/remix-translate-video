@@ -14,7 +14,7 @@ import { copyMaybeOriginalVideoToPublic } from '~/utils'
 import { fileExist } from '~/utils/file'
 import { getTranslateVideoOut } from '~/utils/translate-video'
 
-const fps = 60
+const fps = 30
 
 export async function loader({ params }: LoaderFunctionArgs) {
 	const { id } = params
@@ -62,6 +62,7 @@ export default function TranslateVideoPage() {
 	const downloadFetcher = useFetcher()
 	const convertFetcher = useFetcher()
 	const translateFetcher = useFetcher()
+	const renderFetcher = useFetcher()
 
 	return (
 		<div className="p-4">
@@ -105,6 +106,25 @@ export default function TranslateVideoPage() {
 								/>
 							</convertFetcher.Form>
 						)}
+
+						<renderFetcher.Form method="post" action="render">
+							<input type="hidden" name="fps" value={fps} />
+							<input
+								type="hidden"
+								name="totalDurationInFrames"
+								value={totalDurationInFrames}
+							/>
+							<input
+								type="hidden"
+								name="playVideoFileName"
+								value={playVideoFileName}
+							/>
+
+							<LoadingButtonWithState
+								state={renderFetcher.state}
+								idleText="Render"
+							/>
+						</renderFetcher.Form>
 
 						<translateFetcher.Form method="post" action="translate">
 							<LoadingButtonWithState

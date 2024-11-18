@@ -41,7 +41,7 @@ export default function TranslateVideos({
 				{currentTranscript && (
 					<div className="absolute bottom-[160px] left-[50%] -translate-x-1/2 w-[96%] text-white leading-[1.5]">
 						<div className="text-center text-4xl">{currentTranscript.text}</div>
-						<div className="text-center text-5xl">
+						<div className="text-center text-5xl mt-2">
 							{currentTranscript.textInterpretation}
 						</div>
 					</div>

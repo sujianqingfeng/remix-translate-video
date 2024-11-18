@@ -97,11 +97,14 @@ export function ShortTexts({
 
 						<div className="flex-1 flex flex-col justify-center items-center">
 							<div
-								className="flex-1 flex flex-col justify-center items-center gap-4 pl-12 pr-8"
+								className="flex-1 flex flex-col justify-center items-center pl-12 pr-8"
 								style={{ fontFamily }}
 							>
-								<div className="text-[40px] font-bold">{title}</div>
-								<div className="text-[36px] text-[#333333] leading-[1.5]">
+								<div className="text-[40px] font-bold leading-[40px]">
+									{title}
+								</div>
+								<div className="text-[36px] leading-[36px] mt-2">{titleZh}</div>
+								<div className="text-[36px] text-[#333333] leading-[1.3] mt-6">
 									{wordTranscripts.map((item) => (
 										<span
 											key={item.start}
@@ -121,7 +124,7 @@ export function ShortTexts({
 								</div>
 							</div>
 
-							<div className="h-[160px] text-[#333333] leading-[1.5] ">
+							<div className="h-[140px] text-[#333333] leading-[1.5] ">
 								{currentSentence && (
 									<div className="bg-[#f2ce2b] px-2 py-1 rounded-md">
 										<div className="text-center text-2xl">
@@ -138,7 +141,6 @@ export function ShortTexts({
 
 					<div className="absolute top-4 right-4 font-bold text-right">
 						参考释义在视频末尾
-						<p className="text-[20px]">{titleZh}</p>
 					</div>
 				</Sequence>
 			</AbsoluteFill>

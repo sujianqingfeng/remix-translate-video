@@ -1,22 +1,19 @@
 import { Composition } from 'remotion'
-import TranslateComment from './TranslateComment'
+import TranslateVideos from './TranslateVideos'
 
 export function RemotionRoot() {
 	return (
 		<>
 			<Composition
-				id="TranslateComment"
-				component={TranslateComment}
+				id="TranslateVideos"
+				component={TranslateVideos}
 				durationInFrames={60 * 20}
 				fps={60}
 				width={1920}
 				height={1080}
 				defaultProps={{
-					comments: [],
-					title: '',
-					videoSrc: '',
-					viewCount: 0,
-					coverDuration: 60 * 20,
+					transcripts: [],
+					playVideoFileName: '',
 				}}
 			/>
 		</>
