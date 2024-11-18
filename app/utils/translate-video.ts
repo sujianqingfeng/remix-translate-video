@@ -1,6 +1,7 @@
 import path from 'node:path'
 import {
 	OUT_DIR,
+	TRANSLATE_VIDEO_ASR_RESULT_FILE,
 	TRANSLATE_VIDEO_ID_PREFIX,
 	TRANSLATE_VIDEO_INFO_FILE,
 	TRANSLATE_VIDEO_ORIGINAL_HTML_FILE,
@@ -26,6 +27,9 @@ export function getTranslateVideoOut(id: string) {
 		},
 		get transcriptsFile() {
 			return join(TRANSLATE_VIDEO_TRANSCRIPTS_FILE)
+		},
+		get asrResultFile() {
+			return join(TRANSLATE_VIDEO_ASR_RESULT_FILE)
 		},
 	}
 }

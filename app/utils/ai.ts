@@ -29,3 +29,5 @@ export function generateShortText(theme: string) {
 		schema: ShortTextSchema,
 	})
 }
+
+export { deepSeek }

@@ -1,4 +1,3 @@
-import { useMemo } from 'react'
 import {
 	AbsoluteFill,
 	Video,
@@ -6,11 +5,11 @@ import {
 	useCurrentFrame,
 	useVideoConfig,
 } from 'remotion'
-import type { YoutubeTranscript } from '~/types'
+import type { Transcript } from '~/types'
 
 type TranslateVideosProps = {
 	playVideoFileName: string
-	transcripts: YoutubeTranscript[]
+	transcripts: Transcript[]
 }
 
 export default function TranslateVideos({
@@ -23,8 +22,7 @@ export default function TranslateVideos({
 	const currentTime = frame / fps
 
 	const currentTranscript = transcripts.find((item) => {
-		const [start, end] = item.timestamp
-		return currentTime >= start && currentTime <= end
+		return currentTime >= item.start && currentTime <= item.end
 	})
 
 	return (
@@ -41,15 +39,11 @@ export default function TranslateVideos({
 
 			<AbsoluteFill>
 				{currentTranscript && (
-					<div
-						className="absolute bottom-[160px] left-[50%] -translate-x-1/2 w-[96%] text-4xl text-white leading-[1.5]"
-						style={{
-							backgroundColor: 'rgba(0, 0, 0, 0.5)',
-							padding: '10px',
-							borderRadius: '8px',
-						}}
-					>
-						<div className="text-center">{currentTranscript.text}</div>
+					<div className="absolute bottom-[160px] left-[50%] -translate-x-1/2 w-[96%] text-white leading-[1.5]">
+						<div className="text-center text-4xl">{currentTranscript.text}</div>
+						<div className="text-center text-5xl">
+							{currentTranscript.textInterpretation}
+						</div>
 					</div>
 				)}
 			</AbsoluteFill>

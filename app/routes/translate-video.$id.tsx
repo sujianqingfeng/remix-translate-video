@@ -6,10 +6,10 @@ import { nodeReader } from '@remotion/media-parser/node'
 import { Player } from '@remotion/player'
 import invariant from 'tiny-invariant'
 import BackPrevious from '~/components/BackPrevious'
+import LoadingButtonWithState from '~/components/LoadingButtonWithState'
 import { Button } from '~/components/ui/button'
-import { PROXY, USER_AGENT } from '~/constants'
 import TranslateVideos from '~/remotion/translate-videos/TranslateVideos'
-import type { YoutubeTranscript } from '~/types'
+import type { Transcript } from '~/types'
 import { copyMaybeOriginalVideoToPublic } from '~/utils'
 import { fileExist } from '~/utils/file'
 import { getTranslateVideoOut } from '~/utils/translate-video'
@@ -22,7 +22,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
 
 	const { transcriptsFile, outDir } = getTranslateVideoOut(id)
 
-	let transcripts: YoutubeTranscript[] = []
+	let transcripts: Transcript[] = []
 
 	const isExist = await fileExist(transcriptsFile)
 	if (isExist) {
@@ -60,6 +60,8 @@ export default function TranslateVideoPage() {
 		useLoaderData<typeof loader>()
 
 	const downloadFetcher = useFetcher()
+	const convertFetcher = useFetcher()
+	const translateFetcher = useFetcher()
 
 	return (
 		<div className="p-4">
@@ -85,25 +87,45 @@ export default function TranslateVideoPage() {
 							controls
 						/>
 					</div>
-					<div>
+					<div className="flex items-center gap-2 mt-2">
 						{!playVideoFileName && (
 							<downloadFetcher.Form method="post" action="download">
-								<Button disabled={downloadFetcher.state !== 'idle'}>
-									{downloadFetcher.state === 'submitting'
-										? 'Loading...'
-										: 'Download'}
-								</Button>
+								<LoadingButtonWithState
+									state={downloadFetcher.state}
+									idleText="Download"
+								/>
 							</downloadFetcher.Form>
 						)}
+
+						{transcripts.length === 0 && (
+							<convertFetcher.Form method="post" action="convert">
+								<LoadingButtonWithState
+									state={convertFetcher.state}
+									idleText="Covert"
+								/>
+							</convertFetcher.Form>
+						)}
+
+						<translateFetcher.Form method="post" action="translate">
+							<LoadingButtonWithState
+								state={translateFetcher.state}
+								idleText="Translate"
+							/>
+						</translateFetcher.Form>
 					</div>
 				</div>
 
 				<div>
 					{transcripts.map((item) => (
 						<div key={item.text}>
-							{item.text}
-							{item.timestamp[0]}
-							{item.timestamp[1]}
+							<div>
+								{item.text}
+								<div>
+									{item.start} - {item.end}
+								</div>
+							</div>
+							<div>{item.textLiteralTranslation}</div>
+							<div>{item.textInterpretation}</div>
 						</div>
 					))}
 				</div>

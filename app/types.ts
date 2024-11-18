@@ -31,23 +31,15 @@ export type YoutubeInfo = {
 }
 
 // translate video
-export type YoutubeTranscript = {
+export type Transcript = {
 	text: string
-	timestamp: [number, number]
-
-	duration: number
-	offset: number
-}
-
-export type RemotionYoutubeTranscript = {
-	textZh: string
-	text: string
-	duration: number
-	offset: number
+	start: number
+	end: number
+	textLiteralTranslation?: string
+	textInterpretation?: string
 }
 
 // short text
-
 export type WordTranscript = {
 	start: number
 	end: number

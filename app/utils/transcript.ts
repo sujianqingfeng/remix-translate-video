@@ -6,82 +6,123 @@ type SentenceSegmentationOptions = {
 type Sentence = {
 	words: { start: number; end: number; word: string }[]
 	text: string
+	start: number // 句子开始时间
+	end: number // 句子结束时间
 }
 
-// 先通过一些断句符号组装成一个一个长句
-// 然后处理每个长句里面存在一些科学计数的逗号去掉，相应对应的word里面的逗号也要去掉
-// 然后遍历这些长句，如果长度超过 maxSentenceLength，则将句子通过一些逗号之类的子句符号切分成多个子句，如果不存在子句符号，就不切分
-export function processSentenceSegmentation({
-	words,
-	maxSentenceLength = 20,
-}: SentenceSegmentationOptions) {
-	const sentences: Sentence[] = []
+// 先组装成长句
+function assembleLongSentences(
+	words: { start: number; end: number; word: string }[],
+) {
+	const sentences: { start: number; end: number; word: string }[][] = []
 	let currentSentence: typeof words = []
-
-	// 定义句子结束的标点符号
 	const sentenceEndMarks = /[.!?。！？]/
-	// 定义可以用来分割子句的标点符号
-	const subSentenceMarks = /[,，;；]/
 
-	// 1. 先组装成长句
 	for (let i = 0; i < words.length; i++) {
 		const word = words[i]
 		currentSentence.push(word)
 
-		// 检查是否是句子结尾
 		if (sentenceEndMarks.test(word.word) || i === words.length - 1) {
-			// 2. 处理科学计数法中的逗号
-			const processedSentence = currentSentence.map((w) => ({
-				...w,
-				word: w.word.replace(/(\d+),(\d{3})/g, '$1$2'),
-			}))
-
-			// 3. 如果句子过长，检查是否存在子句分隔符
-			if (processedSentence.length > maxSentenceLength) {
-				// 检查是否存在子句分隔符
-				const hasSubSentenceMarks = processedSentence.some((w) =>
-					subSentenceMarks.test(w.word),
-				)
-
-				if (hasSubSentenceMarks) {
-					// 存在子句分隔符时才进行切分
-					let subSentence: typeof words = []
-					for (const w of processedSentence) {
-						subSentence.push(w)
-
-						if (subSentenceMarks.test(w.word) && subSentence.length >= 3) {
-							sentences.push({
-								words: subSentence,
-								text: subSentence.map((w) => w.word).join(' '),
-							})
-							subSentence = []
-						}
-					}
-					// 添加剩余的词作为最后一个子句
-					if (subSentence.length > 0) {
-						sentences.push({
-							words: subSentence,
-							text: subSentence.map((w) => w.word).join(' '),
-						})
-					}
-				} else {
-					// 不存在子句分隔符时，保持原句不切分
-					sentences.push({
-						words: processedSentence,
-						text: processedSentence.map((w) => w.word).join(' '),
-					})
-				}
-			} else {
-				// 句子长度在允许范围内，直接添加
-				sentences.push({
-					words: processedSentence,
-					text: processedSentence.map((w) => w.word).join(' '),
-				})
-			}
-
+			sentences.push(currentSentence)
 			currentSentence = []
 		}
 	}
 
 	return sentences
+}
+
+// 处理科学计数法中的逗号
+function processScientificNotation(
+	sentence: { start: number; end: number; word: string }[],
+) {
+	return sentence.map((w) => ({
+		...w,
+		word: w.word.replace(/(\d+),(\d{3})/g, '$1$2'),
+	}))
+}
+
+// 创建句子对象
+function createSentence(
+	words: { start: number; end: number; word: string }[],
+): Sentence {
+	return {
+		words,
+		text: words.map((w) => w.word).join(' '),
+		start: words[0].start,
+		end: words[words.length - 1].end,
+	}
+}
+
+// 根据分隔符切分句子
+function splitBySubSentenceMarks(
+	sentence: { start: number; end: number; word: string }[],
+) {
+	const subSentences: Sentence[] = []
+	let currentSubSentence: typeof sentence = []
+	const subSentenceMarks = /[,，;；]/
+
+	for (const word of sentence) {
+		currentSubSentence.push(word)
+
+		if (subSentenceMarks.test(word.word) && currentSubSentence.length >= 3) {
+			subSentences.push(createSentence(currentSubSentence))
+			currentSubSentence = []
+		}
+	}
+
+	if (currentSubSentence.length > 0) {
+		subSentences.push(createSentence(currentSubSentence))
+	}
+
+	return subSentences
+}
+
+// 计算句子的字符长度
+function getSentenceLength(
+	sentence: { start: number; end: number; word: string }[],
+) {
+	return sentence.reduce((length, word) => length + word.word.length, 0)
+}
+
+export function processSentenceSegmentation({
+	words,
+	maxSentenceLength = 60,
+}: SentenceSegmentationOptions) {
+	// 1. 组装长句
+	const longSentences = assembleLongSentences(words)
+
+	// 2. 处理每个长句
+	const sentences: Sentence[] = []
+	for (const longSentence of longSentences) {
+		// 处理科学计数法中的逗号
+		const processedSentence = processScientificNotation(longSentence)
+
+		// 3. 根据句子字符长度决定是否需要切分
+		const sentenceLength = getSentenceLength(processedSentence)
+		if (sentenceLength > maxSentenceLength) {
+			// 检查是否存在子句分隔符
+			const hasSubSentenceMarks = processedSentence.some((w) =>
+				/[,，;；]/.test(w.word),
+			)
+
+			if (hasSubSentenceMarks) {
+				// 存在分隔符时进行切分
+				sentences.push(...splitBySubSentenceMarks(processedSentence))
+			} else {
+				// 不存在分隔符时保持原句
+				sentences.push(createSentence(processedSentence))
+			}
+		} else {
+			// 句子长度在允许范围内，直接添加
+			sentences.push(createSentence(processedSentence))
+		}
+	}
+
+	return sentences
+}
+
+// 去除句子两边的符号
+export function trimPunctuation(sentence: string): string {
+	const punctuationRegex = /^[^\w]+|[^\w]+$/g
+	return sentence.replace(punctuationRegex, '')
 }
