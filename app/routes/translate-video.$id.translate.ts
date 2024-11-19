@@ -15,9 +15,9 @@ export async function action({ params }: ActionFunctionArgs) {
 	const data: Transcript[] = JSON.parse(transcripts)
 
 	const literalPrompt =
-		'你是一个精通英语的翻译大师， 根据内容直译成中文，不要遗漏任何信息'
+		'你是一个精通英语的翻译大师， 根据内容直译成中文，不要遗漏任何信息，末尾不需要加任何标点符号。'
 	const interpretationPrompt =
-		'你是一个精通中文的翻译大师，根据直译的结果重新意译，遵守原意的前提下让内容更通俗易懂，符合中文表达习惯，内容更加精简。'
+		'你是一个精通中文的翻译大师，根据直译的结果重新意译，遵守原意的前提下让内容更通俗易懂，符合中文表达习惯，内容更加精简，末尾不需要加任何标点符号。'
 
 	await Promise.all(
 		data
