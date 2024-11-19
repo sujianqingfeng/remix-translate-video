@@ -107,7 +107,7 @@ export default function TranslateVideoPage() {
 							</convertFetcher.Form>
 						)}
 
-						<renderFetcher.Form method="post" action="render">
+						<renderFetcher.Form method="post" action="new-render">
 							<input type="hidden" name="fps" value={fps} />
 							<input
 								type="hidden"
