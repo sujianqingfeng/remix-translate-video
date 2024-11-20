@@ -12,7 +12,7 @@ export async function action({ params }: ActionFunctionArgs) {
 	const youtubeUrl = generateYoutubeUrlByVideoId(videoId)
 
 	await execCommand(
-		`cd ${outDir} && yt-dlp ${youtubeUrl} -o "original.%(ext)s"`,
+		`cd ${outDir} && yt-dlp ${youtubeUrl} -f "bv*[height<=720][ext=webm]+ba[ext=webm]/b[ext=webm] / bv*+ba/b" -o "original.%(ext)s"`,
 	)
 
 	return json({ success: true })

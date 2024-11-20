@@ -24,8 +24,8 @@ export const SHORT_TEXT_PUBLIC_COVER_FILE = 'short-text-cover.png'
 export const TRANSLATE_VIDEO_ID_PREFIX = 'tv-'
 export const TRANSLATE_VIDEO_INFO_FILE = 'info.json'
 export const TRANSLATE_VIDEO_ORIGINAL_HTML_FILE = 'original.html'
-export const TRANSLATE_VIDEO_TRANSCRIPTS_FILE = 'transcript.json'
-export const TRANSLATE_VIDEO_ASR_RESULT_FILE = 'asr-result.json'
+export const TRANSLATE_VIDEO_TRANSCRIPTS_FILE = 'tv-transcript.json'
+export const TRANSLATE_VIDEO_ASR_RESULT_FILE = 'transcript.json'
 
 export const PROXY = 'http://127.0.0.1:7890'
 export const USER_AGENT =
