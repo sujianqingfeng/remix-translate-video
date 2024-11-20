@@ -28,7 +28,7 @@ export default function TranslateVideoIndexPage() {
 					<Input
 						placeholder="youtube url"
 						name="url"
-						defaultValue="https://www.youtube.com/watch?v=rwXYj1NalIw"
+						defaultValue="https://www.youtube.com/watch?v=yrSj6yjZ1Yw"
 					/>
 					<Button>start</Button>
 				</div>

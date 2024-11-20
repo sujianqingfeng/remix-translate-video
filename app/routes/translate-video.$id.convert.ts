@@ -23,18 +23,18 @@ export async function action({ params }: ActionFunctionArgs) {
 	const data = JSON.parse(asrResult)
 
 	// 将 chunks 转换为 segments
-	data.segments = data.chunks.map((chunk: any) => ({
-		text: chunk.text,
+	const words = data.chunks.map((chunk: any) => ({
+		word: chunk.text.trim(),
 		start: chunk.timestamp[0],
 		end: chunk.timestamp[1],
 	}))
 
-	const words = data.segments.flatMap((segment: any) =>
-		segment.words.map((word: any) => {
-			word.word = word.word.trim()
-			return word
-		}),
-	)
+	// const words = data.segments.flatMap((segment: any) =>
+	// 	segment.words.map((word: any) => {
+	// 		word.word = word.word.trim()
+	// 		return word
+	// 	}),
+	// )
 
 	const segments = processSentenceSegmentation({ words })
 

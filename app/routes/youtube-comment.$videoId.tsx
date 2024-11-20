@@ -6,9 +6,17 @@ import { Languages, LoaderCircle } from 'lucide-react'
 import invariant from 'tiny-invariant'
 import { ProxyAgent } from 'undici'
 import BackPrevious from '~/components/BackPrevious'
+import LoadingButtonWithState from '~/components/LoadingButtonWithState'
 import { CommentsList } from '~/components/business/CommentsList'
-import { Button } from '~/components/ui/button'
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from '~/components/ui/select'
 import { PROXY } from '~/constants'
+import PortraitTranslateComment from '~/remotion/translate-comments/PortraitTranslateComment'
 import TranslateComment from '~/remotion/translate-comments/TranslateComment'
 import type { YoutubeComment, YoutubeInfo } from '~/types'
 import { copyMaybeOriginalVideoToPublic } from '~/utils'
@@ -22,7 +30,7 @@ import {
 	generateYoutubeUrlByVideoId,
 } from '~/utils/youtube'
 
-async function fetchVideoInfo(videoId: string) {
+async function fetchVideoInfo(videoId: string): Promise<YoutubeInfo> {
 	const proxyAgent = new ProxyAgent({
 		uri: PROXY,
 	})
@@ -34,6 +42,7 @@ async function fetchVideoInfo(videoId: string) {
 		title: youtubeInfo.basic_info.title || '',
 		viewCount: youtubeInfo.basic_info?.view_count ?? 0,
 		youtubeUrl: generateYoutubeUrlByVideoId(videoId),
+		mode: 'landscape',
 	}
 }
 
@@ -62,13 +71,13 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 		outDir,
 	})
 
-	const durationInSeconds = 5
+	const everyCommentSecond = 5
 	const fps = 30
 
 	const remotionVideoComments = generateRemotionVideoComment(
 		comments,
 		fps,
-		durationInSeconds,
+		everyCommentSecond,
 	)
 
 	const coverDuration = 3
@@ -76,13 +85,13 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 
 	const totalDurationInFrames =
 		coverDurationInFrames +
-		fps * durationInSeconds * remotionVideoComments.length
+		fps * everyCommentSecond * remotionVideoComments.length
 
 	return json({
 		videoId,
 		info,
 		fps,
-		durationInSeconds,
+		everyCommentSecond,
 		playVideoFileName,
 		remotionVideoComments,
 		totalDurationInFrames,
@@ -97,7 +106,7 @@ export default function VideoCommentPage() {
 		playVideoFileName,
 		remotionVideoComments,
 		fps,
-		durationInSeconds,
+		everyCommentSecond,
 		totalDurationInFrames,
 		coverDuration,
 	} = useLoaderData<typeof loader>()
@@ -106,14 +115,47 @@ export default function VideoCommentPage() {
 	const translateFetcher = useFetcher()
 	const downloadFetcher = useFetcher()
 	const downloadCommentsFetcher = useFetcher()
+	const modeFetcher = useFetcher()
+
+	const playerWidth = 1280
+	const playerHeight = 720
+	const compositionWidth = 1920
+	const compositionHeight = 1080
 
 	return (
 		<div className="p-4 h-screen w-full ">
-			<BackPrevious />
-			<div className="flex justify-center gap-2">
+			<div className="flex items-center gap-2">
+				<BackPrevious />
+
+				<modeFetcher.Form method="post">
+					<Select
+						defaultValue={info.mode}
+						onValueChange={(value) => {
+							modeFetcher.submit(
+								{ mode: value },
+								{ method: 'post', action: 'mode' },
+							)
+						}}
+					>
+						<SelectTrigger className="w-[180px]">
+							<SelectValue placeholder="Select mode" />
+						</SelectTrigger>
+						<SelectContent>
+							<SelectItem value="landscape">Landscape</SelectItem>
+							<SelectItem value="portrait">Portrait</SelectItem>
+						</SelectContent>
+					</Select>
+				</modeFetcher.Form>
+			</div>
+
+			<div className="flex mt-2 justify-center gap-2">
 				<div className="flex flex-col gap-2">
 					<Player
-						component={TranslateComment}
+						component={
+							info.mode === 'landscape'
+								? TranslateComment
+								: PortraitTranslateComment
+						}
 						inputProps={{
 							comments: remotionVideoComments,
 							title: info.translatedTitle,
@@ -124,12 +166,12 @@ export default function VideoCommentPage() {
 							author: info.author,
 						}}
 						durationInFrames={totalDurationInFrames}
-						compositionWidth={1920}
-						compositionHeight={1080}
+						compositionWidth={compositionWidth}
+						compositionHeight={compositionHeight}
 						fps={fps}
 						style={{
-							width: 1280,
-							height: 720,
+							width: playerWidth,
+							height: playerHeight,
 						}}
 						controls
 					/>
@@ -140,14 +182,10 @@ export default function VideoCommentPage() {
 					<div className="flex items-center gap-2">
 						{!playVideoFileName && (
 							<downloadFetcher.Form method="post" action="download">
-								<Button
-									type="submit"
-									disabled={downloadFetcher.state !== 'idle'}
-								>
-									{downloadFetcher.state === 'submitting'
-										? 'Loading...'
-										: 'Download'}
-								</Button>
+								<LoadingButtonWithState
+									state={downloadFetcher.state}
+									idleText="Download"
+								/>
 							</downloadFetcher.Form>
 						)}
 
@@ -155,19 +193,24 @@ export default function VideoCommentPage() {
 							<input type="hidden" name="fps" value={fps} />
 							<input
 								type="hidden"
-								name="durationInSeconds"
-								value={durationInSeconds}
+								name="everyCommentSecond"
+								value={everyCommentSecond}
 							/>
-							<input type="hidden" name="videoSrc" value={playVideoFileName} />
+							<input
+								type="hidden"
+								name="playVideoFileName"
+								value={playVideoFileName}
+							/>
 							<input
 								type="hidden"
 								name="totalDurationInFrames"
 								value={totalDurationInFrames}
 							/>
 							<input type="hidden" name="coverDuration" value={coverDuration} />
-							<Button type="submit" disabled={renderFetcher.state !== 'idle'}>
-								{renderFetcher.state === 'submitting' ? 'Loading...' : 'Render'}
-							</Button>
+							<LoadingButtonWithState
+								state={renderFetcher.state}
+								idleText="Render"
+							/>
 						</renderFetcher.Form>
 					</div>
 				</div>
@@ -200,14 +243,10 @@ export default function VideoCommentPage() {
 								method="post"
 								action="download-comments"
 							>
-								<Button
-									type="submit"
-									disabled={downloadCommentsFetcher.state !== 'idle'}
-								>
-									{downloadCommentsFetcher.state === 'submitting'
-										? 'Loading...'
-										: 'Download Comments'}
-								</Button>
+								<LoadingButtonWithState
+									state={downloadCommentsFetcher.state}
+									idleText="Download Comments"
+								/>
 							</downloadCommentsFetcher.Form>
 						</div>
 					)}

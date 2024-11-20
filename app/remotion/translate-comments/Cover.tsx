@@ -9,14 +9,14 @@ type CoverProps = {
 export default function Cover({ coverDuration, title, author }: CoverProps) {
 	const { fps } = useVideoConfig()
 
-	const titleLines = title?.split(/[：|。]/)
+	const titleLines = title?.split(/[|。]/)
 
 	return (
 		<Sequence from={0} durationInFrames={coverDuration * fps}>
 			<AbsoluteFill>
 				<div className="w-full h-full flex justify-center items-center">
 					<div className="text-right leading-[1.2] w-[60%]">
-						<div className="text-[40px]">外网真实评论</div>
+						<div className="text-[40px]">外网评论</div>
 						<div className="text-[40px]">@{author}</div>
 
 						{titleLines?.map((line, index) => (

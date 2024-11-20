@@ -28,16 +28,16 @@ export async function action({ request, params }: ActionFunctionArgs) {
 	invariant(params.videoId, 'videoId is required')
 
 	const formData = await request.formData()
-	const videoSrc = formData.get('videoSrc')
+	const playVideoFileName = formData.get('playVideoFileName')
 	const totalDurationInFrames = formData.get('totalDurationInFrames')
 	const fps = formData.get('fps')
-	const durationInSeconds = formData.get('durationInSeconds')
+	const everyCommentSecond = formData.get('everyCommentSecond')
 	const coverDuration = formData.get('coverDuration')
 
-	invariant(videoSrc, 'videoSrc is required')
+	invariant(playVideoFileName, 'videoSrc is required')
 	invariant(totalDurationInFrames, 'totalDurationInFrames is required')
 	invariant(fps, 'fps is required')
-	invariant(durationInSeconds, 'durationInSeconds is required')
+	invariant(everyCommentSecond, 'durationInSeconds is required')
 	invariant(coverDuration, 'coverDuration is required')
 
 	const { videoId } = params
@@ -53,7 +53,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 	const maybePlayVideoFile = await tryGetYoutubeDownloadFile(outDir)
 	if (maybePlayVideoFile) {
 		const { destPath } = publicPlayVideoFile(maybePlayVideoFile)
-		const end = comments.length * +durationInSeconds
+		const end = comments.length * +everyCommentSecond
 		const command = `ffmpeg -y -ss 0 -i ${maybePlayVideoFile} -t ${end} -c copy ${destPath} -progress pipe:1`
 		console.log('processing video...')
 		await execCommand(command)
@@ -63,7 +63,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 	const remotionVideoComments = generateRemotionVideoComment(
 		comments,
 		+fps,
-		+durationInSeconds,
+		+everyCommentSecond,
 	)
 
 	const bundled = await bundle({
@@ -75,7 +75,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 	const inputProps = {
 		comments: remotionVideoComments,
 		title: info.translatedTitle,
-		videoSrc: videoSrc,
+		videoSrc: playVideoFileName,
 		viewCount: info.viewCount,
 		coverDuration: +coverDuration,
 		author: info.author,
@@ -83,7 +83,10 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
 	const composition = await selectComposition({
 		serveUrl: bundled,
-		id: 'TranslateComment',
+		id:
+			info.mode === 'landscape'
+				? 'TranslateComment'
+				: 'PortraitTranslateComment',
 		inputProps,
 	})
 
