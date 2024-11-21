@@ -5,7 +5,12 @@ export const ShortTextSchema = z.object({
 	titleZh: z.string(),
 	shortText: z.string(),
 	shortTextZh: z.string(),
-	words: z.array(z.string()),
+	words: z.array(
+		z.object({
+			word: z.string(),
+			translation: z.string(),
+		}),
+	),
 	direction: z.number(),
 })
 

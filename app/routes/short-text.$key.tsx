@@ -3,9 +3,11 @@ import path from 'node:path'
 import type { LoaderFunctionArgs } from '@remix-run/node'
 import { json, useFetcher, useLoaderData } from '@remix-run/react'
 import { Player } from '@remotion/player'
+import { Copy } from 'lucide-react'
 import invariant from 'tiny-invariant'
 import LoadingButtonWithState from '~/components/LoadingButtonWithState'
 import { PUBLIC_DIR, SHORT_TEXT_AUDIO_FILE } from '~/constants'
+import { toast } from '~/hooks/use-toast'
 import { ShortTexts } from '~/remotion/short-texts/ShortTexts'
 import { buildRemotionRenderData } from '~/utils/short-text'
 
@@ -70,6 +72,19 @@ export default function ShortTextPage() {
 	const width = shortText.direction ? 1280 : 720
 	const height = shortText.direction ? 720 : 1280
 
+	const title = `坚持100天打卡 每日英语听读小短文 | ${shortText.titleZh}`
+
+	const onCopy = async (text: string) => {
+		await navigator.clipboard.writeText(text)
+		toast({
+			title: 'copy successful!',
+		})
+	}
+
+	const words = shortText.words
+		.map((word) => `${word.word}：${word.translation}`)
+		.join('\n')
+
 	return (
 		<div className="h-screen p-4">
 			<div className="flex justify-center gap-6">
@@ -79,7 +94,7 @@ export default function ShortTextPage() {
 							component={ShortTexts}
 							inputProps={{
 								wordTranscripts,
-								littleDifficultWords: shortText.words,
+								littleDifficultWords: shortText.words.map((item) => item.word),
 								playAudioName,
 								title: shortText.title,
 								titleZh: shortText.titleZh,
@@ -102,6 +117,24 @@ export default function ShortTextPage() {
 
 					<div>
 						{!audioExist && <p>Audio not found</p>}
+
+						<div className="flex flex-col gpa-4 mt-2">
+							<p className="flex items-center gap-2">
+								{title}
+								<Copy
+									className="cursor-pointer"
+									onClick={() => onCopy(title)}
+								/>
+							</p>
+
+							<p className="flex items-center gap-2 whitespace-pre-wrap">
+								{words}
+								<Copy
+									className="cursor-pointer"
+									onClick={() => onCopy(words)}
+								/>
+							</p>
+						</div>
 
 						<div className="mt-4 flex gap-2">
 							<generateAudioFetcher.Form action="generate-audio" method="post">
@@ -162,4 +195,5 @@ export default function ShortTextPage() {
 			</div>
 		</div>
 	)
+	console.log('🚀 ~ ShortTextPage ~ flex:', flex)
 }

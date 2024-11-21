@@ -9,9 +9,23 @@ function ShortTextInfo({
 }: { shortText: ShortText; uniqueKey: string }) {
 	return (
 		<>
-			<p className="whitespace-pre-wrap">
-				{JSON.stringify(shortText, null, 2)}
-			</p>
+			<div className="whitespace-pre-wrap">
+				<p>{shortText.title}</p>
+				<p>{shortText.titleZh}</p>
+
+				<p>{shortText.shortText}</p>
+				<p>{shortText.shortTextZh}</p>
+
+				<div>
+					{shortText.words.map((word) => {
+						return (
+							<p key={word.word}>
+								{word.word}：{word.translation}
+							</p>
+						)
+					})}
+				</div>
+			</div>
 
 			<Form method="post" action="confirm">
 				<input name="key" value={uniqueKey} type="hidden" />

@@ -6,6 +6,7 @@ import {
 	Scripts,
 	ScrollRestoration,
 } from '@remix-run/react'
+import { Toaster } from './components/ui/toaster'
 import tailwindStylesheetUrl from './tailwind.css?url'
 
 export const links: LinksFunction = () => [
@@ -25,6 +26,7 @@ export default function App() {
 				<Outlet />
 				<ScrollRestoration />
 				<Scripts />
+				<Toaster />
 			</body>
 		</html>
 	)
