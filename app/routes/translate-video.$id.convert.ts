@@ -40,8 +40,9 @@ export async function action({ params }: ActionFunctionArgs) {
 
 	// 去除句子两边的符号 和 words
 	const transcripts = segments.map(({ text, start, end }) => {
+		const textResult = trimPunctuation(text)
 		return {
-			text: trimPunctuation(text),
+			text: textResult,
 			start: start,
 			end: end,
 		}

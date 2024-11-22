@@ -160,7 +160,7 @@ export async function action({ params, request }: ActionFunctionArgs) {
 			'-i',
 			maybePlayVideoFile,
 			'-vf',
-			`subtitles='${escapedCombinedSrtPath}':force_style='FontName=Microsoft YaHei,FontSize=14,Alignment=2,BorderStyle=3,Outline=0,Shadow=0,MarginV=20,PrimaryColour=&HFFE100,BackColour=&H80FF0000'`,
+			`subtitles='${escapedCombinedSrtPath}':force_style='FontName=Microsoft YaHei,FontSize=14,Alignment=2,BorderStyle=3,Outline=0,Shadow=0,MarginV=20,PrimaryColour=&H0000FFFF,BackColour=&H80FF0000'`,
 			'-c:v',
 			'libx264',
 			'-preset',

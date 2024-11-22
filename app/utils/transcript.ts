@@ -123,6 +123,6 @@ export function processSentenceSegmentation({
 
 // 去除句子两边的符号
 export function trimPunctuation(sentence: string): string {
-	const punctuationRegex = /^[^\w]+|[^\w]+$/g
+	const punctuationRegex = /^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu
 	return sentence.replace(punctuationRegex, '')
 }
