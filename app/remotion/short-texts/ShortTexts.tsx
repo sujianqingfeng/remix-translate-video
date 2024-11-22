@@ -95,14 +95,14 @@ export function ShortTexts({
 							)}
 						</div>
 
-						<div className="flex-1 flex flex-col justify-center items-center">
+						<div className="flex-1 flex flex-col justify-center items-center px-[6rem]">
 							<div
-								className="flex-1 flex flex-col justify-center items-center pl-12 pr-8"
+								className="flex-1 flex flex-col justify-center items-center"
 								style={{ fontFamily }}
 							>
 								<div className="text-8xl font-bold leading-1.2">{title}</div>
 								<div className="text-7xl leading-1.2 mt-2">{titleZh}</div>
-								<div className="text-[40px] text-[#333333] leading-[2] mt-6">
+								<div className="text-[40px] text-black leading-[1.8] mt-6">
 									{wordTranscripts.map((item) => (
 										<span
 											key={item.start}
@@ -122,9 +122,9 @@ export function ShortTexts({
 								</div>
 							</div>
 
-							<div className="h-[200px] text-[#333333] leading-1.5 flex justify-center items-center">
+							<div className="h-[400px] text-[#333333] leading-1.5 flex justify-center items-start">
 								{currentSentence && (
-									<div className="bg-[#f2ce2b] max-w-[90%] px-2 py-1 rounded-md">
+									<div className="bg-[#f2ce2b] max-w-[90%] px-2 py-5 rounded-md">
 										<div className="text-center text-4xl">
 											{currentSentence.part}
 										</div>
@@ -137,7 +137,7 @@ export function ShortTexts({
 						</div>
 					</div>
 
-					<div className="absolute top-4 right-4 font-bold text-right">
+					<div className="absolute top-8 right-8 text-3xl font-bold text-right text-white">
 						参考释义在视频末尾
 					</div>
 				</Sequence>
@@ -145,7 +145,7 @@ export function ShortTexts({
 
 			<AbsoluteFill>
 				<Sequence from={audioDuration}>
-					<div className="flex flex-col justify-center items-center gap-4 px-20 leading-2">
+					<div className="flex flex-col justify-center items-center gap-4 px-[6rem] leading-2">
 						<div className="font-bold text-8xl">{titleZh}</div>
 						<div className="text-7xl leading-[1.5]"> {shortTextZh}</div>
 					</div>

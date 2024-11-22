@@ -19,7 +19,7 @@ async function copyAudioToPublic(audioFile: string) {
 export async function loader({ params }: LoaderFunctionArgs) {
 	invariant(params.key, 'key is required')
 
-	const fps = 60
+	const fps = 120
 
 	const {
 		totalDurationInFrames,
