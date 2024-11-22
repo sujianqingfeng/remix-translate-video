@@ -38,7 +38,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
 	const inputProps = {
 		wordTranscripts,
-		littleDifficultWords: shortText.words,
+		littleDifficultWords: shortText.words.map((word) => word.word),
 		playAudioName: SHORT_TEXT_AUDIO_FILE,
 		title: shortText.title,
 		titleZh: shortText.titleZh,

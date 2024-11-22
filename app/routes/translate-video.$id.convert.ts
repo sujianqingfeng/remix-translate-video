@@ -39,14 +39,16 @@ export async function action({ params }: ActionFunctionArgs) {
 	const segments = processSentenceSegmentation({ words })
 
 	// 去除句子两边的符号 和 words
-	const transcripts = segments.map(({ text, start, end }) => {
+	const transcripts = segments.map(({ text, start, end, words }) => {
 		const textResult = trimPunctuation(text)
 		return {
 			text: textResult,
 			start: start,
 			end: end,
+			words,
 		}
 	})
+
 	await fsp.writeFile(transcriptsFile, JSON.stringify(transcripts, null, 2))
 	return json({ success: true })
 }

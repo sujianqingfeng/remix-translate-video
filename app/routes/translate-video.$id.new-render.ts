@@ -156,7 +156,7 @@ export async function action({ params, request }: ActionFunctionArgs) {
 		const ffmpeg = spawn('ffmpeg', [
 			'-y',
 			'-threads',
-			'1',
+			'2',
 			'-i',
 			maybePlayVideoFile,
 			'-vf',
@@ -164,7 +164,7 @@ export async function action({ params, request }: ActionFunctionArgs) {
 			'-c:v',
 			'libx264',
 			'-preset',
-			'slower',
+			'fast',
 			'-crf',
 			'16',
 			'-maxrate',

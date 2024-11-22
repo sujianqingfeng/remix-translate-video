@@ -32,7 +32,21 @@ export type YoutubeInfo = {
 }
 
 // translate video
+
+export type SentenceWord = {
+	start: number
+	end: number
+	word: string
+}
+export type Sentence = {
+	words: SentenceWord[]
+	text: string
+	start: number // 句子开始时间
+	end: number // 句子结束时间
+}
+
 export type Transcript = {
+	words: SentenceWord[]
 	text: string
 	start: number
 	end: number

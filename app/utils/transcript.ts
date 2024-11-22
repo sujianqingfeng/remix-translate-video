@@ -1,20 +1,13 @@
+import type { Sentence, SentenceWord, Transcript } from '~/types'
+
 type SentenceSegmentationOptions = {
-	words: { start: number; end: number; word: string }[]
+	words: SentenceWord[]
 	maxSentenceLength?: number
 }
 
-type Sentence = {
-	words: { start: number; end: number; word: string }[]
-	text: string
-	start: number // 句子开始时间
-	end: number // 句子结束时间
-}
-
 // 先组装成长句
-function assembleLongSentences(
-	words: { start: number; end: number; word: string }[],
-) {
-	const sentences: { start: number; end: number; word: string }[][] = []
+function assembleLongSentences(words: SentenceWord[]) {
+	const sentences: SentenceWord[][] = []
 	let currentSentence: typeof words = []
 	const sentenceEndMarks = /[.!?。！？]/
 
@@ -32,9 +25,7 @@ function assembleLongSentences(
 }
 
 // 处理科学计数法中的逗号
-function processScientificNotation(
-	sentence: { start: number; end: number; word: string }[],
-) {
+function processScientificNotation(sentence: SentenceWord[]) {
 	return sentence.map((w) => ({
 		...w,
 		word: w.word.replace(/(\d+),(\d{3})/g, '$1$2'),
@@ -42,9 +33,7 @@ function processScientificNotation(
 }
 
 // 创建句子对象
-function createSentence(
-	words: { start: number; end: number; word: string }[],
-): Sentence {
+function createSentence(words: SentenceWord[]): Sentence {
 	return {
 		words,
 		text: words.map((w) => w.word).join(' '),
@@ -54,9 +43,7 @@ function createSentence(
 }
 
 // 根据分隔符切分句子
-function splitBySubSentenceMarks(
-	sentence: { start: number; end: number; word: string }[],
-) {
+function splitBySubSentenceMarks(sentence: SentenceWord[]) {
 	const subSentences: Sentence[] = []
 	let currentSubSentence: typeof sentence = []
 	const subSentenceMarks = /[,，;；]/
@@ -119,6 +106,80 @@ export function processSentenceSegmentation({
 	}
 
 	return sentences
+}
+
+// 当Transcript的text长度超过maxSentenceLength时，进行分成两个Transcript
+// 需要处理start和end，text，其他不用处理
+// 返回新的Transcript数组
+
+export function processTranslatedLongTranscripts(
+	transcripts: Transcript[],
+	maxSentenceLength = 60,
+) {
+	const result: Transcript[] = []
+
+	for (const transcript of transcripts) {
+		if (transcript.text.length <= maxSentenceLength) {
+			result.push(transcript)
+			continue
+		}
+
+		// 找到所有空格的位置
+		const spacePositions: number[] = []
+		for (let i = 0; i < transcript.text.length; i++) {
+			if (transcript.text[i] === ' ') {
+				spacePositions.push(i)
+			}
+		}
+
+		// 如果没有空格，直接添加原文
+		if (spacePositions.length === 0) {
+			result.push(transcript)
+			continue
+		}
+
+		// 找到最接近 maxSentenceLength 的空格位置
+		const splitIndex = spacePositions.reduce((prev, curr) =>
+			Math.abs(curr - maxSentenceLength) < Math.abs(prev - maxSentenceLength)
+				? curr
+				: prev,
+		)
+
+		// 计算到这个位置有多少个单词
+		const wordCount = transcript.text.slice(0, splitIndex).split(' ').length
+
+		// 从原始的 words 数组中获取分割时间点
+		const words = transcript.words || []
+		const splitTime = words[wordCount - 1]?.end || transcript.end
+
+		// 分割成两个 Transcript
+		const firstPart: Transcript = {
+			text: transcript.text.slice(0, splitIndex).trim(),
+			start: transcript.start,
+			end: splitTime,
+			textLiteralTranslation: transcript.textLiteralTranslation,
+			textInterpretation: transcript.textInterpretation,
+			words: words.slice(0, wordCount),
+		}
+
+		const secondPart: Transcript = {
+			text: transcript.text.slice(splitIndex + 1).trim(),
+			start: splitTime,
+			end: transcript.end,
+			textLiteralTranslation: transcript.textLiteralTranslation,
+			textInterpretation: transcript.textInterpretation,
+			words: words.slice(wordCount),
+		}
+
+		result.push(firstPart)
+
+		// 递归处理第二部分，以防它仍然太长
+		result.push(
+			...processTranslatedLongTranscripts([secondPart], maxSentenceLength),
+		)
+	}
+
+	return result
 }
 
 // 去除句子两边的符号
