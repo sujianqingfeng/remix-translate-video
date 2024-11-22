@@ -28,7 +28,7 @@ export type YoutubeInfo = {
 	viewCount: number
 	dateTime?: string
 	author: string
-	mode: 'landscape' | 'portrait'
+	mode: 'landscape' | 'portrait' | 'vertical'
 }
 
 // translate video

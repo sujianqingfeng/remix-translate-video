@@ -184,17 +184,6 @@ export default function ShortTextPage() {
 						</div>
 					</div>
 				</div>
-
-				<div>
-					{wordTranscripts.map((item) => (
-						<div className="flex justify-between items-center" key={item.start}>
-							<div className="text-lg"> {item.part}</div>
-							<div className="text-[12px]">
-								{item.start / 1000}s - {item.end / 1000}s
-							</div>
-						</div>
-					))}
-				</div>
 			</div>
 		</div>
 	)

@@ -10,60 +10,10 @@ import {
 } from 'remotion'
 import type { RemotionVideoComment } from '~/types'
 import Cover from './Cover'
+import { useThrottledFrame } from './hooks'
+import { calculateOptimalFontSize } from './utils'
 
-interface CalculateFontSizeParams {
-	text: string
-	availableWidth: number
-	availableHeight: number
-	minFontSize?: number
-	maxFontSize?: number
-	lineHeightRatio?: number
-	charWidthRatio?: number
-}
-
-function calculateOptimalFontSize({
-	text,
-	availableWidth,
-	availableHeight,
-	minFontSize = 10,
-	maxFontSize = 75,
-	lineHeightRatio = 1.2,
-	charWidthRatio = 1.2,
-}: CalculateFontSizeParams): number {
-	let currentMin = minFontSize
-	let currentMax = maxFontSize
-	let fontSize = 50
-
-	while (currentMax - currentMin > 1) {
-		fontSize = Math.floor((currentMin + currentMax) / 2)
-
-		const charsPerLine = Math.floor(
-			availableWidth / (fontSize * charWidthRatio),
-		)
-		const estimatedLines = Math.ceil(text.length / charsPerLine)
-		const totalHeight = estimatedLines * fontSize * lineHeightRatio
-
-		if (totalHeight > availableHeight) {
-			currentMax = fontSize
-		} else {
-			currentMin = fontSize
-		}
-	}
-
-	return currentMin
-}
-
-// 添加帧率控制函数
-const FRAME_SKIP = 10 // 每5帧更新一次
-function useThrottledFrame(coverDuration: number) {
-	const frame = useCurrentFrame()
-	const { fps } = useVideoConfig()
-
-	const restFrame = frame - coverDuration * fps
-	return Math.floor(restFrame / FRAME_SKIP) * FRAME_SKIP
-}
-
-export default function TranslateComment({
+export default function PortraitTranslateComment({
 	comments,
 	title,
 	videoSrc,

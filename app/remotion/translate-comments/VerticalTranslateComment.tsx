@@ -12,7 +12,7 @@ import Cover from './Cover'
 import { useThrottledFrame } from './hooks'
 import { calculateOptimalFontSize } from './utils'
 
-export default function TranslateComment({
+export default function VerticalTranslateComment({
 	comments,
 	title,
 	videoSrc,

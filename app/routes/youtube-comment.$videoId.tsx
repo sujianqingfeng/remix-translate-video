@@ -16,13 +16,15 @@ import {
 	SelectValue,
 } from '~/components/ui/select'
 import { PROXY } from '~/constants'
-import PortraitTranslateComment from '~/remotion/translate-comments/PortraitTranslateComment'
-import TranslateComment from '~/remotion/translate-comments/TranslateComment'
+
 import type { YoutubeComment, YoutubeInfo } from '~/types'
 import { copyMaybeOriginalVideoToPublic } from '~/utils'
 import { fileExist } from '~/utils/file'
 import {
+	commentModeOptions,
+	findModeOption,
 	generateRemotionVideoComment,
+	getRemotionTemplateComponent,
 	getYoutubeCommentOut,
 } from '~/utils/translate-comment'
 import {
@@ -117,10 +119,8 @@ export default function VideoCommentPage() {
 	const downloadCommentsFetcher = useFetcher()
 	const modeFetcher = useFetcher()
 
-	const playerWidth = 1280
-	const playerHeight = 720
-	const compositionWidth = 1920
-	const compositionHeight = 1080
+	const { playerHeight, playerWidth, compositionHeight, compositionWidth } =
+		findModeOption(info.mode)
 
 	return (
 		<div className="p-4 h-screen w-full ">
@@ -141,8 +141,11 @@ export default function VideoCommentPage() {
 							<SelectValue placeholder="Select mode" />
 						</SelectTrigger>
 						<SelectContent>
-							<SelectItem value="landscape">Landscape</SelectItem>
-							<SelectItem value="portrait">Portrait</SelectItem>
+							{commentModeOptions.map((item) => (
+								<SelectItem key={item.value} value={item.value}>
+									{item.label}
+								</SelectItem>
+							))}
 						</SelectContent>
 					</Select>
 				</modeFetcher.Form>
@@ -151,11 +154,7 @@ export default function VideoCommentPage() {
 			<div className="flex mt-2 justify-center gap-2">
 				<div className="flex flex-col gap-2">
 					<Player
-						component={
-							info.mode === 'landscape'
-								? TranslateComment
-								: PortraitTranslateComment
-						}
+						component={getRemotionTemplateComponent(info.mode)}
 						inputProps={{
 							comments: remotionVideoComments,
 							title: info.translatedTitle,

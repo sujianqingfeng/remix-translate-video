@@ -11,6 +11,7 @@ import { publicPlayVideoFile } from '~/utils'
 import { execCommand } from '~/utils/exec'
 import { bundleOnProgress, throttleRenderOnProgress } from '~/utils/remotion'
 import {
+	findModeOption,
 	generateRemotionVideoComment,
 	getYoutubeCommentOut,
 } from '~/utils/translate-comment'
@@ -66,6 +67,10 @@ export async function action({ request, params }: ActionFunctionArgs) {
 		+everyCommentSecond,
 	)
 
+	const { compositionHeight, compositionWidth, compositionId } = findModeOption(
+		info.mode,
+	)
+
 	const bundled = await bundle({
 		entryPoint,
 		webpackOverride,
@@ -83,15 +88,14 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
 	const composition = await selectComposition({
 		serveUrl: bundled,
-		id:
-			info.mode === 'landscape'
-				? 'TranslateComment'
-				: 'PortraitTranslateComment',
+		id: compositionId,
 		inputProps,
 	})
 
 	composition.durationInFrames = +totalDurationInFrames
 	composition.fps = +fps
+	composition.height = compositionHeight
+	composition.width = compositionWidth
 
 	await renderMedia({
 		codec: 'h264',
