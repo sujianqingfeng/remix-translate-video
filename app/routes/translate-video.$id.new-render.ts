@@ -86,7 +86,7 @@ function formatSRTTime(seconds: number): string {
 	return `${hh}:${mm}:${ss},${ms}`
 }
 
-export async function action({ params, request }: ActionFunctionArgs) {
+export async function action({ params }: ActionFunctionArgs) {
 	const id = params.id
 	invariant(id, 'id is required')
 
@@ -142,7 +142,7 @@ export async function action({ params, request }: ActionFunctionArgs) {
 	const videoSize = await getVideoSize(maybePlayVideoFile)
 
 	// 生成合并的 SRT 字幕文件
-	const { combined, chineseLines } = generateSRT(transcripts, videoSize.width)
+	const { combined } = generateSRT(transcripts, videoSize.width)
 	const combinedSrtPath = path.join(process.cwd(), `out/${fullId}/combined.srt`)
 	await fsp.writeFile(combinedSrtPath, combined)
 

@@ -19,7 +19,7 @@ async function copyAudioToPublic(audioFile: string) {
 export async function loader({ params }: LoaderFunctionArgs) {
 	invariant(params.key, 'key is required')
 
-	const fps = 200
+	const fps = 60
 
 	const {
 		totalDurationInFrames,
@@ -69,8 +69,11 @@ export default function ShortTextPage() {
 	const toggleDirectionFetcher = useFetcher()
 	const generateImageFetcher = useFetcher()
 
-	const width = shortText.direction ? 1280 : 720
-	const height = shortText.direction ? 720 : 1280
+	const width = shortText.direction ? 1920 : 1080
+	const height = shortText.direction ? 1080 : 1920
+
+	const playWidth = shortText.direction ? 1080 : 720
+	const playHeight = shortText.direction ? 720 : 1080
 
 	const title = `坚持100天打卡 每日英语听读小短文 | ${shortText.titleZh}`
 
@@ -108,8 +111,8 @@ export default function ShortTextPage() {
 							compositionHeight={height}
 							fps={fps}
 							style={{
-								width,
-								height,
+								width: playWidth,
+								height: playHeight,
 							}}
 							controls
 						/>
@@ -195,5 +198,4 @@ export default function ShortTextPage() {
 			</div>
 		</div>
 	)
-	console.log('🚀 ~ ShortTextPage ~ flex:', flex)
 }

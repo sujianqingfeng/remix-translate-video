@@ -60,8 +60,8 @@ export async function action({ request, params }: ActionFunctionArgs) {
 		inputProps,
 	})
 
-	const width = shortText.direction ? 1280 : 720
-	const height = shortText.direction ? 720 : 1280
+	const width = shortText.direction ? 1920 : 1080
+	const height = shortText.direction ? 1080 : 1920
 
 	composition.durationInFrames = totalDurationInFrames
 	composition.fps = +fps

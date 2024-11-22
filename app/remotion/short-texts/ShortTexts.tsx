@@ -70,7 +70,7 @@ export function ShortTexts({
 						className={`flex w-full h-full ${direction ? 'flex-row' : 'flex-col'}`}
 					>
 						<div
-							className={`${direction ? 'w-[400px] relative' : 'h-[400px] relative'}`}
+							className={`${direction ? 'w-[400px] relative' : 'h-[500px] relative'}`}
 						>
 							<Img
 								className={`${direction ? 'h-full' : 'h-full w-full'} object-cover`}
@@ -100,11 +100,9 @@ export function ShortTexts({
 								className="flex-1 flex flex-col justify-center items-center pl-12 pr-8"
 								style={{ fontFamily }}
 							>
-								<div className="text-[40px] font-bold leading-[40px]">
-									{title}
-								</div>
-								<div className="text-[36px] leading-[36px] mt-2">{titleZh}</div>
-								<div className="text-[36px] text-[#333333] leading-[1.3] mt-6">
+								<div className="text-8xl font-bold leading-1.2">{title}</div>
+								<div className="text-7xl leading-1.2 mt-2">{titleZh}</div>
+								<div className="text-6xl text-[#333333] leading-[1.3] mt-6">
 									{wordTranscripts.map((item) => (
 										<span
 											key={item.start}
@@ -124,13 +122,13 @@ export function ShortTexts({
 								</div>
 							</div>
 
-							<div className="h-[140px] text-[#333333] leading-[1.5] ">
+							<div className="h-[200px] text-[#333333] leading-1.5">
 								{currentSentence && (
 									<div className="bg-[#f2ce2b] px-2 py-1 rounded-md">
-										<div className="text-center text-2xl">
+										<div className="text-center text-4xl">
 											{currentSentence.part}
 										</div>
-										<div className="text-center text-3xl">
+										<div className="text-center text-5xl">
 											{currentSentence.partZh}
 										</div>
 									</div>
@@ -148,8 +146,8 @@ export function ShortTexts({
 			<AbsoluteFill>
 				<Sequence from={audioDuration}>
 					<div className="flex flex-col justify-center items-center gap-4 px-20 leading-2">
-						<div className="font-bold text-[3rem]">{titleZh}</div>
-						<div className="text-[2.5rem]"> {shortTextZh}</div>
+						<div className="font-bold text-8xl">{titleZh}</div>
+						<div className="text-7xl leading-[1.5]"> {shortTextZh}</div>
 					</div>
 				</Sequence>
 			</AbsoluteFill>
