@@ -102,7 +102,7 @@ export function ShortTexts({
 							>
 								<div className="text-8xl font-bold leading-1.2">{title}</div>
 								<div className="text-7xl leading-1.2 mt-2">{titleZh}</div>
-								<div className="text-6xl text-[#333333] leading-[1.3] mt-6">
+								<div className="text-[40px] text-[#333333] leading-[2] mt-6">
 									{wordTranscripts.map((item) => (
 										<span
 											key={item.start}
@@ -122,13 +122,13 @@ export function ShortTexts({
 								</div>
 							</div>
 
-							<div className="h-[200px] text-[#333333] leading-1.5">
+							<div className="h-[200px] text-[#333333] leading-1.5 flex justify-center items-center">
 								{currentSentence && (
-									<div className="bg-[#f2ce2b] px-2 py-1 rounded-md">
+									<div className="bg-[#f2ce2b] max-w-[90%] px-2 py-1 rounded-md">
 										<div className="text-center text-4xl">
 											{currentSentence.part}
 										</div>
-										<div className="text-center text-5xl">
+										<div className="text-center text-4xl">
 											{currentSentence.partZh}
 										</div>
 									</div>
