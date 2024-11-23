@@ -1,12 +1,4 @@
-import {
-	AbsoluteFill,
-	Audio,
-	Img,
-	Sequence,
-	staticFile,
-	useCurrentFrame,
-	useVideoConfig,
-} from 'remotion'
+import { AbsoluteFill, Audio, Img, Sequence, staticFile, useCurrentFrame, useVideoConfig } from 'remotion'
 import type { SentenceTranscript, WordTranscript } from '~/types'
 
 import { loadFont } from '@remotion/google-fonts/SourceCodePro'
@@ -37,9 +29,7 @@ export function ShortTexts({
 	const currentTime = (frame / fps) * 1000
 	const BUFFER_TIME = 0.05
 
-	const isHighlighted = (item: WordTranscript) =>
-		currentTime >= item.start - BUFFER_TIME &&
-		currentTime < item.end + BUFFER_TIME
+	const isHighlighted = (item: WordTranscript) => currentTime >= item.start - BUFFER_TIME && currentTime < item.end + BUFFER_TIME
 
 	const isDifficultWord = (text: string) => {
 		const cleanText = text
@@ -58,48 +48,33 @@ export function ShortTexts({
 	return (
 		<AbsoluteFill>
 			<AbsoluteFill>
-				<Img
-					className="h-full w-full object-cover"
-					src={staticFile('audio.png')}
-				/>
+				<Img className="h-full w-full object-cover" src={staticFile('audio.png')} />
 				<Audio src={staticFile(playAudioName)} />
 			</AbsoluteFill>
 			<AbsoluteFill>
 				<Sequence from={0} durationInFrames={audioDuration}>
-					<div
-						className={`flex w-full h-full ${direction ? 'flex-row' : 'flex-col'}`}
-					>
-						<div
-							className={`${direction ? 'w-[400px] relative' : 'h-[500px] relative'}`}
-						>
-							<Img
-								className={`${direction ? 'h-full' : 'h-full w-full'} object-cover`}
-								src={staticFile('short-text-cover.png')}
-							/>
+					<div className={`flex w-full h-full ${direction ? 'flex-row' : 'flex-col'}`}>
+						<div className={`${direction ? 'w-[400px] relative' : 'h-[500px] relative'}`}>
+							<Img className={`${direction ? 'h-full' : 'h-full w-full'} object-cover`} src={staticFile('short-text-cover.png')} />
 							{direction ? (
 								<div
 									className="absolute top-0 right-0 h-full w-[200px]"
 									style={{
-										background:
-											'linear-gradient(to right, transparent, #EAE0CD)',
+										background: 'linear-gradient(to right, transparent, #EAE0CD)',
 									}}
 								/>
 							) : (
 								<div
 									className="absolute bottom-0 left-0 w-full h-[100px]"
 									style={{
-										background:
-											'linear-gradient(to bottom, transparent, #EFEADB)',
+										background: 'linear-gradient(to bottom, transparent, #EFEADB)',
 									}}
 								/>
 							)}
 						</div>
 
 						<div className="flex-1 flex flex-col justify-center items-center px-[6rem]">
-							<div
-								className="flex-1 flex flex-col justify-center items-center"
-								style={{ fontFamily }}
-							>
+							<div className="flex-1 flex flex-col justify-center items-center" style={{ fontFamily }}>
 								<div className="text-8xl font-bold leading-1.2">{title}</div>
 								<div className="text-7xl leading-1.2 mt-2">{titleZh}</div>
 								<div className="text-[40px] text-black leading-[1.8] mt-6">
@@ -108,12 +83,8 @@ export function ShortTexts({
 											key={item.start}
 											className="px-1 mx-0.5 rounded-md inline-block transition-all duration-300"
 											style={{
-												backgroundColor: isHighlighted(item)
-													? '#f2ce2b'
-													: 'transparent',
-												color: isDifficultWord(item.part)
-													? '#ee3f4d'
-													: 'inherit',
+												backgroundColor: isHighlighted(item) ? '#f2ce2b' : 'transparent',
+												color: isDifficultWord(item.part) ? '#ee3f4d' : 'inherit',
 											}}
 										>
 											{item.part}
@@ -122,24 +93,18 @@ export function ShortTexts({
 								</div>
 							</div>
 
-							<div className="h-[400px] text-[#333333] leading-1.5 flex justify-center items-start">
+							<div className="h-[400px] text-[#333333] px-4 leading-1.5 flex justify-center items-start">
 								{currentSentence && (
-									<div className="bg-[#f2ce2b] max-w-[90%] px-2 py-5 rounded-md">
-										<div className="text-center text-4xl">
-											{currentSentence.part}
-										</div>
-										<div className="text-center text-4xl">
-											{currentSentence.partZh}
-										</div>
+									<div className="bg-[#f2ce2b] px-3 py-5 rounded-md">
+										<div className="text-center text-4xl">{currentSentence.part}</div>
+										<div className="text-center text-4xl">{currentSentence.partZh}</div>
 									</div>
 								)}
 							</div>
 						</div>
 					</div>
 
-					<div className="absolute top-8 right-8 text-3xl font-bold text-right text-white">
-						参考释义在视频末尾
-					</div>
+					<div className="absolute top-8 right-8 text-3xl font-bold text-right text-white">参考释义在视频末尾</div>
 				</Sequence>
 			</AbsoluteFill>
 

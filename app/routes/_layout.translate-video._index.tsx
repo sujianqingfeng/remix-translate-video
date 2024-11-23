@@ -25,11 +25,7 @@ export default function TranslateVideoIndexPage() {
 		<div>
 			<Form method="post">
 				<div className="flex gap-2">
-					<Input
-						placeholder="youtube url"
-						name="url"
-						defaultValue="https://www.youtube.com/watch?v=yrSj6yjZ1Yw"
-					/>
+					<Input placeholder="youtube url" name="url" />
 					<Button>start</Button>
 				</div>
 			</Form>
