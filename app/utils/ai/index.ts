@@ -10,10 +10,9 @@ const deepSeek = createDeepSeek({ apiKey })
 
 export function translate(text: string) {
 	return deepSeek.generateText({
-		system:
-			'你是一个精通多语言的翻译大师，将文本翻译成中文。如果是中文，就返回原文。',
+		system: '你是一个精通多语言的翻译大师，将文本翻译成中文。如果是中文，就返回原文。',
 		prompt: text,
-		maxTokens: 1000,
+		maxTokens: 300,
 	})
 }
 

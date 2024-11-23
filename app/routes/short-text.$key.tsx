@@ -5,6 +5,7 @@ import { json, useFetcher, useLoaderData } from '@remix-run/react'
 import { Player } from '@remotion/player'
 import { Copy } from 'lucide-react'
 import invariant from 'tiny-invariant'
+import BackPrevious from '~/components/BackPrevious'
 import LoadingButtonWithState from '~/components/LoadingButtonWithState'
 import { PUBLIC_DIR, SHORT_TEXT_AUDIO_FILE } from '~/constants'
 import { toast } from '~/hooks/use-toast'
@@ -70,6 +71,7 @@ export default function ShortTextPage() {
 
 	return (
 		<div className="h-screen p-4">
+			<BackPrevious />
 			<div className="flex justify-center gap-6">
 				{audioExist && (
 					<Player
