@@ -2,7 +2,7 @@ import fsp from 'node:fs/promises'
 import type { LoaderFunctionArgs } from '@remix-run/node'
 import { json, useFetcher, useLoaderData } from '@remix-run/react'
 import { Player } from '@remotion/player'
-import { Languages, LoaderCircle } from 'lucide-react'
+import { Copy, Languages, LoaderCircle } from 'lucide-react'
 import invariant from 'tiny-invariant'
 import { ProxyAgent } from 'undici'
 import BackPrevious from '~/components/BackPrevious'
@@ -11,11 +11,12 @@ import { CommentsList } from '~/components/business/CommentsList'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select'
 import { commentModeOptions } from '~/config'
 import { PROXY } from '~/constants'
+import { toast } from '~/hooks/use-toast'
 import { PortraitTranslateComment, TranslateComment, VerticalTranslateComment } from '~/remotion'
-import type { YoutubeComment, YoutubeInfo } from '~/types'
+import type { YoutubeInfo } from '~/types'
 import { copyMaybeOriginalVideoToPublic } from '~/utils'
 import { fileExist } from '~/utils/file'
-import { findModeOption, generateRemotionVideoComment, getYoutubeCommentOut } from '~/utils/translate-comment'
+import { buildRemotionRenderData, getYoutubeCommentOut } from '~/utils/translate-comment'
 import { createProxyYoutubeInnertube, generateYoutubeUrlByVideoId } from '~/utils/youtube'
 
 function getRemotionTemplateComponent(mode: YoutubeInfo['mode']) {
@@ -47,7 +48,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 	invariant(params.videoId, 'videoId is required')
 
 	const videoId = params.videoId
-	const { commentFile, infoFile, outDir } = getYoutubeCommentOut(videoId)
+	const { infoFile, outDir } = getYoutubeCommentOut(videoId)
 
 	let info: YoutubeInfo | null = null
 	if (!(await fileExist(infoFile))) {
@@ -58,32 +59,19 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 		info = JSON.parse(infoStr) as YoutubeInfo
 	}
 
-	let comments: YoutubeComment[] = []
-	if (await fileExist(commentFile)) {
-		const commentsStr = await fsp.readFile(commentFile, 'utf-8')
-		comments = JSON.parse(commentsStr) as YoutubeComment[]
-	}
-
 	const { playVideoFileName } = await copyMaybeOriginalVideoToPublic({
 		outDir,
 	})
 
-	const everyCommentSecond = 5
-	const fps = 30
-
-	const remotionVideoComments = generateRemotionVideoComment(comments, fps, everyCommentSecond)
-
-	const coverDuration = 3
-	const coverDurationInFrames = coverDuration * fps
-	const totalDurationInFrames = coverDurationInFrames + fps * everyCommentSecond * remotionVideoComments.length
-
-	const { playerHeight, playerWidth, compositionHeight, compositionWidth } = findModeOption(info.mode)
+	const { fps, playerHeight, playerWidth, compositionHeight, compositionWidth, totalDurationInFrames, coverDuration, remotionVideoComments } = await buildRemotionRenderData({
+		videoId,
+		mode: info.mode,
+	})
 
 	return json({
 		videoId,
 		info,
 		fps,
-		everyCommentSecond,
 		playVideoFileName,
 		remotionVideoComments,
 		totalDurationInFrames,
@@ -96,26 +84,26 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 }
 
 export default function VideoCommentPage() {
-	const {
-		videoId,
-		info,
-		playVideoFileName,
-		remotionVideoComments,
-		fps,
-		everyCommentSecond,
-		totalDurationInFrames,
-		coverDuration,
-		playerHeight,
-		playerWidth,
-		compositionHeight,
-		compositionWidth,
-	} = useLoaderData<typeof loader>()
+	const { videoId, info, playVideoFileName, fps, totalDurationInFrames, coverDuration, remotionVideoComments, playerHeight, playerWidth, compositionHeight, compositionWidth } =
+		useLoaderData<typeof loader>()
 
 	const renderFetcher = useFetcher()
 	const translateFetcher = useFetcher()
 	const downloadFetcher = useFetcher()
 	const downloadCommentsFetcher = useFetcher()
 	const modeFetcher = useFetcher()
+
+	const desc = `原链接：${info.youtubeUrl}\n理性看待`
+
+	const onCopy = async (text?: string) => {
+		if (!text) {
+			return
+		}
+		await navigator.clipboard.writeText(text)
+		toast({
+			title: 'copy successful!',
+		})
+	}
 
 	return (
 		<div className="p-4 h-screen w-full ">
@@ -169,6 +157,16 @@ export default function VideoCommentPage() {
 
 					<p>{info.title}</p>
 					<p>{info.translatedTitle}</p>
+					<p className="flex items-center gap-2">
+						{info.publishTitle}
+
+						<Copy size={16} className="cursor-pointer" onClick={() => onCopy(info.publishTitle)} />
+					</p>
+
+					<p className="flex items-center gap-2">
+						{desc}
+						<Copy size={16} className="cursor-pointer" onClick={() => onCopy(desc)} />
+					</p>
 
 					<div className="flex items-center gap-2">
 						{!playVideoFileName && (
@@ -178,11 +176,7 @@ export default function VideoCommentPage() {
 						)}
 
 						<renderFetcher.Form method="post" action="render">
-							<input type="hidden" name="fps" value={fps} />
-							<input type="hidden" name="everyCommentSecond" value={everyCommentSecond} />
 							<input type="hidden" name="playVideoFileName" value={playVideoFileName} />
-							<input type="hidden" name="totalDurationInFrames" value={totalDurationInFrames} />
-							<input type="hidden" name="coverDuration" value={coverDuration} />
 							<LoadingButtonWithState state={renderFetcher.state} idleText="Render" />
 						</renderFetcher.Form>
 					</div>

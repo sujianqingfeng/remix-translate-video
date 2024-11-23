@@ -8,13 +8,7 @@ import { webpackOverride } from '~/remotion/webpack-override'
 import { bundleOnProgress, throttleRenderOnProgress } from '~/utils/remotion'
 import { buildRemotionRenderData } from '~/utils/short-text'
 
-const entryPoint = path.join(
-	process.cwd(),
-	'app',
-	'remotion',
-	'short-texts',
-	'index.ts',
-)
+const entryPoint = path.join(process.cwd(), 'app', 'remotion', 'short-texts', 'index.ts')
 
 export async function action({ request, params }: ActionFunctionArgs) {
 	const { key } = params
@@ -25,13 +19,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
 	invariant(fps, 'fps is required')
 
-	const {
-		totalDurationInFrames,
-		wordTranscripts,
-		shortText,
-		audioDuration,
-		sentenceTranscript,
-	} = await buildRemotionRenderData({
+	const { totalDurationInFrames, wordTranscripts, shortText, audioDuration, sentenceTranscript } = await buildRemotionRenderData({
 		key,
 		fps: +fps,
 	})

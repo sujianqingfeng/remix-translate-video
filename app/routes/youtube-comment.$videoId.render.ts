@@ -6,70 +6,43 @@ import { renderMedia, selectComposition } from '@remotion/renderer'
 import invariant from 'tiny-invariant'
 import { YOUTUBE_COMMENT_ID_PREFIX } from '~/constants'
 import { webpackOverride } from '~/remotion/webpack-override'
-import type { YoutubeComment, YoutubeInfo } from '~/types'
+import type { YoutubeInfo } from '~/types'
 import { publicPlayVideoFile } from '~/utils'
 import { execCommand } from '~/utils/exec'
 import { bundleOnProgress, throttleRenderOnProgress } from '~/utils/remotion'
-import {
-	findModeOption,
-	generateRemotionVideoComment,
-	getYoutubeCommentOut,
-} from '~/utils/translate-comment'
+import { buildRemotionRenderData, getYoutubeCommentOut } from '~/utils/translate-comment'
 import { tryGetYoutubeDownloadFile } from '~/utils/youtube'
 
-const entryPoint = path.join(
-	process.cwd(),
-	'app',
-	'remotion',
-	'translate-comments',
-	'index.ts',
-)
+const entryPoint = path.join(process.cwd(), 'app', 'remotion', 'translate-comments', 'index.ts')
 
 export async function action({ request, params }: ActionFunctionArgs) {
 	invariant(params.videoId, 'videoId is required')
+	const { videoId } = params
 
 	const formData = await request.formData()
 	const playVideoFileName = formData.get('playVideoFileName')
-	const totalDurationInFrames = formData.get('totalDurationInFrames')
-	const fps = formData.get('fps')
-	const everyCommentSecond = formData.get('everyCommentSecond')
-	const coverDuration = formData.get('coverDuration')
+	invariant(playVideoFileName, 'playVideoFileName is required')
 
-	invariant(playVideoFileName, 'videoSrc is required')
-	invariant(totalDurationInFrames, 'totalDurationInFrames is required')
-	invariant(fps, 'fps is required')
-	invariant(everyCommentSecond, 'durationInSeconds is required')
-	invariant(coverDuration, 'coverDuration is required')
-
-	const { videoId } = params
-
-	const { commentFile, infoFile, outDir } = getYoutubeCommentOut(videoId)
-
-	const commentStr = await fsp.readFile(commentFile, 'utf-8')
-	const comments: YoutubeComment[] = JSON.parse(commentStr)
+	const { infoFile, outDir } = getYoutubeCommentOut(videoId)
 
 	const infoStr = await fsp.readFile(infoFile, 'utf-8')
 	const info: YoutubeInfo = JSON.parse(infoStr)
 
+	const { fps, compositionHeight, compositionWidth, totalDurationInFrames, coverDuration, remotionVideoComments, everyCommentSecond, compositionId } =
+		await buildRemotionRenderData({
+			videoId,
+			mode: info.mode,
+		})
+
 	const maybePlayVideoFile = await tryGetYoutubeDownloadFile(outDir)
 	if (maybePlayVideoFile) {
 		const { destPath } = publicPlayVideoFile(maybePlayVideoFile)
-		const end = comments.length * +everyCommentSecond
+		const end = remotionVideoComments.length * +everyCommentSecond
 		const command = `ffmpeg -y -ss 0 -i ${maybePlayVideoFile} -t ${end} -c copy ${destPath} -progress pipe:1`
 		console.log('processing video...')
 		await execCommand(command)
 		console.log('video processed')
 	}
-
-	const remotionVideoComments = generateRemotionVideoComment(
-		comments,
-		+fps,
-		+everyCommentSecond,
-	)
-
-	const { compositionHeight, compositionWidth, compositionId } = findModeOption(
-		info.mode,
-	)
 
 	const bundled = await bundle({
 		entryPoint,

@@ -12,5 +12,14 @@ export async function action({ request }: ActionFunctionArgs) {
 	const shortText = await generateShortText(theme as string)
 	const key = generateUniqueKey('st-')
 
-	return json<GenerateShortTextActionData>({ success: true, shortText, key })
+	return json<GenerateShortTextActionData>(
+		{ success: true, shortText, key },
+		{
+			headers: {
+				'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+				Pragma: 'no-cache',
+				Expires: '0',
+			},
+		},
+	)
 }

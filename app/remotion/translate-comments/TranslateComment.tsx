@@ -1,12 +1,6 @@
 import { ThumbsUp } from 'lucide-react'
 import { useMemo } from 'react'
-import {
-	AbsoluteFill,
-	Sequence,
-	Video,
-	staticFile,
-	useVideoConfig,
-} from 'remotion'
+import { AbsoluteFill, Sequence, Video, staticFile, useVideoConfig } from 'remotion'
 import type { RemotionVideoComment } from '~/types'
 import Cover from './Cover'
 import { useThrottledFrame } from './hooks'
@@ -33,10 +27,7 @@ export default function TranslateComment({
 
 	const currentComment = useMemo(() => {
 		return comments.find((item) => {
-			return (
-				throttledFrame >= item.form &&
-				throttledFrame <= item.form + item.durationInFrames
-			)
+			return throttledFrame >= item.form && throttledFrame <= item.form + item.durationInFrames
 		})
 	}, [comments, throttledFrame]) // 使用节流后的帧作为依赖
 
@@ -67,13 +58,7 @@ export default function TranslateComment({
 								<p className="text-5xl mt-2 leading-[1.5]"> {title}</p>
 							</div>
 						</div>
-						<Video
-							loop
-							className="object-contain h-full"
-							startFrom={0}
-							crossOrigin="anonymous"
-							src={staticFile(videoSrc)}
-						/>
+						<Video loop className="object-contain h-full" startFrom={0} crossOrigin="anonymous" src={staticFile(videoSrc)} />
 					</div>
 				</AbsoluteFill>
 
@@ -88,9 +73,7 @@ export default function TranslateComment({
 						</div>
 
 						<div className="flex flex-col">
-							<p className="leading-1.6 text-[20px] text-ellipsis line-clamp-1">
-								{currentComment?.content}
-							</p>
+							<p className="leading-1.6 text-[20px] text-ellipsis line-clamp-1">{currentComment?.content}</p>
 
 							<p
 								className="text-[#ee3f4d] leading-[1.2] mt-1"
