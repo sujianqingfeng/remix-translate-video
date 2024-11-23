@@ -21,15 +21,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
 
 	const fps = 120
 
-	const {
-		totalDurationInFrames,
-		wordTranscripts,
-		shortText,
-		audioExist,
-		audioFile,
-		audioDuration,
-		sentenceTranscript,
-	} = await buildRemotionRenderData({
+	const { totalDurationInFrames, wordTranscripts, shortText, audioExist, audioFile, audioDuration, sentenceTranscript } = await buildRemotionRenderData({
 		key: params.key,
 		fps,
 	})
@@ -52,17 +44,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
 }
 
 export default function ShortTextPage() {
-	const {
-		shortText,
-		key,
-		audioExist,
-		wordTranscripts,
-		totalDurationInFrames,
-		fps,
-		playAudioName,
-		audioDuration,
-		sentenceTranscript,
-	} = useLoaderData<typeof loader>()
+	const { shortText, key, audioExist, wordTranscripts, totalDurationInFrames, fps, playAudioName, audioDuration, sentenceTranscript } = useLoaderData<typeof loader>()
 
 	const generateAudioFetcher = useFetcher()
 	const renderFetcher = useFetcher()
@@ -84,104 +66,74 @@ export default function ShortTextPage() {
 		})
 	}
 
-	const words = shortText.words
-		.map((word) => `${word.word}：${word.translation}`)
-		.join('\n')
+	const words = shortText.words.map((word) => `${word.word}：${word.translation}`).join('\n')
 
 	return (
 		<div className="h-screen p-4">
 			<div className="flex justify-center gap-6">
+				{audioExist && (
+					<Player
+						component={ShortTexts}
+						inputProps={{
+							wordTranscripts,
+							littleDifficultWords: shortText.words.map((item) => item.word),
+							playAudioName,
+							title: shortText.title,
+							titleZh: shortText.titleZh,
+							audioDuration,
+							shortTextZh: shortText.shortTextZh,
+							sentenceTranscript,
+							direction: shortText.direction,
+						}}
+						durationInFrames={totalDurationInFrames}
+						compositionWidth={width}
+						compositionHeight={height}
+						fps={fps}
+						style={{
+							width: playWidth,
+							height: playHeight,
+						}}
+						controls
+					/>
+				)}
+
 				<div>
-					{audioExist && (
-						<Player
-							component={ShortTexts}
-							inputProps={{
-								wordTranscripts,
-								littleDifficultWords: shortText.words.map((item) => item.word),
-								playAudioName,
-								title: shortText.title,
-								titleZh: shortText.titleZh,
-								audioDuration,
-								shortTextZh: shortText.shortTextZh,
-								sentenceTranscript,
-								direction: shortText.direction,
-							}}
-							durationInFrames={totalDurationInFrames}
-							compositionWidth={width}
-							compositionHeight={height}
-							fps={fps}
-							style={{
-								width: playWidth,
-								height: playHeight,
-							}}
-							controls
-						/>
-					)}
+					{!audioExist && <p>Audio not found</p>}
 
-					<div>
-						{!audioExist && <p>Audio not found</p>}
+					<div className="flex flex-col gpa-4 mt-2">
+						<p className="flex items-center gap-2">
+							{title}
+							<Copy className="cursor-pointer" onClick={() => onCopy(title)} />
+						</p>
 
-						<div className="flex flex-col gpa-4 mt-2">
-							<p className="flex items-center gap-2">
-								{title}
-								<Copy
-									className="cursor-pointer"
-									onClick={() => onCopy(title)}
-								/>
-							</p>
+						<p className="flex items-center gap-2 whitespace-pre-wrap">
+							{words}
+							<Copy className="cursor-pointer" onClick={() => onCopy(words)} />
+						</p>
+					</div>
 
-							<p className="flex items-center gap-2 whitespace-pre-wrap">
-								{words}
-								<Copy
-									className="cursor-pointer"
-									onClick={() => onCopy(words)}
-								/>
-							</p>
-						</div>
+					<div className="mt-4 flex gap-2">
+						<generateAudioFetcher.Form action="generate-audio" method="post">
+							<input name="key" value={key} hidden readOnly />
+							<LoadingButtonWithState state={generateAudioFetcher.state} idleText="Generate audio" />
+						</generateAudioFetcher.Form>
 
-						<div className="mt-4 flex gap-2">
-							<generateAudioFetcher.Form action="generate-audio" method="post">
-								<input name="key" value={key} hidden readOnly />
-								<LoadingButtonWithState
-									state={generateAudioFetcher.state}
-									idleText="Generate audio"
-								/>
-							</generateAudioFetcher.Form>
+						<generateImageFetcher.Form action="generate-image" method="post">
+							<input name="key" value={key} hidden readOnly />
+							<LoadingButtonWithState state={generateImageFetcher.state} idleText="Generate image" />
+						</generateImageFetcher.Form>
 
-							<generateImageFetcher.Form action="generate-image" method="post">
-								<input name="key" value={key} hidden readOnly />
-								<LoadingButtonWithState
-									state={generateImageFetcher.state}
-									idleText="Generate image"
-								/>
-							</generateImageFetcher.Form>
+						<toggleDirectionFetcher.Form action="toggle-direction" method="post">
+							<input name="direction" value={shortText.direction ?? 0} hidden readOnly />
+							<LoadingButtonWithState state={toggleDirectionFetcher.state} idleText="Toggle direction" />
+						</toggleDirectionFetcher.Form>
+					</div>
 
-							<toggleDirectionFetcher.Form
-								action="toggle-direction"
-								method="post"
-							>
-								<input
-									name="direction"
-									value={shortText.direction ?? 0}
-									hidden
-									readOnly
-								/>
-								<LoadingButtonWithState
-									state={toggleDirectionFetcher.state}
-									idleText="Toggle direction"
-								/>
-							</toggleDirectionFetcher.Form>
-						</div>
-
-						<div className="mt-4">
-							<renderFetcher.Form method="post" action="render">
-								<input name="fps" value={fps} hidden readOnly />
-								<LoadingButtonWithState
-									state={renderFetcher.state}
-									idleText="Render"
-								/>
-							</renderFetcher.Form>
-						</div>
+					<div className="mt-4">
+						<renderFetcher.Form method="post" action="render">
+							<input name="fps" value={fps} hidden readOnly />
+							<LoadingButtonWithState state={renderFetcher.state} idleText="Render" />
+						</renderFetcher.Form>
 					</div>
 				</div>
 			</div>
