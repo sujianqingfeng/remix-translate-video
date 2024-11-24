@@ -7,7 +7,6 @@ import { Player } from '@remotion/player'
 import invariant from 'tiny-invariant'
 import BackPrevious from '~/components/BackPrevious'
 import LoadingButtonWithState from '~/components/LoadingButtonWithState'
-import { Button } from '~/components/ui/button'
 import TranslateVideos from '~/remotion/translate-videos/TranslateVideos'
 import type { Transcript } from '~/types'
 import { copyMaybeOriginalVideoToPublic } from '~/utils'
@@ -30,10 +29,9 @@ export async function loader({ params }: LoaderFunctionArgs) {
 		transcripts = JSON.parse(transcriptsStr)
 	}
 
-	const { playVideoFileName, maybePlayVideoFile } =
-		await copyMaybeOriginalVideoToPublic({
-			outDir,
-		})
+	const { playVideoFileName, maybePlayVideoFile } = await copyMaybeOriginalVideoToPublic({
+		outDir,
+	})
 
 	let totalDurationInFrames = 100
 	if (maybePlayVideoFile) {
@@ -56,8 +54,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
 }
 
 export default function TranslateVideoPage() {
-	const { transcripts, playVideoFileName, fps, totalDurationInFrames } =
-		useLoaderData<typeof loader>()
+	const { transcripts, playVideoFileName, fps, totalDurationInFrames } = useLoaderData<typeof loader>()
 
 	const downloadFetcher = useFetcher()
 	const convertFetcher = useFetcher()
@@ -68,7 +65,7 @@ export default function TranslateVideoPage() {
 		<div className="p-4">
 			<BackPrevious />
 
-			<div className="flex gap-4">
+			<div className="flex gap-4 mt-2">
 				<div>
 					<div>
 						<Player
@@ -91,46 +88,26 @@ export default function TranslateVideoPage() {
 					<div className="flex items-center gap-2 mt-2">
 						{!playVideoFileName && (
 							<downloadFetcher.Form method="post" action="download">
-								<LoadingButtonWithState
-									state={downloadFetcher.state}
-									idleText="Download"
-								/>
+								<LoadingButtonWithState state={downloadFetcher.state} idleText="Download" />
 							</downloadFetcher.Form>
 						)}
 
 						{transcripts.length === 0 && (
 							<convertFetcher.Form method="post" action="convert">
-								<LoadingButtonWithState
-									state={convertFetcher.state}
-									idleText="Covert"
-								/>
+								<LoadingButtonWithState state={convertFetcher.state} idleText="Covert" />
 							</convertFetcher.Form>
 						)}
 
 						<renderFetcher.Form method="post" action="new-render">
 							<input type="hidden" name="fps" value={fps} />
-							<input
-								type="hidden"
-								name="totalDurationInFrames"
-								value={totalDurationInFrames}
-							/>
-							<input
-								type="hidden"
-								name="playVideoFileName"
-								value={playVideoFileName}
-							/>
+							<input type="hidden" name="totalDurationInFrames" value={totalDurationInFrames} />
+							<input type="hidden" name="playVideoFileName" value={playVideoFileName} />
 
-							<LoadingButtonWithState
-								state={renderFetcher.state}
-								idleText="Render"
-							/>
+							<LoadingButtonWithState state={renderFetcher.state} idleText="Render" />
 						</renderFetcher.Form>
 
 						<translateFetcher.Form method="post" action="translate">
-							<LoadingButtonWithState
-								state={translateFetcher.state}
-								idleText="Translate"
-							/>
+							<LoadingButtonWithState state={translateFetcher.state} idleText="Translate" />
 						</translateFetcher.Form>
 					</div>
 				</div>
