@@ -75,9 +75,9 @@ export function ShortTexts({
 
 						<div className="flex-1 flex flex-col justify-center items-center px-[6rem]">
 							<div className="flex-1 flex flex-col justify-center items-center" style={{ fontFamily }}>
-								<div className="text-8xl font-bold leading-1.2">{title}</div>
-								<div className="text-7xl leading-1.2 mt-2">{titleZh}</div>
-								<div className="text-[40px] text-black leading-[1.8] mt-6">
+								<div className="text-7xl font-bold leading-1.2">{title}</div>
+								<div className="text-6xl leading-1.2 mt-6">{titleZh}</div>
+								<div className="text-[40px] text-black leading-[1.8] mt-10">
 									{wordTranscripts.map((item) => (
 										<span
 											key={item.start}
@@ -110,9 +110,30 @@ export function ShortTexts({
 
 			<AbsoluteFill>
 				<Sequence from={audioDuration}>
-					<div className="flex flex-col justify-center items-center gap-4 px-[6rem] leading-2">
-						<div className="font-bold text-8xl">{titleZh}</div>
-						<div className="text-7xl leading-[1.5]"> {shortTextZh}</div>
+					<div className={`flex ${direction ? 'flex-row' : 'flex-col'} gap-4 leading-2`}>
+						<div className={`${direction ? 'w-[400px] relative' : 'h-[500px] relative'}`}>
+							<Img className={`${direction ? 'h-full' : 'h-full w-full'} object-cover`} src={staticFile('short-text-cover.png')} />
+							{direction ? (
+								<div
+									className="absolute top-0 right-0 h-full w-[200px]"
+									style={{
+										background: 'linear-gradient(to right, transparent, #EAE0CD)',
+									}}
+								/>
+							) : (
+								<div
+									className="absolute bottom-0 left-0 w-full h-[100px]"
+									style={{
+										background: 'linear-gradient(to bottom, transparent, #EFEADB)',
+									}}
+								/>
+							)}
+						</div>
+
+						<div className="flex-1 p-[6rem] flex flex-col justify-center items-center">
+							<div className="font-bold text-6xl">{titleZh}</div>
+							<div className="text-[40px] leading-[1.8] mt-10"> {shortTextZh}</div>
+						</div>
 					</div>
 				</Sequence>
 			</AbsoluteFill>
