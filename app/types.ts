@@ -71,7 +71,6 @@ export type SentenceTranscript = {
 export type GenerateShortTextActionData = {
 	success: boolean
 	shortText: ShortText
-	key: string
 }
 
 export type { ShortText }

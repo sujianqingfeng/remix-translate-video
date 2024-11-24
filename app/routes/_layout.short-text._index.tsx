@@ -1,10 +1,11 @@
-import { Form, useFetcher } from '@remix-run/react'
+import { Form, json, useFetcher, useLoaderData } from '@remix-run/react'
 import { useEffect, useState } from 'react'
 import LoadingButtonWithState from '~/components/LoadingButtonWithState'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { Textarea } from '~/components/ui/textarea'
 import type { GenerateShortTextActionData, ShortText } from '~/types'
+import { generateUniqueKey } from '~/utils'
 
 function ShortTextInfo({
 	shortText,
@@ -104,7 +105,17 @@ function ShortTextInfo({
 	)
 }
 
+export const loader = async () => {
+	const key = generateUniqueKey('st-')
+
+	return json({
+		key,
+	})
+}
+
 export default function ShortTextIndexPage() {
+	const { key } = useLoaderData<typeof loader>()
+
 	const fetcher = useFetcher<GenerateShortTextActionData>()
 	const [currentShortText, setCurrentShortText] = useState<ShortText>({
 		title: '',
@@ -131,7 +142,7 @@ export default function ShortTextIndexPage() {
 			</div>
 
 			<div className="rounded-lg border p-4">
-				<ShortTextInfo uniqueKey="current" shortText={currentShortText} setShortText={setCurrentShortText} />
+				<ShortTextInfo uniqueKey={key} shortText={currentShortText} setShortText={setCurrentShortText} />
 			</div>
 
 			{fetcher.data?.success === false && <p className="text-red-500">generate failed</p>}
