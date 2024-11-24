@@ -2,6 +2,7 @@ import { AbsoluteFill, Audio, Img, Sequence, staticFile, useCurrentFrame, useVid
 import type { SentenceTranscript, WordTranscript } from '~/types'
 
 import { loadFont } from '@remotion/google-fonts/SourceCodePro'
+import Cover from './Cover'
 
 export function ShortTexts({
 	wordTranscripts,
@@ -54,24 +55,7 @@ export function ShortTexts({
 			<AbsoluteFill>
 				<Sequence from={0} durationInFrames={audioDuration}>
 					<div className={`flex w-full h-full ${direction ? 'flex-row' : 'flex-col'}`}>
-						<div className={`${direction ? 'w-[400px] relative' : 'h-[500px] relative'}`}>
-							<Img className={`${direction ? 'h-full' : 'h-full w-full'} object-cover`} src={staticFile('short-text-cover.png')} />
-							{direction ? (
-								<div
-									className="absolute top-0 right-0 h-full w-[200px]"
-									style={{
-										background: 'linear-gradient(to right, transparent, #EAE0CD)',
-									}}
-								/>
-							) : (
-								<div
-									className="absolute bottom-0 left-0 w-full h-[100px]"
-									style={{
-										background: 'linear-gradient(to bottom, transparent, #EFEADB)',
-									}}
-								/>
-							)}
-						</div>
+						<Cover direction={direction} coverFileName="short-text-cover.png" />
 
 						<div className="flex-1 flex flex-col justify-center items-center px-[6rem]">
 							<div className="flex-1 flex flex-col justify-center items-center" style={{ fontFamily }}>
@@ -111,26 +95,9 @@ export function ShortTexts({
 			<AbsoluteFill>
 				<Sequence from={audioDuration}>
 					<div className={`flex ${direction ? 'flex-row' : 'flex-col'} gap-4 leading-2`}>
-						<div className={`${direction ? 'w-[400px] relative' : 'h-[500px] relative'}`}>
-							<Img className={`${direction ? 'h-full' : 'h-full w-full'} object-cover`} src={staticFile('short-text-cover.png')} />
-							{direction ? (
-								<div
-									className="absolute top-0 right-0 h-full w-[200px]"
-									style={{
-										background: 'linear-gradient(to right, transparent, #EAE0CD)',
-									}}
-								/>
-							) : (
-								<div
-									className="absolute bottom-0 left-0 w-full h-[100px]"
-									style={{
-										background: 'linear-gradient(to bottom, transparent, #EFEADB)',
-									}}
-								/>
-							)}
-						</div>
+						<Cover direction={direction} coverFileName="short-text-cover.png" />
 
-						<div className="flex-1 p-[6rem] flex flex-col justify-center items-center">
+						<div className="flex-1 p-[6rem] flex flex-col justify-start items-center">
 							<div className="font-bold text-6xl">{titleZh}</div>
 							<div className="text-[40px] leading-[1.8] mt-10"> {shortTextZh}</div>
 						</div>
