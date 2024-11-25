@@ -1,7 +1,7 @@
 import { spawn } from 'node:child_process'
 import fsp from 'node:fs/promises'
 import path from 'node:path'
-import { type ActionFunctionArgs, json } from '@remix-run/node'
+import type { ActionFunctionArgs } from '@remix-run/node'
 import invariant from 'tiny-invariant'
 import type { Transcript } from '~/types'
 import { getTranslateVideoFullId, getTranslateVideoOut } from '~/utils/translate-video'
@@ -121,5 +121,5 @@ export async function action({ params }: ActionFunctionArgs) {
 		throw error
 	}
 
-	return json({ success: true })
+	return { success: true }
 }

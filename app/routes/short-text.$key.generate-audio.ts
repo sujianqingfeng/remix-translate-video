@@ -1,5 +1,5 @@
 import fsp from 'node:fs/promises'
-import { type ActionFunctionArgs, json } from '@remix-run/node'
+import type { ActionFunctionArgs } from '@remix-run/node'
 import invariant from 'tiny-invariant'
 import { PROXY } from '~/constants'
 import type { ShortText } from '~/types'
@@ -21,5 +21,5 @@ export async function action({ request }: ActionFunctionArgs) {
 		proxy: PROXY,
 	})
 
-	return json({ success: true })
+	return { success: true }
 }

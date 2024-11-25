@@ -1,17 +1,9 @@
 import type { LinksFunction } from '@remix-run/node'
-import {
-	Links,
-	Meta,
-	Outlet,
-	Scripts,
-	ScrollRestoration,
-} from '@remix-run/react'
+import { Links, Meta, Outlet, Scripts, ScrollRestoration } from '@remix-run/react'
 import { Toaster } from './components/ui/toaster'
 import tailwindStylesheetUrl from './tailwind.css?url'
 
-export const links: LinksFunction = () => [
-	{ rel: 'stylesheet', href: tailwindStylesheetUrl },
-]
+export const links: LinksFunction = () => [{ rel: 'stylesheet', href: tailwindStylesheetUrl }]
 
 export default function App() {
 	return (

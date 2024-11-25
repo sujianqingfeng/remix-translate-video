@@ -1,5 +1,5 @@
 import fsp from 'node:fs/promises'
-import { type ActionFunctionArgs, json } from '@remix-run/node'
+import type { ActionFunctionArgs } from '@remix-run/node'
 import invariant from 'tiny-invariant'
 import type { YoutubeComment } from '~/types'
 import { getYoutubeCommentOut } from '~/utils/translate-comment'
@@ -17,14 +17,12 @@ export async function action({ request, params }: ActionFunctionArgs) {
 		const commentsStr = await fsp.readFile(commentFile, 'utf-8')
 		const comments: YoutubeComment[] = JSON.parse(commentsStr)
 
-		const newComments = comments.filter(
-			(comment) => comment.content !== commentContent,
-		)
+		const newComments = comments.filter((comment) => comment.content !== commentContent)
 
 		await fsp.writeFile(commentFile, JSON.stringify(newComments))
 
-		return json({ success: true })
+		return { success: true }
 	}
 
-	return json({ success: false })
+	return { success: false }
 }

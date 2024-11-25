@@ -49,7 +49,7 @@ export default function TranslateComment({
 
 			<Sequence from={coverDuration * fps}>
 				<AbsoluteFill>
-					<div className="flex justify-center items-center gap-[100px] h-[60%] p-4">
+					<div className="flex justify-center items-center gap-[100px] h-[64%] p-4">
 						<div className="text-[#ee3f4d] w-[450px] flex-shrink-0 h-full flex flex-col items-center justify-center p-[20px]">
 							<div>
 								<div className="flex items-center gap-2 text-3xl">

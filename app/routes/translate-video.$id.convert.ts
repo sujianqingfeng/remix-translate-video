@@ -1,12 +1,8 @@
 import fsp from 'node:fs/promises'
 import type { ActionFunctionArgs } from '@remix-run/node'
-import { json } from '@remix-run/node'
 import invariant from 'tiny-invariant'
 import { fileExist } from '~/utils/file'
-import {
-	processSentenceSegmentation,
-	trimPunctuation,
-} from '~/utils/transcript'
+import { processSentenceSegmentation, trimPunctuation } from '~/utils/transcript'
 import { getTranslateVideoOut } from '~/utils/translate-video'
 
 export async function action({ params }: ActionFunctionArgs) {
@@ -16,7 +12,7 @@ export async function action({ params }: ActionFunctionArgs) {
 	const { asrResultFile, transcriptsFile } = getTranslateVideoOut(id)
 
 	if (!(await fileExist(asrResultFile))) {
-		return json({ success: false, message: 'asr result file not found' })
+		return { success: false, message: 'asr result file not found' }
 	}
 
 	const asrResult = await fsp.readFile(asrResultFile, 'utf-8')
@@ -50,5 +46,5 @@ export async function action({ params }: ActionFunctionArgs) {
 	})
 
 	await fsp.writeFile(transcriptsFile, JSON.stringify(transcripts, null, 2))
-	return json({ success: true })
+	return { success: true }
 }

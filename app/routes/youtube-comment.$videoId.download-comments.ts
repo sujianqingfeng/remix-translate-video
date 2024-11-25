@@ -39,5 +39,5 @@ export async function action({ params }: ActionFunctionArgs) {
 
 	await fsp.writeFile(commentFile, JSON.stringify(comments, null, 2))
 
-	return json({ success: true })
+	return { success: true }
 }

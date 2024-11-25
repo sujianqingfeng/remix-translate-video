@@ -1,5 +1,5 @@
 import path from 'node:path'
-import { type ActionFunctionArgs, json } from '@remix-run/node'
+import type { ActionFunctionArgs } from '@remix-run/node'
 import { bundle } from '@remotion/bundler'
 import { renderMedia, selectComposition } from '@remotion/renderer'
 import invariant from 'tiny-invariant'
@@ -65,5 +65,5 @@ export async function action({ request, params }: ActionFunctionArgs) {
 		onProgress: throttleRenderOnProgress,
 	})
 
-	return json({ success: true })
+	return { success: true }
 }

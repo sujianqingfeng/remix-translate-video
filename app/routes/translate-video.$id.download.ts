@@ -1,5 +1,4 @@
 import type { ActionFunctionArgs } from '@remix-run/node'
-import { json } from '@remix-run/node'
 import invariant from 'tiny-invariant'
 import { execCommand } from '~/utils/exec'
 import { getTranslateVideoOut } from '~/utils/translate-video'
@@ -13,14 +12,10 @@ export async function action({ params }: ActionFunctionArgs) {
 	const youtubeUrl = generateYoutubeUrlByVideoId(id)
 
 	// 下载视频
-	await execCommand(
-		`cd ${outDir} && yt-dlp ${youtubeUrl} --output "original.%(ext)s"`,
-	)
+	await execCommand(`cd ${outDir} && yt-dlp ${youtubeUrl} --output "original.%(ext)s"`)
 
 	// 单独下载音频
-	await execCommand(
-		`cd ${outDir} && yt-dlp -f "ba" --extract-audio --audio-format aac ${youtubeUrl} --output "original_audio.%(ext)s"`,
-	)
+	await execCommand(`cd ${outDir} && yt-dlp -f "ba" --extract-audio --audio-format aac ${youtubeUrl} --output "original_audio.%(ext)s"`)
 
-	return json({ success: true })
+	return { success: true }
 }

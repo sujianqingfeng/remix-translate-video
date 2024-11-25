@@ -1,5 +1,5 @@
 import fsp from 'node:fs/promises'
-import { type ActionFunctionArgs, json } from '@remix-run/node'
+import type { ActionFunctionArgs } from '@remix-run/node'
 import invariant from 'tiny-invariant'
 import type { ShortText } from '~/types'
 import { getShortTextOut } from '~/utils/short-text'
@@ -17,5 +17,5 @@ export async function action({ request, params }: ActionFunctionArgs) {
 	shortText.direction = direction === '1' ? 0 : 1
 
 	await fsp.writeFile(infoFile, JSON.stringify(shortText, null, 2), 'utf-8')
-	return json({ success: true })
+	return { success: true }
 }

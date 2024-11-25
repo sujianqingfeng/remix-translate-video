@@ -99,7 +99,7 @@ export function ShortTexts({
 
 						<div className="flex-1 p-[6rem] flex flex-col justify-start items-center">
 							<div className="font-bold text-6xl">{titleZh}</div>
-							<div className="text-[40px] leading-[1.8] mt-10"> {shortTextZh}</div>
+							<div className="text-[40px] leading-[1.8] mt-10"> {sentenceTranscript.map((item) => item.partZh).join('')}</div>
 						</div>
 					</div>
 				</Sequence>

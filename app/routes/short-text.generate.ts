@@ -1,4 +1,4 @@
-import { type ActionFunctionArgs, json } from '@remix-run/node'
+import { type ActionFunctionArgs, data } from '@remix-run/node'
 import invariant from 'tiny-invariant'
 import type { GenerateShortTextActionData } from '~/types'
 import { generateUniqueKey } from '~/utils'
@@ -11,7 +11,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
 	const shortText = await generateShortText(theme as string)
 
-	return json<GenerateShortTextActionData>(
+	return data<GenerateShortTextActionData>(
 		{ success: true, shortText },
 		{
 			headers: {

@@ -1,5 +1,5 @@
 import fsp from 'node:fs/promises'
-import { type LoaderFunctionArgs, json } from '@remix-run/node'
+import type { LoaderFunctionArgs } from '@remix-run/node'
 import { useFetcher, useLoaderData } from '@remix-run/react'
 import { parseMedia } from '@remotion/media-parser'
 import { nodeReader } from '@remotion/media-parser/node'
@@ -50,7 +50,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
 		totalDurationInFrames = Math.ceil(durationInSeconds * fps)
 	}
 
-	return json({ transcripts, playVideoFileName, fps, totalDurationInFrames })
+	return { transcripts, playVideoFileName, fps, totalDurationInFrames }
 }
 
 export default function TranslateVideoPage() {
@@ -115,7 +115,7 @@ export default function TranslateVideoPage() {
 				<div>
 					{transcripts.map((item) => (
 						<div key={item.text}>
-							<div>
+							<div className="flex items-center justify-between gap-2">
 								{item.text}
 								<div>
 									{item.start} - {item.end}

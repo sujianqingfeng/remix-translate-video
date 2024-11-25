@@ -8,11 +8,7 @@ import { processTranslatedLongTranscripts } from '~/utils/transcript'
 import { getTranslateVideoOut } from '~/utils/translate-video'
 
 // 添加并发控制函数
-async function asyncPool<T, U>(
-	poolLimit: number,
-	items: T[],
-	iteratorFn: (item: T) => Promise<U>,
-): Promise<U[]> {
+async function asyncPool<T, U>(poolLimit: number, items: T[], iteratorFn: (item: T) => Promise<U>): Promise<U[]> {
 	const ret: Promise<U>[] = []
 	const executing = new Set<Promise<U>>()
 
@@ -39,10 +35,8 @@ export async function action({ params }: ActionFunctionArgs) {
 	const transcripts = await fsp.readFile(transcriptsFile, 'utf-8')
 	const data: Transcript[] = JSON.parse(transcripts)
 
-	const literalPrompt =
-		'你是一个精通多语言的翻译大师，根据内容直译成中文，不要遗漏任何信息，末尾不需要加任何标点符号。'
-	const interpretationPrompt =
-		'你是一个精通中文的翻译大师，根据内容重新意译，遵守原意的前提下让内容更通俗易懂，符合中文表达习惯，内容更加精简，末尾不需要加任何标点符号。'
+	const literalPrompt = '你是一个精通多语言的翻译大师，根据内容直译成中文，保留原文特定的术语或媒体名称（如有）'
+	const interpretationPrompt = '你是一个精通中文的语言大师，根据内容重新意译，遵守原意的前提下让内容更通俗易懂，符合中文表达习惯。不要去解释内容，末尾不需要加任何标点符号。'
 
 	// 使用 asyncPool 替代 Promise.all，限制并发数为 50
 	await asyncPool(
@@ -64,9 +58,7 @@ export async function action({ params }: ActionFunctionArgs) {
 	// 同样使用 asyncPool 处理意译
 	await asyncPool(
 		50,
-		data
-			.filter((item) => !item.textInterpretation)
-			.filter((item) => item.textLiteralTranslation),
+		data.filter((item) => !item.textInterpretation).filter((item) => item.textLiteralTranslation),
 		async (item) => {
 			const result = await deepSeek.generateText({
 				system: interpretationPrompt,
@@ -81,9 +73,6 @@ export async function action({ params }: ActionFunctionArgs) {
 
 	const processedTranscripts = processTranslatedLongTranscripts(data)
 
-	await fsp.writeFile(
-		transcriptsFile,
-		JSON.stringify(processedTranscripts, null, 2),
-	)
+	await fsp.writeFile(transcriptsFile, JSON.stringify(processedTranscripts, null, 2))
 	return json({ success: true })
 }
