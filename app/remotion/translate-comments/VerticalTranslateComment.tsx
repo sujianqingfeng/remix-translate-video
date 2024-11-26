@@ -73,7 +73,7 @@ export default function VerticalTranslateComment({
 							<p className="leading-1.6 text-2xl text-ellipsis line-clamp-2">{currentComment?.content}</p>
 
 							<p
-								className="text-[#ee3f4d] leading-[1.2] mt-1 border border-red-500"
+								className="text-[#ee3f4d] leading-[1.2] mt-1"
 								style={{
 									fontSize: `${fontSize}px`,
 								}}
