@@ -18,7 +18,7 @@ function generateSRT(transcripts: Transcript[]): string {
 			return `${index + 1}
 ${startTime} --> ${endTime}
 ${transcript.text}
-${transcript.textInterpretation || ''}
+${transcript.textLiteralTranslation || ''}
 
 `
 		})
@@ -65,7 +65,7 @@ export async function action({ params }: ActionFunctionArgs) {
 			'-i',
 			maybePlayVideoFile,
 			'-vf',
-			`subtitles='${escapedCombinedSrtPath}':force_style='FontName=Microsoft YaHei,FontSize=14,Alignment=2,BorderStyle=1,Outline=0.5,Shadow=0,MarginV=20,PrimaryColour=&HFFFFFF,OutlineColour=&H808080'`,
+			`subtitles='${escapedCombinedSrtPath}':force_style='FontName=Microsoft YaHei,FontSize=16,Alignment=2,BorderStyle=1,Outline=0.5,Shadow=0,MarginV=20,PrimaryColour=&HFFFFFF,OutlineColour=&H808080'`,
 			'-c:v',
 			'libx264',
 			'-preset',

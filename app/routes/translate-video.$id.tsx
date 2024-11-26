@@ -114,7 +114,7 @@ export default function TranslateVideoPage() {
 
 				<div>
 					{transcripts.map((item) => (
-						<div key={item.text}>
+						<div key={item.text} className="border-b border-gray-200 pb-2">
 							<div className="flex items-center justify-between gap-2">
 								{item.text}
 								<div>

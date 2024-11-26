@@ -93,7 +93,7 @@ export default function VideoCommentPage() {
 	const downloadCommentsFetcher = useFetcher()
 	const modeFetcher = useFetcher()
 
-	const desc = `原链接：${info.youtubeUrl}\n理性看待`
+	const desc = `原链接：${info.youtubeUrl}\n视频仅供娱乐，请勿过度解读`
 
 	const onCopy = async (text?: string) => {
 		if (!text) {

@@ -57,10 +57,10 @@ export function ShortTexts({
 					<div className={`flex w-full h-full ${direction ? 'flex-row' : 'flex-col'}`}>
 						<Cover direction={direction} coverFileName="short-text-cover.png" />
 
-						<div className="flex-1 flex flex-col justify-center items-center px-[6rem]">
-							<div className="flex-1 flex flex-col justify-center items-center" style={{ fontFamily }}>
-								<div className="text-7xl font-bold leading-1.2">{title}</div>
-								<div className="text-6xl leading-1.2 mt-6">{titleZh}</div>
+						<div className="flex-1 flex flex-col items-center px-[6rem]">
+							<div className="flex-1 flex flex-col items-center pt-[5rem]" style={{ fontFamily }}>
+								<div className="text-5xl font-bold leading-1.2">{title}</div>
+								<div className="text-5xl font-bold leading-1.2 mt-6">{titleZh}</div>
 								<div className="text-[40px] text-black leading-[1.8] mt-10">
 									{wordTranscripts.map((item) => (
 										<span

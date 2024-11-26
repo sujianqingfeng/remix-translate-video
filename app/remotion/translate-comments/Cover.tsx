@@ -9,7 +9,7 @@ type CoverProps = {
 export default function Cover({ coverDuration, title, author }: CoverProps) {
 	const { fps } = useVideoConfig()
 
-	const titleLines = title?.split(/[|。]/)
+	const titleLines = title?.split(/[|。，]/)
 
 	return (
 		<Sequence from={0} durationInFrames={coverDuration * fps}>
