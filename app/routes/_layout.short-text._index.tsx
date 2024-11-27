@@ -1,4 +1,5 @@
 import { Form, json, useFetcher, useLoaderData } from '@remix-run/react'
+import { X } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import LoadingButtonWithState from '~/components/LoadingButtonWithState'
 import { Button } from '~/components/ui/button'
@@ -38,6 +39,11 @@ function ShortTextInfo({
 			words: [...shortText.words, ...newWords],
 		})
 		setBulkWords('')
+	}
+
+	const deleteWord = (index: number) => {
+		const newWords = shortText.words.filter((_, i) => i !== index)
+		setShortText({ ...shortText, words: newWords })
 	}
 
 	return (
@@ -82,7 +88,7 @@ function ShortTextInfo({
 							<div
 								// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
 								key={`${uniqueKey}-word-${index}`}
-								className="grid grid-cols-2 gap-2"
+								className="grid grid-cols-[1fr_1fr_auto] gap-2 items-center"
 							>
 								<div>
 									<label htmlFor={wordId} className="sr-only">
@@ -96,6 +102,9 @@ function ShortTextInfo({
 									</label>
 									<Input id={translationId} value={word.translation} onChange={(e) => updateWord(index, 'translation', e.target.value)} placeholder="Translation" />
 								</div>
+								<Button type="button" variant="ghost" size="icon" onClick={() => deleteWord(index)} className="text-red-500 hover:text-red-700 hover:bg-red-100">
+									<X className="text-red-500" />
+								</Button>
 							</div>
 						)
 					})}
@@ -160,7 +169,7 @@ export default function ShortTextIndexPage() {
 				</fetcher.Form>
 			</div>
 
-			<div className="rounded-lg border p-4">
+			<div className="rounded-lg p-4">
 				<ShortTextInfo uniqueKey={key} shortText={currentShortText} setShortText={setCurrentShortText} />
 			</div>
 
