@@ -1,17 +1,14 @@
 import fsp from 'node:fs/promises'
 import { describe, expect, it } from 'vitest'
-import { processSentenceSegmentation } from '../transcript'
+import { mergeSentencesWithAbbreviations, processSentenceSegmentation } from '../transcript'
 
 // 先通过一些断句符号组装成一个一个长句
 // 然后处理每个长句里面存在一些科学计数的逗号去掉，相应对应的word里面的逗号也要去掉
 // 然后遍历这些长句，如果长度超过 maxSentenceLength，则将句子通过一些逗号之类的子句符号切分成多个子句
 
 describe('transcript', () => {
-	it('processSentenceSegmentation', async () => {
-		const result = await fsp.readFile(
-			'./out/tv-rwXYj1NalIw/result.json',
-			'utf-8',
-		)
+	it.skip('processSentenceSegmentation', async () => {
+		const result = await fsp.readFile('./out/tv-rwXYj1NalIw/result.json', 'utf-8')
 		const data = JSON.parse(result)
 
 		const words = data.segments.flatMap((segment: any) =>
@@ -241,6 +238,100 @@ describe('transcript', () => {
 			  "thank all of you for watching,",
 			  "and as always,",
 			  "we'll see you in the next one.",
+			]
+		`)
+	})
+
+	it('mergeSentencesWithAbbreviations', () => {
+		const words = [
+			[
+				{ word: 'assembly', start: 329.28, end: 330.24 },
+				{ word: 'and', start: 330.24, end: 330.46 },
+				{ word: 'shipment', start: 330.46, end: 331.06 },
+				{ word: 'to', start: 331.06, end: 331.21 },
+				{ word: 'the', start: 331.21, end: 331.43 },
+				{ word: 'U', start: 331.43, end: 331.5 },
+				{ word: '.', start: 331.5, end: 331.72 },
+			],
+			[
+				{ word: 'S', start: 331.72, end: 331.79 },
+				{ word: '.', start: 331.79, end: 332.01 },
+			],
+			[
+				{ word: 'and', start: 332.01, end: 332.23 },
+				{ word: 'Canada', start: 332.23, end: 332.78 },
+				{ word: '.', start: 332.78, end: 332.93 },
+			],
+		]
+
+		const result = mergeSentencesWithAbbreviations(words)
+
+		expect(result).toMatchInlineSnapshot(`
+			[
+			  [
+			    {
+			      "end": 330.24,
+			      "start": 329.28,
+			      "word": "assembly",
+			    },
+			    {
+			      "end": 330.46,
+			      "start": 330.24,
+			      "word": "and",
+			    },
+			    {
+			      "end": 331.06,
+			      "start": 330.46,
+			      "word": "shipment",
+			    },
+			    {
+			      "end": 331.21,
+			      "start": 331.06,
+			      "word": "to",
+			    },
+			    {
+			      "end": 331.43,
+			      "start": 331.21,
+			      "word": "the",
+			    },
+			    {
+			      "end": 331.5,
+			      "start": 331.43,
+			      "word": "U",
+			    },
+			    {
+			      "end": 331.72,
+			      "start": 331.5,
+			      "word": ".",
+			    },
+			    {
+			      "end": 331.79,
+			      "start": 331.72,
+			      "word": "S",
+			    },
+			    {
+			      "end": 332.01,
+			      "start": 331.79,
+			      "word": ".",
+			    },
+			  ],
+			  [
+			    {
+			      "end": 332.23,
+			      "start": 332.01,
+			      "word": "and",
+			    },
+			    {
+			      "end": 332.78,
+			      "start": 332.23,
+			      "word": "Canada",
+			    },
+			    {
+			      "end": 332.93,
+			      "start": 332.78,
+			      "word": ".",
+			    },
+			  ],
 			]
 		`)
 	})

@@ -65,22 +65,62 @@ function splitBySubSentenceMarks(sentence: SentenceWord[]) {
 }
 
 // 计算句子的字符长度
-function getSentenceLength(
-	sentence: { start: number; end: number; word: string }[],
-) {
+function getSentenceLength(sentence: { start: number; end: number; word: string }[]) {
 	return sentence.reduce((length, word) => length + word.word.length, 0)
 }
 
-export function processSentenceSegmentation({
-	words,
-	maxSentenceLength = 60,
-}: SentenceSegmentationOptions) {
+// 检查是否需要合并的特殊缩写
+function isSpecialAbbreviation(words: SentenceWord[]): boolean {
+	const combinedText = words.map((w) => w.word).join('')
+	const abbreviations = ['u.s', 'e.g']
+	// 检查组合文本中是否包含任何缩写
+	return abbreviations.some((abbr) => combinedText.toLowerCase() === abbr)
+}
+
+// 合并包含特殊缩写的句子
+export function mergeSentencesWithAbbreviations(sentences: SentenceWord[][]): SentenceWord[][] {
+	const result: SentenceWord[][] = []
+	let currentSentence: SentenceWord[] = []
+
+	for (let i = 0; i < sentences.length; i++) {
+		const sentence = sentences[i]
+
+		if (currentSentence.length === 0) {
+			currentSentence = sentence
+		} else {
+			const lastThreeWords = currentSentence.slice(-2)
+			const firstThreeWords = sentence.slice(0, 1)
+
+			// 检查是否需要合并
+			if (isSpecialAbbreviation([...lastThreeWords, ...firstThreeWords])) {
+				// 合并当前句子到前一个句子
+				currentSentence = [...currentSentence, ...sentence]
+			} else {
+				// 如果不需要合并，将当前累积的句子加入结果，并开始新的句子
+				result.push(currentSentence)
+				currentSentence = sentence
+			}
+		}
+	}
+
+	// 不要忘记最后一个句子
+	if (currentSentence.length > 0) {
+		result.push(currentSentence)
+	}
+
+	return result
+}
+
+export function processSentenceSegmentation({ words, maxSentenceLength = 60 }: SentenceSegmentationOptions) {
 	// 1. 组装长句
 	const longSentences = assembleLongSentences(words)
 
-	// 2. 处理每个长句
+	// 2. 合并包含特殊缩写的句子
+	const mergedSentences = mergeSentencesWithAbbreviations(longSentences)
+
+	// 3. 处理每个长句
 	const sentences: Sentence[] = []
-	for (const longSentence of longSentences) {
+	for (const longSentence of mergedSentences) {
 		// 处理科学计数法中的逗号
 		const processedSentence = processScientificNotation(longSentence)
 
@@ -88,9 +128,7 @@ export function processSentenceSegmentation({
 		const sentenceLength = getSentenceLength(processedSentence)
 		if (sentenceLength > maxSentenceLength) {
 			// 检查是否存在子句分隔符
-			const hasSubSentenceMarks = processedSentence.some((w) =>
-				/[,，;；]/.test(w.word),
-			)
+			const hasSubSentenceMarks = processedSentence.some((w) => /[,，;；]/.test(w.word))
 
 			if (hasSubSentenceMarks) {
 				// 存在分隔符时进行切分
@@ -112,10 +150,7 @@ export function processSentenceSegmentation({
 // 需要处理start和end，text，其他不用处理
 // 返回新的Transcript数组
 
-export function processTranslatedLongTranscripts(
-	transcripts: Transcript[],
-	maxSentenceLength = 60,
-) {
+export function processTranslatedLongTranscripts(transcripts: Transcript[], maxSentenceLength = 60) {
 	const result: Transcript[] = []
 
 	for (const transcript of transcripts) {
@@ -139,11 +174,7 @@ export function processTranslatedLongTranscripts(
 		}
 
 		// 找到最接近 maxSentenceLength 的空格位置
-		const splitIndex = spacePositions.reduce((prev, curr) =>
-			Math.abs(curr - maxSentenceLength) < Math.abs(prev - maxSentenceLength)
-				? curr
-				: prev,
-		)
+		const splitIndex = spacePositions.reduce((prev, curr) => (Math.abs(curr - maxSentenceLength) < Math.abs(prev - maxSentenceLength) ? curr : prev))
 
 		// 计算到这个位置有多少个单词
 		const wordCount = transcript.text.slice(0, splitIndex).split(' ').length
@@ -174,9 +205,7 @@ export function processTranslatedLongTranscripts(
 		result.push(firstPart)
 
 		// 递归处理第二部分，以防它仍然太长
-		result.push(
-			...processTranslatedLongTranscripts([secondPart], maxSentenceLength),
-		)
+		result.push(...processTranslatedLongTranscripts([secondPart], maxSentenceLength))
 	}
 
 	return result

@@ -16,10 +16,28 @@ function ShortTextInfo({
 	setShortText: (shortText: ShortText) => void
 	uniqueKey: string
 }) {
+	const [bulkWords, setBulkWords] = useState('')
+
 	const updateWord = (index: number, field: 'word' | 'translation', value: string) => {
 		const newWords = [...shortText.words]
 		newWords[index] = { ...newWords[index], [field]: value }
 		setShortText({ ...shortText, words: newWords })
+	}
+
+	const handleBulkAdd = () => {
+		const newWords = bulkWords
+			.split('\n')
+			.filter((line) => line.trim())
+			.map((line) => {
+				const [word, translation] = line.split(':').map((s) => s.trim())
+				return { word: word || '', translation: translation || '' }
+			})
+
+		setShortText({
+			...shortText,
+			words: [...shortText.words, ...newWords],
+		})
+		setBulkWords('')
 	}
 
 	return (
@@ -81,18 +99,19 @@ function ShortTextInfo({
 							</div>
 						)
 					})}
-					<Button
-						type="button"
-						variant="outline"
-						onClick={() =>
-							setShortText({
-								...shortText,
-								words: [...shortText.words, { word: '', translation: '' }],
-							})
-						}
-					>
-						Add Word
-					</Button>
+
+					<div className="space-y-2">
+						<Textarea
+							value={bulkWords}
+							onChange={(e) => setBulkWords(e.target.value)}
+							rows={10}
+							// biome-ignore lint/style/noUnusedTemplateLiteral: <explanation>
+							placeholder={`每行输入一个单词和释义，用冒号分隔。例如：\nhello:你好\nworld:世界`}
+						/>
+						<Button onClick={handleBulkAdd} type="button" variant="outline">
+							Add Words
+						</Button>
+					</div>
 				</div>
 			</div>
 

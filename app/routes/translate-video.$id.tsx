@@ -4,9 +4,11 @@ import { useFetcher, useLoaderData } from '@remix-run/react'
 import { parseMedia } from '@remotion/media-parser'
 import { nodeReader } from '@remotion/media-parser/node'
 import { Player } from '@remotion/player'
+import { Trash } from 'lucide-react'
 import invariant from 'tiny-invariant'
 import BackPrevious from '~/components/BackPrevious'
 import LoadingButtonWithState from '~/components/LoadingButtonWithState'
+import { Button } from '~/components/ui/button'
 import TranslateVideos from '~/remotion/translate-videos/TranslateVideos'
 import type { Transcript } from '~/types'
 import { copyMaybeOriginalVideoToPublic } from '~/utils'
@@ -60,6 +62,7 @@ export default function TranslateVideoPage() {
 	const convertFetcher = useFetcher()
 	const translateFetcher = useFetcher()
 	const renderFetcher = useFetcher()
+	const deleteFetcher = useFetcher()
 
 	return (
 		<div className="p-4">
@@ -113,14 +116,18 @@ export default function TranslateVideoPage() {
 				</div>
 
 				<div>
-					{transcripts.map((item) => (
-						<div key={item.text} className="border-b border-gray-200 pb-2">
+					{transcripts.map((item, index) => (
+						<div key={item.start} className="border-b border-gray-200 pb-2">
 							<div className="flex items-center justify-between gap-2">
-								{item.text}
-								<div>
-									{item.start} - {item.end}
-								</div>
+								{item.start} - {item.end}
+								<deleteFetcher.Form method="post" action="delete-transcript">
+									<input type="hidden" name="index" value={index} />
+									<Button variant="ghost" size="icon" type="submit" className="h-8 w-8 text-destructive hover:text-destructive/90">
+										<Trash size={16} />
+									</Button>
+								</deleteFetcher.Form>
 							</div>
+							<div>{item.text}</div>
 							<div>{item.textLiteralTranslation}</div>
 							<div>{item.textInterpretation}</div>
 						</div>

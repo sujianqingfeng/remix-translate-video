@@ -1,10 +1,8 @@
 import { ThumbsUp } from 'lucide-react'
-import { useMemo } from 'react'
 import { AbsoluteFill, Sequence, Video, staticFile, useVideoConfig } from 'remotion'
 import type { RemotionVideoComment } from '~/types'
 import Cover from './Cover'
-import { useThrottledFrame } from './hooks'
-import { calculateOptimalFontSize } from './utils'
+import { useTranslateComment } from './hooks'
 
 export default function VerticalTranslateComment({
 	comments,
@@ -21,43 +19,30 @@ export default function VerticalTranslateComment({
 	coverDuration: number
 	author?: string
 }) {
-	const a = 1
-	const viewCountFormat = `${(viewCount / 1000).toFixed(1)}k`
-	// 使用节流后的帧
-	const throttledFrame = useThrottledFrame(coverDuration)
-
-	const currentComment = useMemo(() => {
-		return comments.find((item) => {
-			return throttledFrame >= item.form && throttledFrame <= item.form + item.durationInFrames
-		})
-	}, [comments, throttledFrame]) // 使用节流后的帧作为依赖
-
-	const fontSize = useMemo(() => {
-		if (!currentComment?.translatedContent) return 20
-
-		return calculateOptimalFontSize({
-			text: currentComment.translatedContent,
-			availableWidth: 1080 - 32,
-			availableHeight: 1200,
-		})
-	}, [currentComment?.translatedContent])
+	const { currentComment, fontSize, viewCountFormat } = useTranslateComment({
+		viewCount,
+		coverDuration,
+		comments,
+		availableWidth: 1080 - 32,
+		availableHeight: 1000,
+	})
 
 	const { fps } = useVideoConfig()
 
 	return (
 		<AbsoluteFill className="bg-white">
-			<Cover coverDuration={coverDuration} title={title} author={author} />
+			<Cover coverDuration={coverDuration} title={title} author={author} isSplit={false} />
 
 			<Sequence from={coverDuration * fps}>
 				<AbsoluteFill>
-					<div className="flex justify-center items-center h-[30%]">
+					<div className="flex justify-center items-center h-[30%] px-[6rem]">
 						<Video loop className="object-contain h-full" startFrom={0} crossOrigin="anonymous" src={staticFile(videoSrc)} />
 					</div>
 				</AbsoluteFill>
 
 				<AbsoluteFill>
-					<div className="absolute bottom-0 left-0 px-4 h-[70%] w-full flex flex-col">
-						<div className="text-5xl mt-2 leading-[1.5] text-[#ee3f4d]">{title}</div>
+					<div className="absolute bottom-0 left-0 px-[6rem] h-[70%] w-full flex flex-col gap-1">
+						<div className="text-5xl leading-[1.2] text-[#ee3f4d]">{title}</div>
 						<div className="flex items-center gap-2 text-3xl text-[#ee3f4d]">
 							<span>播放量：{viewCountFormat}</span>
 						</div>
@@ -70,7 +55,7 @@ export default function VerticalTranslateComment({
 						</div>
 
 						<div className="flex flex-col">
-							<p className="leading-1.6 text-2xl text-ellipsis line-clamp-2">{currentComment?.content}</p>
+							<p className="leading-1.6 text-3xl text-ellipsis line-clamp-3">{currentComment?.content}</p>
 
 							<p
 								className="text-[#ee3f4d] leading-[1.2] mt-1"
