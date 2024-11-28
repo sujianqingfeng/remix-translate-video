@@ -1,6 +1,6 @@
 import fsp from 'node:fs/promises'
 import type { LoaderFunctionArgs } from '@remix-run/node'
-import { json, useFetcher, useLoaderData } from '@remix-run/react'
+import { useFetcher, useLoaderData } from '@remix-run/react'
 import { Player } from '@remotion/player'
 import { Copy, Languages, LoaderCircle } from 'lucide-react'
 import invariant from 'tiny-invariant'
@@ -68,7 +68,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 		mode: info.mode,
 	})
 
-	return json({
+	return {
 		videoId,
 		info,
 		fps,
@@ -80,7 +80,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 		playerWidth,
 		compositionHeight,
 		compositionWidth,
-	})
+	}
 }
 
 export default function VideoCommentPage() {

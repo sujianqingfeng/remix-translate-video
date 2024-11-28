@@ -27,14 +27,25 @@ export function getYoutubeCommentOut(videoId: string) {
 	}
 }
 
-export function generateRemotionVideoComment(comments: YoutubeComment[], fps = 60, durationInSeconds = 5) {
+export function generateRemotionVideoComment(comments: YoutubeComment[], fps = 60, defaultSeconds = 5) {
+	let currentStartFrame = 0
+
 	const remotionVideoComments: RemotionVideoComment[] = comments.map((comment, i) => {
-		return {
+		const textLength = comment.translatedContent?.length || 0
+		const calculatedDuration = Math.max(3, Math.ceil((textLength / 30) * defaultSeconds))
+		const durationInFrames = fps * calculatedDuration
+
+		const result = {
 			...comment,
-			durationInFrames: fps * durationInSeconds,
-			form: fps * durationInSeconds * i,
+			durationInFrames,
+			form: currentStartFrame,
 		}
+
+		currentStartFrame += durationInFrames
+
+		return result
 	})
+
 	return remotionVideoComments
 }
 
@@ -48,7 +59,7 @@ export function findModeOption(mode: YoutubeInfo['mode']) {
 
 export async function buildRemotionRenderData({
 	fps = 30,
-	everyCommentSecond = 5,
+	defaultSeconds = 5,
 	coverDuration = 3,
 	videoId,
 	mode,
@@ -56,7 +67,7 @@ export async function buildRemotionRenderData({
 	videoId: string
 	mode: YoutubeInfo['mode']
 	fps?: number
-	everyCommentSecond?: number
+	defaultSeconds?: number
 	coverDuration?: number
 }) {
 	const { commentFile } = getYoutubeCommentOut(videoId)
@@ -67,10 +78,13 @@ export async function buildRemotionRenderData({
 		comments = JSON.parse(commentsStr) as YoutubeComment[]
 	}
 
-	const remotionVideoComments = generateRemotionVideoComment(comments, fps, everyCommentSecond)
+	const remotionVideoComments = generateRemotionVideoComment(comments, fps, defaultSeconds)
 
 	const coverDurationInFrames = coverDuration * fps
-	const totalDurationInFrames = coverDurationInFrames + fps * everyCommentSecond * comments.length
+	const lastComment = remotionVideoComments[remotionVideoComments.length - 1]
+	const commentsEndFrame = lastComment ? lastComment.form + lastComment.durationInFrames : 0
+	const totalDurationInFrames = coverDurationInFrames + commentsEndFrame
+
 	const { playerHeight, playerWidth, compositionHeight, compositionWidth, compositionId } = findModeOption(mode)
 
 	return {
@@ -83,7 +97,8 @@ export async function buildRemotionRenderData({
 		playerWidth,
 		compositionHeight,
 		compositionWidth,
-		everyCommentSecond,
+		defaultSeconds,
 		compositionId,
+		commentsEndFrame,
 	}
 }

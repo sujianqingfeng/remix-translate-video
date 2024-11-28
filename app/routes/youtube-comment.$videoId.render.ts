@@ -28,16 +28,15 @@ export async function action({ request, params }: ActionFunctionArgs) {
 	const infoStr = await fsp.readFile(infoFile, 'utf-8')
 	const info: YoutubeInfo = JSON.parse(infoStr)
 
-	const { fps, compositionHeight, compositionWidth, totalDurationInFrames, coverDuration, remotionVideoComments, everyCommentSecond, compositionId } =
-		await buildRemotionRenderData({
-			videoId,
-			mode: info.mode,
-		})
+	const { fps, compositionHeight, compositionWidth, totalDurationInFrames, coverDuration, remotionVideoComments, compositionId, commentsEndFrame } = await buildRemotionRenderData({
+		videoId,
+		mode: info.mode,
+	})
 
 	const maybePlayVideoFile = await tryGetYoutubeDownloadFile(outDir)
 	if (maybePlayVideoFile) {
 		const { destPath } = publicPlayVideoFile(maybePlayVideoFile)
-		const end = remotionVideoComments.length * +everyCommentSecond
+		const end = commentsEndFrame / fps
 		const command = `ffmpeg -y -ss 0 -i ${maybePlayVideoFile} -t ${end} -threads 2 -preset medium -crf 30 ${destPath} -progress pipe:1`
 		console.log('processing video...')
 		await execCommand(command)

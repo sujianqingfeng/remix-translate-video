@@ -56,6 +56,9 @@ export async function action({ params }: ActionFunctionArgs) {
 
 	const escapedCombinedSrtPath = combinedSrtPath.replace(/\\/g, '/').replace(/:/g, '\\:').replace(/'/g, "'\\\\''")
 
+	// 背景
+	// `subtitles='${escapedCombinedSrtPath}':force_style='FontName=Microsoft YaHei,FontSize=16,Alignment=2,BorderStyle=4,MarginV=20,PrimaryColour=&HFFFFFF,BackColour=&H1A000000'`,
+
 	// 使用 FFmpeg 渲染带字幕的视频，只使用一个字幕文件
 	await new Promise((resolve, reject) => {
 		const ffmpeg = spawn('ffmpeg', [
