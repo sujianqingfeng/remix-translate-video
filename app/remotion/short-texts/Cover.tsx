@@ -1,4 +1,4 @@
-import { Img, staticFile } from 'remotion'
+import { Img } from 'remotion'
 
 type CoverProps = {
 	direction: number
@@ -8,7 +8,7 @@ type CoverProps = {
 export default function Cover({ direction, coverFileName }: CoverProps) {
 	return (
 		<div className={`${direction ? 'w-[400px] relative' : 'h-[500px] relative'}`}>
-			<Img className={`${direction ? 'h-full' : 'h-full w-full'} object-cover`} src={staticFile(coverFileName)} />
+			<Img className={`${direction ? 'h-full' : 'h-full w-full'} object-cover`} src={coverFileName} />
 			{direction ? (
 				<div
 					className="absolute top-0 right-0 h-full w-[200px]"

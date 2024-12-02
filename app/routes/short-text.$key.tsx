@@ -1,7 +1,7 @@
 import fsp from 'node:fs/promises'
 import path from 'node:path'
 import type { LoaderFunctionArgs } from '@remix-run/node'
-import { json, useFetcher, useLoaderData } from '@remix-run/react'
+import { useFetcher, useLoaderData } from '@remix-run/react'
 import { Player } from '@remotion/player'
 import { Copy } from 'lucide-react'
 import invariant from 'tiny-invariant'
@@ -22,35 +22,40 @@ export async function loader({ params }: LoaderFunctionArgs) {
 
 	const fps = 120
 
-	const { totalDurationInFrames, wordTranscripts, shortText, audioExist, audioFile, audioDuration, sentenceTranscript } = await buildRemotionRenderData({
-		key: params.key,
-		fps,
-	})
+	const { totalDurationInFrames, wordTranscripts, shortText, audioExist, audioFile, audioDuration, sentenceTranscript, shortTextBgFile, shortTextCoverFile, playAudioFile } =
+		await buildRemotionRenderData({
+			key: params.key,
+			fps,
+		})
 
 	if (audioExist) {
 		await copyAudioToPublic(audioFile)
 	}
 
-	return json({
+	return {
 		shortText,
 		key: params.key,
 		audioExist,
 		wordTranscripts,
 		totalDurationInFrames,
 		fps,
-		playAudioName: SHORT_TEXT_AUDIO_FILE,
 		audioDuration,
 		sentenceTranscript,
-	})
+		shortTextBgFile,
+		shortTextCoverFile,
+		playAudioFile,
+	}
 }
 
 export default function ShortTextPage() {
-	const { shortText, key, audioExist, wordTranscripts, totalDurationInFrames, fps, playAudioName, audioDuration, sentenceTranscript } = useLoaderData<typeof loader>()
+	const { shortText, key, audioExist, wordTranscripts, totalDurationInFrames, fps, audioDuration, sentenceTranscript, shortTextBgFile, shortTextCoverFile, playAudioFile } =
+		useLoaderData<typeof loader>()
 
 	const generateAudioFetcher = useFetcher()
 	const renderFetcher = useFetcher()
 	const toggleDirectionFetcher = useFetcher()
 	const generateImageFetcher = useFetcher()
+	const remoteRenderFetcher = useFetcher()
 
 	const width = shortText.direction ? 1920 : 1080
 	const height = shortText.direction ? 1080 : 1920
@@ -79,13 +84,15 @@ export default function ShortTextPage() {
 						inputProps={{
 							wordTranscripts,
 							littleDifficultWords: shortText.words.map((item) => item.word),
-							playAudioName,
 							title: shortText.title,
 							titleZh: shortText.titleZh,
 							audioDuration,
 							shortTextZh: shortText.shortTextZh,
 							sentenceTranscript,
 							direction: shortText.direction,
+							shortTextBgFile,
+							shortTextCoverFile,
+							playAudioFile,
 						}}
 						durationInFrames={totalDurationInFrames}
 						compositionWidth={width}
@@ -131,11 +138,15 @@ export default function ShortTextPage() {
 						</toggleDirectionFetcher.Form>
 					</div>
 
-					<div className="mt-4">
+					<div className="mt-4 flex gap-2">
 						<renderFetcher.Form method="post" action="render">
 							<input name="fps" value={fps} hidden readOnly />
 							<LoadingButtonWithState state={renderFetcher.state} idleText="Render" />
 						</renderFetcher.Form>
+						<remoteRenderFetcher.Form method="post" action="remote-render">
+							<input name="fps" value={fps} hidden readOnly />
+							<LoadingButtonWithState state={remoteRenderFetcher.state} idleText="Remote render" />
+						</remoteRenderFetcher.Form>
 					</div>
 				</div>
 			</div>

@@ -3,7 +3,6 @@ import type { ActionFunctionArgs } from '@remix-run/node'
 import { bundle } from '@remotion/bundler'
 import { renderMedia, selectComposition } from '@remotion/renderer'
 import invariant from 'tiny-invariant'
-import { SHORT_TEXT_AUDIO_FILE } from '~/constants'
 import { webpackOverride } from '~/remotion/webpack-override'
 import { bundleOnProgress, throttleRenderOnProgress } from '~/utils/remotion'
 import { buildRemotionRenderData } from '~/utils/short-text'
@@ -19,21 +18,27 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
 	invariant(fps, 'fps is required')
 
-	const { totalDurationInFrames, wordTranscripts, shortText, audioDuration, sentenceTranscript } = await buildRemotionRenderData({
-		key,
-		fps: +fps,
-	})
+	const { totalDurationInFrames, wordTranscripts, shortText, audioDuration, sentenceTranscript, shortTextBgFile, shortTextCoverFile, playAudioFile } =
+		await buildRemotionRenderData({
+			key,
+			fps: +fps,
+		})
+
+	console.log('🚀 ~ action ~ shortTextCoverFile:', shortTextCoverFile)
 
 	const inputProps = {
 		wordTranscripts,
 		littleDifficultWords: shortText.words.map((word) => word.word),
-		playAudioName: SHORT_TEXT_AUDIO_FILE,
 		title: shortText.title,
 		titleZh: shortText.titleZh,
 		shortTextZh: shortText.shortTextZh,
 		audioDuration,
 		sentenceTranscript,
 		direction: shortText.direction,
+		shortTextBgFile,
+		shortTextCoverFile,
+		playAudioFile,
+		isRemoteRender: false,
 	}
 
 	const bundled = await bundle({

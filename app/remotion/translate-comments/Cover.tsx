@@ -7,10 +7,10 @@ type CoverProps = {
 	isSplit?: boolean
 }
 
-export default function Cover({ coverDuration, title, author, isSplit }: CoverProps) {
+export default function Cover({ coverDuration, title, author, isSplit = true }: CoverProps) {
 	const { fps } = useVideoConfig()
 
-	const titleLines = isSplit ? title?.split(/[|。，]/) : [title]
+	const titleLines = isSplit ? title?.split(/[|。，：]/) : [title]
 
 	return (
 		<Sequence from={0} durationInFrames={coverDuration * fps}>

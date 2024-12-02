@@ -15,12 +15,15 @@ export function RemotionRoot() {
 				defaultProps={{
 					title: '',
 					titleZh: '',
-					playAudioName: '',
+					playAudioFile: '',
+					shortTextBgFile: '',
+					shortTextCoverFile: '',
 					audioDuration: 1,
 					wordTranscripts: [],
 					littleDifficultWords: [],
 					sentenceTranscript: [],
 					shortTextZh: '',
+					direction: 1,
 				}}
 			/>
 		</>

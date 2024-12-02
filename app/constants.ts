@@ -19,6 +19,7 @@ export const SHORT_TEXT_AUDIO_TRANSCRIPTS_FILE = 'short-text.webm.json'
 export const SHORT_TEXT_SENTENCES_FILE = 'sentences.json'
 export const SHORT_TEXT_COVER_FILE = 'cover.png'
 export const SHORT_TEXT_PUBLIC_COVER_FILE = 'short-text-cover.png'
+export const SHORT_TEXT_PUBLIC_BG_FILE = 'short-text-bg.png'
 
 export const TRANSLATE_VIDEO_ID_PREFIX = 'tv-'
 export const TRANSLATE_VIDEO_INFO_FILE = 'info.json'

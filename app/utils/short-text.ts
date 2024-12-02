@@ -6,6 +6,8 @@ import {
 	SHORT_TEXT_AUDIO_TRANSCRIPTS_FILE,
 	SHORT_TEXT_COVER_FILE,
 	SHORT_TEXT_INFO_FILE,
+	SHORT_TEXT_PUBLIC_BG_FILE,
+	SHORT_TEXT_PUBLIC_COVER_FILE,
 	SHORT_TEXT_SENTENCES_FILE,
 } from '~/constants'
 import type { SentenceTranscript, ShortText, WordTranscript } from '~/types'
@@ -91,21 +93,13 @@ async function parseSentences({
 		}),
 	)
 
-	await fsp.writeFile(
-		sentencesFile,
-		JSON.stringify(translateSentences, null, 2),
-		'utf-8',
-	)
+	await fsp.writeFile(sentencesFile, JSON.stringify(translateSentences, null, 2), 'utf-8')
 
 	return translateSentences
 }
 
-export async function buildRemotionRenderData({
-	key,
-	fps,
-}: { key: string; fps: number }) {
-	const { infoFile, audioFile, transcriptsFile, sentencesFile } =
-		getShortTextOut(key)
+export async function buildRemotionRenderData({ key, fps }: { key: string; fps: number }) {
+	const { infoFile, audioFile, transcriptsFile, sentencesFile } = getShortTextOut(key)
 	const shortTextStr = await fsp.readFile(infoFile, 'utf-8')
 	const shortText = JSON.parse(shortTextStr) as ShortText
 
@@ -127,6 +121,10 @@ export async function buildRemotionRenderData({
 	const translateZhDuration = fps * 5
 	const totalDurationInFrames = audioDuration + translateZhDuration
 
+	const shortTextBgFile = SHORT_TEXT_PUBLIC_BG_FILE
+	const shortTextCoverFile = SHORT_TEXT_PUBLIC_COVER_FILE
+	const playAudioFile = SHORT_TEXT_AUDIO_FILE
+
 	return {
 		totalDurationInFrames,
 		wordTranscripts,
@@ -135,5 +133,8 @@ export async function buildRemotionRenderData({
 		audioFile,
 		audioDuration,
 		sentenceTranscript,
+		shortTextBgFile,
+		shortTextCoverFile,
+		playAudioFile,
 	}
 }

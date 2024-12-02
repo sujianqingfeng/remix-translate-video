@@ -7,23 +7,28 @@ import Cover from './Cover'
 export function ShortTexts({
 	wordTranscripts,
 	littleDifficultWords,
-	playAudioName,
+	playAudioFile,
 	title,
 	titleZh,
 	audioDuration,
-	shortTextZh,
 	sentenceTranscript,
 	direction,
+	shortTextBgFile,
+	shortTextCoverFile,
+	isRemoteRender = false,
 }: {
 	wordTranscripts: WordTranscript[]
 	sentenceTranscript: SentenceTranscript[]
 	littleDifficultWords: string[]
-	playAudioName: string
+	playAudioFile: string
+	shortTextBgFile: string
+	shortTextCoverFile: string
 	title: string
 	titleZh: string
 	audioDuration: number
 	shortTextZh: string
 	direction: number
+	isRemoteRender?: boolean
 }) {
 	const frame = useCurrentFrame()
 	const { fps } = useVideoConfig()
@@ -46,16 +51,18 @@ export function ShortTexts({
 
 	const { fontFamily } = loadFont()
 
+	const coverFileName = isRemoteRender ? shortTextCoverFile : staticFile(shortTextCoverFile)
+
 	return (
 		<AbsoluteFill>
 			<AbsoluteFill>
-				<Img className="h-full w-full object-cover" src={staticFile('audio.png')} />
-				<Audio src={staticFile(playAudioName)} />
+				<Img className="h-full w-full object-cover" src={isRemoteRender ? shortTextBgFile : staticFile(shortTextBgFile)} />
+				<Audio src={isRemoteRender ? playAudioFile : staticFile(playAudioFile)} />
 			</AbsoluteFill>
 			<AbsoluteFill>
 				<Sequence from={0} durationInFrames={audioDuration}>
 					<div className={`flex w-full h-full ${direction ? 'flex-row' : 'flex-col'}`}>
-						<Cover direction={direction} coverFileName="short-text-cover.png" />
+						<Cover direction={direction} coverFileName={coverFileName} />
 
 						<div className="flex-1 flex flex-col items-center px-[6rem]">
 							<div className="flex-1 flex flex-col items-center pt-[5rem]" style={{ fontFamily }}>
@@ -95,7 +102,7 @@ export function ShortTexts({
 			<AbsoluteFill>
 				<Sequence from={audioDuration}>
 					<div className={`flex ${direction ? 'flex-row' : 'flex-col'} gap-4 leading-2`}>
-						<Cover direction={direction} coverFileName="short-text-cover.png" />
+						<Cover direction={direction} coverFileName={coverFileName} />
 
 						<div className="flex-1 p-[6rem] flex flex-col justify-start items-center">
 							<div className="font-bold text-6xl">{titleZh}</div>

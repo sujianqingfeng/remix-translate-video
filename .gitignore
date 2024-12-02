@@ -6,8 +6,7 @@ node_modules
 
 out
 .DS_Store
-original.mp4
-original.webm
-audio.mp3
-audio.webm
-short-text.webm
+
+public
+!public/short-text-cover.png
+!public/short-text-bg.png
