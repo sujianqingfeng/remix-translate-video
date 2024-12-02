@@ -6,7 +6,6 @@ import { bundle } from '@remotion/bundler'
 import { renderMedia, selectComposition } from '@remotion/renderer'
 import invariant from 'tiny-invariant'
 import { webpackOverride } from '~/remotion/webpack-override'
-import { client } from '~/utils/ali/oss'
 import { bundleOnProgress, throttleRenderOnProgress } from '~/utils/remotion'
 import { buildRemotionRenderData } from '~/utils/short-text'
 
@@ -76,7 +75,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 	for (const file of files) {
 		const filePath = path.join(bundled, file)
 		const prefixFile = path.join(key, file)
-		await client.put(prefixFile, filePath)
+		// await client.put(prefixFile, filePath)
 	}
 
 	const renderInfo = {
@@ -94,7 +93,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 	const renderInfoStream = new Readable()
 	renderInfoStream.push(JSON.stringify(renderInfo))
 	renderInfoStream.push(null)
-	await client.putStream(`${key}/short-text-render.json`, renderInfoStream)
+	// await client.putStream(`${key}/short-text-render.json`, renderInfoStream)
 
 	// const composition = await selectComposition({
 	// 	serveUrl: `${process.env.OSS_BUCKET_URL}/${key}/index.html`,
