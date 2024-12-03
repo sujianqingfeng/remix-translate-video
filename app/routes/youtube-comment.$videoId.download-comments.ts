@@ -35,6 +35,12 @@ export async function action({ params }: ActionFunctionArgs) {
 	if (youtubeComments.has_continuation) {
 		const continuation = await youtubeComments.getContinuation()
 		comments = comments.concat(continuation.contents.map(mapComment))
+
+		// await new Promise((resolve) => setTimeout(resolve, 1000))
+		// if (continuation.has_continuation) {
+		// 	const nextContinuation = await continuation.getContinuation()
+		// 	comments = comments.concat(nextContinuation.contents.map(mapComment))
+		// }
 	}
 
 	await fsp.writeFile(commentFile, JSON.stringify(comments, null, 2))
