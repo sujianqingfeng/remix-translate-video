@@ -1,13 +1,16 @@
+import { createWriteStream } from 'node:fs'
 import fsp from 'node:fs/promises'
 import path from 'node:path'
 import { Readable } from 'node:stream'
 import type { ActionFunctionArgs } from '@remix-run/node'
 import { bundle } from '@remotion/bundler'
 import { renderMedia, selectComposition } from '@remotion/renderer'
+import archiver from 'archiver'
 import invariant from 'tiny-invariant'
+import { fetch } from 'undici'
 import { webpackOverride } from '~/remotion/webpack-override'
 import { bundleOnProgress, throttleRenderOnProgress } from '~/utils/remotion'
-import { buildRemotionRenderData } from '~/utils/short-text'
+import { buildRemotionRenderData, getShortTextOut } from '~/utils/short-text'
 
 const entryPoint = path.join(process.cwd(), 'app', 'remotion', 'short-texts', 'index.ts')
 
@@ -33,12 +36,34 @@ async function shortTextBundleFiles({ bundledPath, coverFile, audioFile, bgFile 
 	return result
 }
 
+async function createZipArchive(bundleDir: string, renderInfoFile: string, outputZipPath: string): Promise<void> {
+	return new Promise((resolve, reject) => {
+		const output = createWriteStream(outputZipPath)
+		const archive = archiver('zip', {
+			zlib: { level: 9 }, // Sets the compression level
+		})
+
+		output.on('close', () => resolve())
+		archive.on('error', (err) => reject(err))
+
+		archive.pipe(output)
+
+		// Add the bundle directory
+		archive.directory(bundleDir, 'bundle')
+
+		// Add the render info file
+		archive.file(renderInfoFile, { name: 'render-info.json' })
+
+		archive.finalize()
+	})
+}
+
 export async function action({ request, params }: ActionFunctionArgs) {
 	const { key } = params
 	invariant(key, 'key is required')
 
-	const formData = await request.formData()
-	const fps = formData.get('fps')
+	const requestFormData = await request.formData()
+	const fps = requestFormData.get('fps')
 
 	invariant(fps, 'fps is required')
 
@@ -70,16 +95,19 @@ export async function action({ request, params }: ActionFunctionArgs) {
 		publicPath: './',
 	})
 
+	const { bundleDir, renderInfoFile } = getShortTextOut(key)
+
 	const files = await shortTextBundleFiles({ bundledPath: bundled, coverFile: shortTextCoverFile, audioFile: playAudioFile, bgFile: shortTextBgFile })
 
 	for (const file of files) {
 		const filePath = path.join(bundled, file)
-		const prefixFile = path.join(key, file)
-		// await client.put(prefixFile, filePath)
+		const targetDir = path.join(bundleDir, path.dirname(file))
+		await fsp.mkdir(targetDir, { recursive: true })
+		await fsp.copyFile(filePath, path.join(bundleDir, file))
 	}
 
 	const renderInfo = {
-		serveUrl: `${process.env.OSS_BUCKET_URL}/${key}/index.html`,
+		serveUrl: 'bundle/index.html',
 		inputProps,
 		composition: {
 			durationInFrames: totalDurationInFrames,
@@ -93,30 +121,27 @@ export async function action({ request, params }: ActionFunctionArgs) {
 	const renderInfoStream = new Readable()
 	renderInfoStream.push(JSON.stringify(renderInfo))
 	renderInfoStream.push(null)
-	// await client.putStream(`${key}/short-text-render.json`, renderInfoStream)
 
-	// const composition = await selectComposition({
-	// 	serveUrl: `${process.env.OSS_BUCKET_URL}/${key}/index.html`,
-	// 	id: 'ShortTexts',
-	// 	inputProps,
-	// })
+	await fsp.writeFile(renderInfoFile, renderInfoStream)
 
-	// const width = shortText.direction ? 1920 : 1080
-	// const height = shortText.direction ? 1080 : 1920
+	// Add zip creation logic here
+	const zipPath = path.join(path.dirname(renderInfoFile), 'render.zip')
+	await createZipArchive(bundleDir, renderInfoFile, zipPath)
 
-	// composition.durationInFrames = totalDurationInFrames
-	// composition.fps = +fps
-	// composition.width = width
-	// composition.height = height
+	// Read the zip file
+	// const zipFile = await fsp.readFile(zipPath)
 
-	// await renderMedia({
-	// 	codec: 'h264',
-	// 	composition,
-	// 	serveUrl: bundled,
-	// 	inputProps,
-	// 	outputLocation: `out/${key}/output.mp4`,
-	// 	onProgress: throttleRenderOnProgress,
-	// })
+	// Create FormData and append the zip file
+	// const uploadFormData = new FormData()
+	// uploadFormData.append('file', new Blob([zipFile], { type: 'application/zip' }), 'render.zip')
+
+	// Send the request with form-data
+	// const data = await fetch('http://localhost:3000/api/upload', {
+	// 	method: 'POST',
+	// 	// @ts-ignore - FormData type mismatch between node and browser
+	// 	body: uploadFormData,
+	// }).then((res) => res.json())
+	// console.log('🚀 ~ action ~ data:', data)
 
 	return { success: true }
 }

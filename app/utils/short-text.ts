@@ -1,7 +1,9 @@
 import fsp from 'node:fs/promises'
 import path from 'node:path'
 import {
+	BUNDLE_DIR,
 	OUT_DIR,
+	RENDER_INFO_FILE,
 	SHORT_TEXT_AUDIO_FILE,
 	SHORT_TEXT_AUDIO_TRANSCRIPTS_FILE,
 	SHORT_TEXT_COVER_FILE,
@@ -33,6 +35,12 @@ export function getShortTextOut(key: string) {
 		},
 		get coverFile() {
 			return path.join(outDir, SHORT_TEXT_COVER_FILE)
+		},
+		get bundleDir() {
+			return path.join(outDir, BUNDLE_DIR)
+		},
+		get renderInfoFile() {
+			return path.join(outDir, RENDER_INFO_FILE)
 		},
 	}
 }

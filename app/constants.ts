@@ -2,6 +2,9 @@ import path from 'node:path'
 
 export const PUBLIC_DIR = path.join(process.cwd(), 'public')
 
+export const BUNDLE_DIR = 'bundle'
+export const RENDER_INFO_FILE = 'render-info.json'
+
 export const OUT_DIR = 'out'
 export const YOUTUBE_COMMENTS_FILE = 'comments.json'
 export const YOUTUBE_INFO_FILE = 'info.json'
