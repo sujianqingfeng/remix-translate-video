@@ -24,6 +24,7 @@ export function CommentsList({ comments }: CommentsListProps) {
 						</fetcher.Form>
 					</div>
 					<p className="text-md">{comment.content}</p>
+					<p className="text-md">{comment.translatedContent}</p>
 					<p className="text-md">{comment.convertedContent}</p>
 				</div>
 			))}

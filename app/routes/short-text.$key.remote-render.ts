@@ -129,19 +129,41 @@ export async function action({ request, params }: ActionFunctionArgs) {
 	await createZipArchive(bundleDir, renderInfoFile, zipPath)
 
 	// Read the zip file
-	// const zipFile = await fsp.readFile(zipPath)
+	const zipFile = await fsp.readFile(zipPath)
 
 	// Create FormData and append the zip file
-	// const uploadFormData = new FormData()
-	// uploadFormData.append('file', new Blob([zipFile], { type: 'application/zip' }), 'render.zip')
+	const uploadFormData = new FormData()
+	uploadFormData.append('file', new Blob([zipFile], { type: 'application/zip' }), 'render.zip')
+
+	const headers = {
+		Authorization: `${process.env.UPLOAD_API_KEY}`,
+	}
 
 	// Send the request with form-data
-	// const data = await fetch('http://localhost:3000/api/upload', {
-	// 	method: 'POST',
-	// 	// @ts-ignore - FormData type mismatch between node and browser
-	// 	body: uploadFormData,
-	// }).then((res) => res.json())
-	// console.log('🚀 ~ action ~ data:', data)
+	const data: any = await fetch('http://localhost:3000/api/upload', {
+		method: 'POST',
+		headers,
+		// @ts-ignore - FormData type mismatch between node and browser
+		body: uploadFormData,
+	}).then((res) => res.json())
+
+	const id = data.id as string
+
+	if (!id) {
+		return { success: false, error: 'Upload failed' }
+	}
+
+	const renderData: any = await fetch('http://localhost:3000/api/remotion/render', {
+		method: 'POST',
+		headers: {
+			...headers,
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify({
+			id,
+			fileName: 'render.zip',
+		}),
+	}).then((res) => res.json())
 
 	return { success: true }
 }
