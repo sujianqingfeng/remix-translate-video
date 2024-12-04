@@ -4,6 +4,7 @@ export type YoutubeComment = {
 	content: string
 	author: string
 	translatedContent?: string
+	convertedContent?: string
 	likes: string
 	authorThumbnail: string
 	publishedTime?: string
@@ -12,6 +13,7 @@ export type YoutubeComment = {
 export type RemotionVideoComment = {
 	author: string
 	content: string
+	convertedContent?: string
 	translatedContent?: string
 	likes: string
 	authorThumbnail: string

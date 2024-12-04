@@ -81,7 +81,7 @@ export default function TranslateComment({
 									fontSize: `${fontSize}px`,
 								}}
 							>
-								{currentComment?.translatedContent}
+								{currentComment?.convertedContent}
 							</p>
 						</div>
 					</div>

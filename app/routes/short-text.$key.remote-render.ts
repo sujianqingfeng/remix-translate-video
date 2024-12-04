@@ -83,9 +83,9 @@ export async function action({ request, params }: ActionFunctionArgs) {
 		sentenceTranscript,
 		direction: shortText.direction,
 		isRemoteRender: true,
-		shortTextBgFile: `/public/${shortTextBgFile}`,
-		shortTextCoverFile: `/public/${shortTextCoverFile}`,
-		playAudioFile: `/public/${playAudioFile}`,
+		shortTextBgFile: `${shortTextBgFile}`,
+		shortTextCoverFile: `${shortTextCoverFile}`,
+		playAudioFile: `${playAudioFile}`,
 	}
 
 	const bundled = await bundle({

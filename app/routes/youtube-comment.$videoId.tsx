@@ -92,6 +92,7 @@ export default function VideoCommentPage() {
 	const downloadFetcher = useFetcher()
 	const downloadCommentsFetcher = useFetcher()
 	const modeFetcher = useFetcher()
+	const convertFetcher = useFetcher()
 
 	const desc = `原链接：${info.youtubeUrl}\n视频仅供娱乐，请勿过度解读`
 
@@ -174,6 +175,10 @@ export default function VideoCommentPage() {
 								<LoadingButtonWithState state={downloadFetcher.state} idleText="Download" />
 							</downloadFetcher.Form>
 						)}
+
+						<convertFetcher.Form method="post" action="convert">
+							<LoadingButtonWithState state={convertFetcher.state} idleText="Convert" />
+						</convertFetcher.Form>
 
 						<renderFetcher.Form method="post" action="render">
 							<input type="hidden" name="playVideoFileName" value={playVideoFileName} />
