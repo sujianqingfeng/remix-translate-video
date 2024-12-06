@@ -37,7 +37,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 	if (maybePlayVideoFile) {
 		const { destPath } = publicPlayVideoFile(maybePlayVideoFile)
 		const end = commentsEndFrame / fps
-		const command = `ffmpeg -y -ss 0 -i ${maybePlayVideoFile} -t ${end} -threads 3 -preset medium -crf 40 ${destPath} -progress pipe:1`
+		const command = `ffmpeg -y -ss 0 -i ${maybePlayVideoFile} -t ${end} -threads 3 -preset medium -crf 40 -vf scale=-1:720 ${destPath} -progress pipe:1`
 		console.log('processing video...')
 		await execCommand(command)
 		console.log('video processed')

@@ -1,4 +1,4 @@
-import { type ActionFunctionArgs, json } from '@remix-run/node'
+import type { ActionFunctionArgs } from '@remix-run/node'
 import invariant from 'tiny-invariant'
 import { execCommand } from '~/utils/exec'
 import { getYoutubeCommentOut } from '~/utils/translate-comment'
@@ -11,9 +11,7 @@ export async function action({ params }: ActionFunctionArgs) {
 	const { outDir } = getYoutubeCommentOut(videoId)
 	const youtubeUrl = generateYoutubeUrlByVideoId(videoId)
 
-	await execCommand(
-		`cd ${outDir} && yt-dlp ${youtubeUrl} -f "bv*[height<=720][ext=webm]+ba[ext=webm]/b[ext=webm] / bv*+ba/b" -o "original.%(ext)s"`,
-	)
+	await execCommand(`cd ${outDir} && yt-dlp ${youtubeUrl} -f "bv*[height<=720][ext=webm]+ba[ext=webm]/b[ext=webm] / bv*+ba/b" -o "original.%(ext)s"`)
 
-	return json({ success: true })
+	return { success: true }
 }

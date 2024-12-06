@@ -16,6 +16,7 @@ export function ShortTexts({
 	shortTextBgFile,
 	shortTextCoverFile,
 	isRemoteRender = false,
+	shortTextZh,
 }: {
 	wordTranscripts: WordTranscript[]
 	sentenceTranscript: SentenceTranscript[]
@@ -45,8 +46,12 @@ export function ShortTexts({
 		return littleDifficultWords.some((word) => cleanText === word.toLowerCase())
 	}
 
-	const currentSentence = sentenceTranscript.find((item) => {
-		return currentTime >= item.start && currentTime < item.end
+	const currentSentence = sentenceTranscript.find((item, index) => {
+		const isCurrentSentence = currentTime >= item.start && currentTime < item.end
+		if (isCurrentSentence) {
+			item.partZh = shortTextZh.split('。')[index]
+		}
+		return isCurrentSentence
 	})
 
 	const { fontFamily } = loadFont()
@@ -106,7 +111,7 @@ export function ShortTexts({
 
 						<div className="flex-1 p-[6rem] flex flex-col justify-start items-center">
 							<div className="font-bold text-6xl">{titleZh}</div>
-							<div className="text-[40px] leading-[1.8] mt-10"> {sentenceTranscript.map((item) => item.partZh).join('')}</div>
+							<div className="text-[40px] leading-[1.8] mt-10"> {shortTextZh}</div>
 						</div>
 					</div>
 				</Sequence>
