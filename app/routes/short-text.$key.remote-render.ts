@@ -1,15 +1,10 @@
-import { createWriteStream } from 'node:fs'
 import fsp from 'node:fs/promises'
 import path from 'node:path'
-import { Readable } from 'node:stream'
 import type { ActionFunctionArgs } from '@remix-run/node'
 import { bundle } from '@remotion/bundler'
-import { renderMedia, selectComposition } from '@remotion/renderer'
-import archiver from 'archiver'
 import invariant from 'tiny-invariant'
-import { fetch } from 'undici'
 import { webpackOverride } from '~/remotion/webpack-override'
-import { bundleOnProgress, throttleRenderOnProgress } from '~/utils/remotion'
+import { bundleOnProgress, createRenderZipFile, uploadRenderZipFile } from '~/utils/remotion'
 import { buildRemotionRenderData, getShortTextOut } from '~/utils/short-text'
 
 const entryPoint = path.join(process.cwd(), 'app', 'remotion', 'short-texts', 'index.ts')
@@ -34,28 +29,6 @@ async function shortTextBundleFiles({ bundledPath, coverFile, audioFile, bgFile 
 	}
 
 	return result
-}
-
-async function createZipArchive(bundleDir: string, renderInfoFile: string, outputZipPath: string): Promise<void> {
-	return new Promise((resolve, reject) => {
-		const output = createWriteStream(outputZipPath)
-		const archive = archiver('zip', {
-			zlib: { level: 9 }, // Sets the compression level
-		})
-
-		output.on('close', () => resolve())
-		archive.on('error', (err) => reject(err))
-
-		archive.pipe(output)
-
-		// Add the bundle directory
-		archive.directory(bundleDir, 'bundle')
-
-		// Add the render info file
-		archive.file(renderInfoFile, { name: 'render-info.json' })
-
-		archive.finalize()
-	})
 }
 
 export async function action({ request, params }: ActionFunctionArgs) {
@@ -118,52 +91,8 @@ export async function action({ request, params }: ActionFunctionArgs) {
 		compositionId: 'ShortTexts',
 	}
 
-	const renderInfoStream = new Readable()
-	renderInfoStream.push(JSON.stringify(renderInfo))
-	renderInfoStream.push(null)
-
-	await fsp.writeFile(renderInfoFile, renderInfoStream)
-
-	// Add zip creation logic here
-	const zipPath = path.join(path.dirname(renderInfoFile), 'render.zip')
-	await createZipArchive(bundleDir, renderInfoFile, zipPath)
-
-	// Read the zip file
-	const zipFile = await fsp.readFile(zipPath)
-
-	// Create FormData and append the zip file
-	const uploadFormData = new FormData()
-	uploadFormData.append('file', new Blob([zipFile], { type: 'application/zip' }), 'render.zip')
-
-	const headers = {
-		Authorization: `${process.env.UPLOAD_API_KEY}`,
-	}
-
-	// Send the request with form-data
-	const data: any = await fetch('http://localhost:3000/api/upload', {
-		method: 'POST',
-		headers,
-		// @ts-ignore - FormData type mismatch between node and browser
-		body: uploadFormData,
-	}).then((res) => res.json())
-
-	const id = data.id as string
-
-	if (!id) {
-		return { success: false, error: 'Upload failed' }
-	}
-
-	const renderData: any = await fetch('http://localhost:3000/api/remotion/render', {
-		method: 'POST',
-		headers: {
-			...headers,
-			'Content-Type': 'application/json',
-		},
-		body: JSON.stringify({
-			id,
-			fileName: 'render.zip',
-		}),
-	}).then((res) => res.json())
+	const zipPath = await createRenderZipFile(renderInfo, bundleDir, renderInfoFile)
+	const uploadZipPath = await uploadRenderZipFile(zipPath)
 
 	return { success: true }
 }
