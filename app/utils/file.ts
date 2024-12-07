@@ -10,34 +10,6 @@ export async function fileExist(path: string) {
 	)
 }
 
-export async function createFileCache<T extends string | Record<string, unknown> | Record<string, unknown>[] = string>({
-	path,
-	generator,
-	isJsonTransform = false,
-}: {
-	path: string
-	generator: () => Promise<T>
-	isJsonTransform?: boolean
-}): Promise<T> {
-	const fileExists = await fileExist(path)
-
-	if (fileExists) {
-		const str = await fsp.readFile(path, 'utf-8')
-		return isJsonTransform ? JSON.parse(str) : str
-	}
-
-	const str = await generator()
-	const strToWrite = isJsonTransform ? JSON.stringify(str, null, 2) : str
-
-	if (typeof strToWrite !== 'string') {
-		throw new Error('strToWrite is not a string')
-	}
-
-	await fsp.writeFile(path, strToWrite)
-
-	return str
-}
-
 export async function createRemotionZipArchive(bundleDir: string, renderInfoFile: string, outputZipPath: string): Promise<void> {
 	return new Promise((resolve, reject) => {
 		const output = createWriteStream(outputZipPath)
@@ -58,4 +30,17 @@ export async function createRemotionZipArchive(bundleDir: string, renderInfoFile
 
 		archive.finalize()
 	})
+}
+
+export async function updateFileJson<T>(path: string, update: Partial<T>) {
+	const json = await fsp.readFile(path, 'utf-8')
+	const data = JSON.parse(json) as T
+	const newData = { ...data, ...update }
+	const str = JSON.stringify(newData, null, 2)
+	await fsp.writeFile(path, str)
+}
+
+export async function readFileJson<T>(path: string): Promise<T> {
+	const json = await fsp.readFile(path, 'utf-8')
+	return JSON.parse(json) as T
 }

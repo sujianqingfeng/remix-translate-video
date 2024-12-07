@@ -1,11 +1,11 @@
-import { Form, json, useFetcher, useLoaderData } from '@remix-run/react'
+import { Form, useFetcher, useLoaderData } from '@remix-run/react'
 import { X } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import LoadingButtonWithState from '~/components/LoadingButtonWithState'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { Textarea } from '~/components/ui/textarea'
-import type { GenerateShortTextActionData, ShortText } from '~/types'
+import type { GenerateShortTextActionData } from '~/types'
 import { generateUniqueKey } from '~/utils'
 
 function ShortTextInfo({
@@ -13,8 +13,8 @@ function ShortTextInfo({
 	setShortText,
 	uniqueKey,
 }: {
-	shortText: ShortText
-	setShortText: (shortText: ShortText) => void
+	shortText: GenerateShortTextActionData['shortText']
+	setShortText: (shortText: GenerateShortTextActionData['shortText']) => void
 	uniqueKey: string
 }) {
 	const [bulkWords, setBulkWords] = useState('')
@@ -136,22 +136,21 @@ function ShortTextInfo({
 export const loader = async () => {
 	const key = generateUniqueKey('st-')
 
-	return json({
+	return {
 		key,
-	})
+	}
 }
 
 export default function ShortTextIndexPage() {
 	const { key } = useLoaderData<typeof loader>()
 
 	const fetcher = useFetcher<GenerateShortTextActionData>()
-	const [currentShortText, setCurrentShortText] = useState<ShortText>({
+	const [currentShortText, setCurrentShortText] = useState<GenerateShortTextActionData['shortText']>({
 		title: '',
 		titleZh: '',
 		shortText: '',
 		shortTextZh: '',
 		words: [],
-		direction: 0,
 	})
 
 	useEffect(() => {

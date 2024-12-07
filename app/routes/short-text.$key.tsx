@@ -1,15 +1,17 @@
 import fsp from 'node:fs/promises'
 import path from 'node:path'
 import type { LoaderFunctionArgs } from '@remix-run/node'
-import { useFetcher, useLoaderData } from '@remix-run/react'
+import { Form, Link, useFetcher, useLoaderData } from '@remix-run/react'
 import { Player } from '@remotion/player'
 import { Copy } from 'lucide-react'
 import invariant from 'tiny-invariant'
 import BackPrevious from '~/components/BackPrevious'
 import LoadingButtonWithState from '~/components/LoadingButtonWithState'
+import { Button } from '~/components/ui/button'
 import { PUBLIC_DIR, SHORT_TEXT_AUDIO_FILE } from '~/constants'
 import { toast } from '~/hooks/use-toast'
 import { ShortTexts } from '~/remotion/short-texts/ShortTexts'
+import { getRenderInfo } from '~/utils/remotion'
 import { buildRemotionRenderData } from '~/utils/short-text'
 
 async function copyAudioToPublic(audioFile: string) {
@@ -32,6 +34,12 @@ export async function loader({ params }: LoaderFunctionArgs) {
 		await copyAudioToPublic(audioFile)
 	}
 
+	let renderProgress = ''
+	if (shortText.renderId) {
+		const { progress } = await getRenderInfo(shortText.renderId)
+		renderProgress = progress
+	}
+
 	return {
 		shortText,
 		key: params.key,
@@ -44,12 +52,25 @@ export async function loader({ params }: LoaderFunctionArgs) {
 		shortTextBgFile,
 		shortTextCoverFile,
 		playAudioFile,
+		renderProgress,
 	}
 }
 
 export default function ShortTextPage() {
-	const { shortText, key, audioExist, wordTranscripts, totalDurationInFrames, fps, audioDuration, sentenceTranscript, shortTextBgFile, shortTextCoverFile, playAudioFile } =
-		useLoaderData<typeof loader>()
+	const {
+		shortText,
+		key,
+		audioExist,
+		wordTranscripts,
+		totalDurationInFrames,
+		fps,
+		audioDuration,
+		sentenceTranscript,
+		shortTextBgFile,
+		shortTextCoverFile,
+		playAudioFile,
+		renderProgress,
+	} = useLoaderData<typeof loader>()
 
 	const generateAudioFetcher = useFetcher()
 	const renderFetcher = useFetcher()
@@ -119,6 +140,8 @@ export default function ShortTextPage() {
 							{words}
 							<Copy className="cursor-pointer" onClick={() => onCopy(words)} />
 						</p>
+
+						{renderProgress && <p className="flex items-center gap-2 text-red-400">Remote render progress: {renderProgress}</p>}
 					</div>
 
 					<div className="mt-4 flex gap-2">
@@ -133,7 +156,6 @@ export default function ShortTextPage() {
 						</generateImageFetcher.Form>
 
 						<toggleDirectionFetcher.Form action="toggle-direction" method="post">
-							<input name="direction" value={shortText.direction ?? 0} hidden readOnly />
 							<LoadingButtonWithState state={toggleDirectionFetcher.state} idleText="Toggle direction" />
 						</toggleDirectionFetcher.Form>
 					</div>
@@ -147,6 +169,10 @@ export default function ShortTextPage() {
 							<input name="fps" value={fps} hidden readOnly />
 							<LoadingButtonWithState state={remoteRenderFetcher.state} idleText="Remote render" />
 						</remoteRenderFetcher.Form>
+
+						<Link className="underline" to={`/short-text/${key}/download-remote`} target="_blank" rel="noopener noreferrer">
+							<Button>Download Remote Video</Button>
+						</Link>
 					</div>
 				</div>
 			</div>

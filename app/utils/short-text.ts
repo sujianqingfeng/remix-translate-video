@@ -144,5 +144,6 @@ export async function buildRemotionRenderData({ key, fps }: { key: string; fps: 
 		shortTextBgFile,
 		shortTextCoverFile,
 		playAudioFile,
+		infoFile,
 	}
 }

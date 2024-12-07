@@ -1,6 +1,7 @@
 import fsp from 'node:fs/promises'
 import { type ActionFunctionArgs, redirect } from '@remix-run/node'
 import invariant from 'tiny-invariant'
+import type { ShortText } from '~/types'
 import { getShortTextOut } from '~/utils/short-text'
 
 export async function action({ request }: ActionFunctionArgs) {
@@ -15,7 +16,9 @@ export async function action({ request }: ActionFunctionArgs) {
 
 	await fsp.mkdir(outDir, { recursive: true })
 
-	await fsp.writeFile(infoFile, shortTextStr, 'utf-8')
+	const shortText = JSON.parse(shortTextStr) as ShortText
+	shortText.direction = 0
 
+	await fsp.writeFile(infoFile, JSON.stringify(shortText, null, 2), 'utf-8')
 	return redirect(`/short-text/${key}`)
 }

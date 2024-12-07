@@ -4,6 +4,7 @@ import type { ActionFunctionArgs } from '@remix-run/node'
 import { bundle } from '@remotion/bundler'
 import invariant from 'tiny-invariant'
 import { webpackOverride } from '~/remotion/webpack-override'
+import { updateFileJson } from '~/utils/file'
 import { bundleOnProgress, createRenderZipFile, uploadRenderZipFile } from '~/utils/remotion'
 import { buildRemotionRenderData, getShortTextOut } from '~/utils/short-text'
 
@@ -40,7 +41,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
 	invariant(fps, 'fps is required')
 
-	const { totalDurationInFrames, wordTranscripts, shortText, audioDuration, sentenceTranscript, shortTextBgFile, shortTextCoverFile, playAudioFile } =
+	const { totalDurationInFrames, wordTranscripts, shortText, audioDuration, sentenceTranscript, shortTextBgFile, shortTextCoverFile, playAudioFile, infoFile } =
 		await buildRemotionRenderData({
 			key,
 			fps: +fps,
@@ -92,7 +93,9 @@ export async function action({ request, params }: ActionFunctionArgs) {
 	}
 
 	const zipPath = await createRenderZipFile(renderInfo, bundleDir, renderInfoFile)
-	const uploadZipPath = await uploadRenderZipFile(zipPath)
+	const { id } = await uploadRenderZipFile(zipPath)
+
+	await updateFileJson(infoFile, { renderId: id })
 
 	return { success: true }
 }

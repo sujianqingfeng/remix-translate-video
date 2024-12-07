@@ -11,8 +11,8 @@ export async function action({ params }: ActionFunctionArgs) {
 	const { outDir } = getTranslateVideoOut(id)
 	const youtubeUrl = generateYoutubeUrlByVideoId(id)
 
-	// 下载视频
-	await execCommand(`cd ${outDir} && yt-dlp ${youtubeUrl} --output "original.%(ext)s"`)
+	// 下载视频，限制最高分辨率为1080p
+	await execCommand(`cd ${outDir} && yt-dlp ${youtubeUrl} -f "bv*[height<=1080]+ba" --output "original.%(ext)s"`)
 
 	// 单独下载音频，格式为 wav，采样率 16kHz
 	await execCommand(`cd ${outDir} && yt-dlp -f "ba" --extract-audio --audio-format wav --postprocessor-args "ffmpeg:-ar 16000" ${youtubeUrl} --output "audio.%(ext)s"`)

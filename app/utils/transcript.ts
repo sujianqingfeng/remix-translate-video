@@ -6,7 +6,7 @@ type SentenceSegmentationOptions = {
 }
 
 // 先组装成长句
-function assembleLongSentences(words: SentenceWord[]) {
+export function assembleLongSentences(words: SentenceWord[]) {
 	const sentences: SentenceWord[][] = []
 	let currentSentence: typeof words = []
 	const sentenceEndMarks = /[.!?。！？]/
@@ -25,11 +25,36 @@ function assembleLongSentences(words: SentenceWord[]) {
 }
 
 // 处理科学计数法中的逗号
-function processScientificNotation(sentence: SentenceWord[]) {
-	return sentence.map((w) => ({
-		...w,
-		word: w.word.replace(/(\d+),(\d{3})/g, '$1$2'),
-	}))
+export function processScientificNotation(sentence: SentenceWord[]) {
+	// 1. 过滤掉空的 word
+	const filteredSentence = sentence.filter((w) => w.word.trim() !== '')
+
+	// 2. 处理科学计数法中的逗号
+	// 检查前后是否为数字的逗号，如果是则将其与后面的数字合并
+	const result: SentenceWord[] = []
+
+	for (let i = 0; i < filteredSentence.length; i++) {
+		const current = filteredSentence[i]
+		const next = filteredSentence[i + 1]
+		const prev = filteredSentence[i - 1]
+
+		// 如果当前是逗号，且前后都是数字，跳过这个逗号
+		if (current.word === ',' && prev?.word?.match(/\d+/) && next?.word?.match(/\d+/)) {
+			continue
+		}
+
+		// 如果当前是数字，且前一个是被跳过的逗号，将当前数字与前一个数字合并
+		if (current.word.match(/\d+/) && prev?.word?.match(/\d+/) && filteredSentence[i - 1]?.word?.match(/\d+/)) {
+			const lastResult = result[result.length - 1]
+			lastResult.word = lastResult.word + current.word
+			lastResult.end = current.end
+			continue
+		}
+
+		result.push(current)
+	}
+
+	return result
 }
 
 // 创建句子对象
@@ -115,31 +140,31 @@ export function processSentenceSegmentation({ words, maxSentenceLength = 60 }: S
 	// 1. 组装长句
 	const longSentences = assembleLongSentences(words)
 
-	// 2. 合并包含特殊缩写的句子
-	const mergedSentences = mergeSentencesWithAbbreviations(longSentences)
+	// 2. 处理科学计数法
+	const processedLongSentences = longSentences.map(processScientificNotation)
 
-	// 3. 处理每个长句
+	// 3. 合并包含特殊缩写的句子
+	const mergedSentences = mergeSentencesWithAbbreviations(processedLongSentences)
+
+	// 4. 处理每个长句
 	const sentences: Sentence[] = []
 	for (const longSentence of mergedSentences) {
-		// 处理科学计数法中的逗号
-		const processedSentence = processScientificNotation(longSentence)
-
-		// 3. 根据句子字符长度决定是否需要切分
-		const sentenceLength = getSentenceLength(processedSentence)
+		// 根据句子字符长度决定是否需要切分
+		const sentenceLength = getSentenceLength(longSentence)
 		if (sentenceLength > maxSentenceLength) {
 			// 检查是否存在子句分隔符
-			const hasSubSentenceMarks = processedSentence.some((w) => /[,，;；]/.test(w.word))
+			const hasSubSentenceMarks = longSentence.some((w) => /[,，;；]/.test(w.word))
 
 			if (hasSubSentenceMarks) {
 				// 存在分隔符时进行切分
-				sentences.push(...splitBySubSentenceMarks(processedSentence))
+				sentences.push(...splitBySubSentenceMarks(longSentence))
 			} else {
 				// 不存在分隔符时保持原句
-				sentences.push(createSentence(processedSentence))
+				sentences.push(createSentence(longSentence))
 			}
 		} else {
 			// 句子长度在允许范围内，直接添加
-			sentences.push(createSentence(processedSentence))
+			sentences.push(createSentence(longSentence))
 		}
 	}
 

@@ -1,7 +1,6 @@
 import { type ActionFunctionArgs, data } from '@remix-run/node'
 import invariant from 'tiny-invariant'
 import type { GenerateShortTextActionData } from '~/types'
-import { generateUniqueKey } from '~/utils'
 import { generateShortText } from '~/utils/ai'
 
 export async function action({ request }: ActionFunctionArgs) {

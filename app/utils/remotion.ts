@@ -61,7 +61,7 @@ export async function uploadRenderZipFile(zipFilePath: string) {
 		throw new Error('Upload failed')
 	}
 
-	const renderData: any = await fetch(`${baseUrl}/api/remotion/render`, {
+	const renderData = await fetch(`${baseUrl}/api/remotion/render`, {
 		method: 'POST',
 		headers: {
 			...headers,
@@ -71,7 +71,30 @@ export async function uploadRenderZipFile(zipFilePath: string) {
 			id,
 			fileName: REMOTION_ZIP_OUTPUT_FILE_NAME,
 		}),
-	}).then((res) => res.json())
+	}).then((res) => res.json() as Promise<{ id: string }>)
 
 	return renderData
+}
+
+export async function getRenderInfo(renderId: string) {
+	const baseUrl = process.env.REMOTE_REMOTION_RENDER_API_URL
+	const headers = {
+		Authorization: `${process.env.REMOTE_REMOTION_API_KEY}`,
+	}
+	const renderData = await fetch(`${baseUrl}/api/remotion/progress/${renderId}`, {
+		headers,
+	}).then((res) => res.json() as Promise<{ progress: string }>)
+	return renderData
+}
+
+export async function downloadRenderOutput(renderId: string) {
+	const baseUrl = process.env.REMOTE_REMOTION_RENDER_API_URL
+	const headers = {
+		Authorization: `${process.env.REMOTE_REMOTION_API_KEY}`,
+	}
+	const buffer = await fetch(`${baseUrl}/api/remotion/render/${renderId}`, {
+		headers,
+	}).then((res) => res.arrayBuffer())
+
+	return buffer
 }

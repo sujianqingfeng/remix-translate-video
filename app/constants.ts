@@ -28,7 +28,7 @@ export const TRANSLATE_VIDEO_ID_PREFIX = 'tv-'
 export const TRANSLATE_VIDEO_INFO_FILE = 'info.json'
 export const TRANSLATE_VIDEO_ORIGINAL_HTML_FILE = 'original.html'
 export const TRANSLATE_VIDEO_TRANSCRIPTS_FILE = 'tv-transcript.json'
-export const TRANSLATE_VIDEO_ASR_RESULT_FILE = 'transcript.json'
+export const TRANSLATE_VIDEO_ASR_RESULT_FILE = 'audio.wav.json'
 
 export const PROXY = 'http://127.0.0.1:7890'
 export const USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36'

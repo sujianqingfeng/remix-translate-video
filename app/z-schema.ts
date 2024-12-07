@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-export const ShortTextSchema = z.object({
+export const GenerateShortTextSchema = z.object({
 	title: z.string(),
 	titleZh: z.string(),
 	shortText: z.string(),
@@ -11,7 +11,6 @@ export const ShortTextSchema = z.object({
 			translation: z.string(),
 		}),
 	),
-	direction: z.number(),
 })
 
-export type ShortText = z.infer<typeof ShortTextSchema>
+export type GenerateShortText = z.infer<typeof GenerateShortTextSchema>

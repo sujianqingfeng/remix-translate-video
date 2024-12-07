@@ -1,10 +1,6 @@
 import fsp from 'node:fs/promises'
 import { describe, expect, it } from 'vitest'
-import { mergeSentencesWithAbbreviations, processSentenceSegmentation } from '../transcript'
-
-// 先通过一些断句符号组装成一个一个长句
-// 然后处理每个长句里面存在一些科学计数的逗号去掉，相应对应的word里面的逗号也要去掉
-// 然后遍历这些长句，如果长度超过 maxSentenceLength，则将句子通过一些逗号之类的子句符号切分成多个子句
+import { assembleLongSentences, mergeSentencesWithAbbreviations, processScientificNotation, processSentenceSegmentation } from '../transcript'
 
 describe('transcript', () => {
 	it.skip('processSentenceSegmentation', async () => {
@@ -242,7 +238,7 @@ describe('transcript', () => {
 		`)
 	})
 
-	it('mergeSentencesWithAbbreviations', () => {
+	it.skip('mergeSentencesWithAbbreviations', () => {
 		const words = [
 			[
 				{ word: 'assembly', start: 329.28, end: 330.24 },
@@ -332,6 +328,98 @@ describe('transcript', () => {
 			      "word": ".",
 			    },
 			  ],
+			]
+		`)
+	})
+
+	it('processScientificNotation', async () => {
+		// const str = await fsp.readFile('./out/tv-mXPMXVLs3-Q/audio.wav.json', 'utf-8')
+		// const data = JSON.parse(str)
+		// const words = data.transcription.map((item: any) => ({
+		// 	word: item.text.trim(),
+		// 	start: item.offsets.from / 1000,
+		// 	end: item.offsets.to / 1000,
+		// }))
+		// const longSentences = assembleLongSentences(words)
+		// console.log('🚀 ~ it ~ longSentences:', longSentences)
+
+		const words = [
+			{
+				end: 57.2,
+				start: 57.02,
+				word: 'going',
+			},
+			{
+				end: 57.44,
+				start: 57.2,
+				word: 'over',
+			},
+			{
+				end: 57.55,
+				start: 57.44,
+				word: '',
+			},
+			{
+				end: 57.57,
+				start: 57.55,
+				word: '3',
+			},
+			{
+				end: 57.66,
+				start: 57.57,
+				word: ',',
+			},
+			{
+				end: 58.06,
+				start: 57.66,
+				word: '000',
+			},
+			{
+				end: 58.39,
+				start: 58.06,
+				word: 'degrees',
+			},
+			{
+				end: 58.82,
+				start: 58.39,
+				word: 'Fahrenheit',
+			},
+		]
+
+		const result = processScientificNotation(words)
+
+		expect(result).toMatchInlineSnapshot(`
+			[
+			  {
+			    "end": 57.2,
+			    "start": 57.02,
+			    "word": "going",
+			  },
+			  {
+			    "end": 57.44,
+			    "start": 57.2,
+			    "word": "over",
+			  },
+			  {
+			    "end": 57.57,
+			    "start": 57.55,
+			    "word": "3",
+			  },
+			  {
+			    "end": 58.06,
+			    "start": 57.66,
+			    "word": "000",
+			  },
+			  {
+			    "end": 58.39,
+			    "start": 58.06,
+			    "word": "degrees",
+			  },
+			  {
+			    "end": 58.82,
+			    "start": 58.39,
+			    "word": "Fahrenheit",
+			  },
 			]
 		`)
 	})

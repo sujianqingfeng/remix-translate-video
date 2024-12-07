@@ -1,4 +1,4 @@
-import type { ShortText } from './z-schema'
+import type { GenerateShortText } from './z-schema'
 
 export type YoutubeComment = {
 	content: string
@@ -72,7 +72,11 @@ export type SentenceTranscript = {
 
 export type GenerateShortTextActionData = {
 	success: boolean
-	shortText: ShortText
+	shortText: GenerateShortText
 }
 
-export type { ShortText }
+export type ShortText = GenerateShortText & {
+	renderId?: string
+	// 0: portrait, 1: landscape
+	direction: 0 | 1
+}
