@@ -1,6 +1,6 @@
 import fsp from 'node:fs/promises'
 import type { LoaderFunctionArgs } from '@remix-run/node'
-import { useFetcher, useLoaderData } from '@remix-run/react'
+import { Link, useFetcher, useLoaderData } from '@remix-run/react'
 import { Player } from '@remotion/player'
 import { Copy, Languages, LoaderCircle } from 'lucide-react'
 import invariant from 'tiny-invariant'
@@ -8,6 +8,7 @@ import { ProxyAgent } from 'undici'
 import BackPrevious from '~/components/BackPrevious'
 import LoadingButtonWithState from '~/components/LoadingButtonWithState'
 import { CommentsList } from '~/components/business/CommentsList'
+import { Button } from '~/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select'
 import { commentModeOptions } from '~/config'
 import { PROXY } from '~/constants'
@@ -16,6 +17,7 @@ import { PortraitTranslateComment, TranslateComment, VerticalTranslateComment } 
 import type { YoutubeInfo } from '~/types'
 import { copyMaybeOriginalVideoToPublic } from '~/utils'
 import { fileExist } from '~/utils/file'
+import { getRenderInfo } from '~/utils/remotion'
 import { buildRemotionRenderData, getYoutubeCommentOut } from '~/utils/translate-comment'
 import { createProxyYoutubeInnertube, generateYoutubeUrlByVideoId } from '~/utils/youtube'
 
@@ -68,6 +70,12 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 		mode: info.mode,
 	})
 
+	let renderProgress = ''
+	if (info.renderId) {
+		const { progress } = await getRenderInfo(info.renderId)
+		renderProgress = progress
+	}
+
 	return {
 		videoId,
 		info,
@@ -80,12 +88,25 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 		playerWidth,
 		compositionHeight,
 		compositionWidth,
+		renderProgress,
 	}
 }
 
 export default function VideoCommentPage() {
-	const { videoId, info, playVideoFileName, fps, totalDurationInFrames, coverDuration, remotionVideoComments, playerHeight, playerWidth, compositionHeight, compositionWidth } =
-		useLoaderData<typeof loader>()
+	const {
+		videoId,
+		info,
+		playVideoFileName,
+		fps,
+		totalDurationInFrames,
+		coverDuration,
+		remotionVideoComments,
+		playerHeight,
+		playerWidth,
+		compositionHeight,
+		compositionWidth,
+		renderProgress,
+	} = useLoaderData<typeof loader>()
 
 	const renderFetcher = useFetcher()
 	const translateFetcher = useFetcher()
@@ -93,6 +114,7 @@ export default function VideoCommentPage() {
 	const downloadCommentsFetcher = useFetcher()
 	const modeFetcher = useFetcher()
 	const convertFetcher = useFetcher()
+	const remoteRenderFetcher = useFetcher()
 
 	const desc = `原链接：${info.youtubeUrl}\n视频仅供娱乐，请勿过度解读`
 
@@ -140,7 +162,6 @@ export default function VideoCommentPage() {
 							comments: remotionVideoComments,
 							title: info.translatedTitle,
 							videoSrc: playVideoFileName,
-							dateTime: info.dateTime ?? '',
 							viewCount: info.viewCount,
 							coverDuration,
 							author: info.author,
@@ -169,6 +190,8 @@ export default function VideoCommentPage() {
 						<Copy size={16} className="cursor-pointer" onClick={() => onCopy(desc)} />
 					</p>
 
+					<div className="text-red-300">Remote remotion render:{renderProgress}</div>
+
 					<div className="flex items-center gap-2">
 						{!playVideoFileName && (
 							<downloadFetcher.Form method="post" action="download">
@@ -184,6 +207,15 @@ export default function VideoCommentPage() {
 							<input type="hidden" name="playVideoFileName" value={playVideoFileName} />
 							<LoadingButtonWithState state={renderFetcher.state} idleText="Render" />
 						</renderFetcher.Form>
+
+						<remoteRenderFetcher.Form method="post" action="remote-render">
+							<input type="hidden" name="playVideoFileName" value={playVideoFileName} />
+							<LoadingButtonWithState state={remoteRenderFetcher.state} idleText="Remote Render" />
+						</remoteRenderFetcher.Form>
+
+						<Link to={`/youtube-comment/${videoId}/download-remote`} target="_blank" rel="noopener noreferrer">
+							<Button>Download Remote Video</Button>
+						</Link>
 					</div>
 				</div>
 

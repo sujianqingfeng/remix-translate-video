@@ -31,6 +31,7 @@ export type YoutubeInfo = {
 	dateTime?: string
 	author: string
 	mode: 'landscape' | 'portrait' | 'vertical'
+	renderId?: string
 }
 
 // translate video

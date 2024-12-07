@@ -13,6 +13,7 @@ export default function TranslateComment({
 	viewCount,
 	coverDuration,
 	author,
+	isRemoteRender = false,
 }: {
 	comments: RemotionVideoComment[]
 	title?: string
@@ -20,8 +21,8 @@ export default function TranslateComment({
 	viewCount: number
 	coverDuration: number
 	author?: string
+	isRemoteRender?: boolean
 }) {
-	const viewCountFormat = `${(viewCount / 1000).toFixed(1)}k`
 	// 使用节流后的帧
 	const throttledFrame = useThrottledFrame(coverDuration)
 
@@ -43,6 +44,9 @@ export default function TranslateComment({
 
 	const { fps } = useVideoConfig()
 
+	const playSrc = isRemoteRender ? videoSrc : staticFile(videoSrc)
+	const viewCountFormat = `${(viewCount / 1000).toFixed(1)}k`
+
 	return (
 		<AbsoluteFill className="bg-white">
 			<Cover coverDuration={coverDuration} title={title} author={author} />
@@ -58,7 +62,7 @@ export default function TranslateComment({
 								<p className="text-5xl mt-2 leading-[1.5]"> {title}</p>
 							</div>
 						</div>
-						<Video loop className="object-contain h-full" startFrom={0} crossOrigin="anonymous" src={staticFile(videoSrc)} />
+						<Video loop className="object-contain h-full" startFrom={0} crossOrigin="anonymous" src={playSrc} />
 					</div>
 				</AbsoluteFill>
 

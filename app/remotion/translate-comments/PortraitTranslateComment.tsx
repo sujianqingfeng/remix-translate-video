@@ -1,13 +1,6 @@
 import { ThumbsUp } from 'lucide-react'
 import { useMemo } from 'react'
-import {
-	AbsoluteFill,
-	Sequence,
-	Video,
-	staticFile,
-	useCurrentFrame,
-	useVideoConfig,
-} from 'remotion'
+import { AbsoluteFill, Sequence, Video, staticFile, useCurrentFrame, useVideoConfig } from 'remotion'
 import type { RemotionVideoComment } from '~/types'
 import Cover from './Cover'
 import { useThrottledFrame } from './hooks'
@@ -20,6 +13,7 @@ export default function PortraitTranslateComment({
 	viewCount,
 	coverDuration,
 	author,
+	isRemoteRender = false,
 }: {
 	comments: RemotionVideoComment[]
 	title?: string
@@ -27,6 +21,7 @@ export default function PortraitTranslateComment({
 	viewCount: number
 	coverDuration: number
 	author?: string
+	isRemoteRender?: boolean
 }) {
 	const viewCountFormat = `${(viewCount / 1000).toFixed(1)}k`
 	// 使用节流后的帧
@@ -34,10 +29,7 @@ export default function PortraitTranslateComment({
 
 	const currentComment = useMemo(() => {
 		return comments.find((item) => {
-			return (
-				throttledFrame >= item.form &&
-				throttledFrame <= item.form + item.durationInFrames
-			)
+			return throttledFrame >= item.form && throttledFrame <= item.form + item.durationInFrames
 		})
 	}, [comments, throttledFrame]) // 使用节流后的帧作为依赖
 
@@ -53,6 +45,8 @@ export default function PortraitTranslateComment({
 
 	const { fps } = useVideoConfig()
 
+	const playSrc = isRemoteRender ? videoSrc : staticFile(videoSrc)
+
 	return (
 		<AbsoluteFill className="bg-white">
 			<Cover coverDuration={coverDuration} title={title} author={author} />
@@ -60,13 +54,7 @@ export default function PortraitTranslateComment({
 			<Sequence from={coverDuration * fps}>
 				<AbsoluteFill>
 					<div className="flex justify-center items-center w-[40%] h-full p-4">
-						<Video
-							loop
-							className="object-contain h-full"
-							startFrom={0}
-							crossOrigin="anonymous"
-							src={staticFile(videoSrc)}
-						/>
+						<Video loop className="object-contain h-full" startFrom={0} crossOrigin="anonymous" src={playSrc} />
 					</div>
 				</AbsoluteFill>
 
@@ -90,9 +78,7 @@ export default function PortraitTranslateComment({
 						</div>
 
 						<div className="flex flex-col">
-							<p className="leading-1.6 text-3xl text-ellipsis line-clamp-4">
-								{currentComment?.content}
-							</p>
+							<p className="leading-1.6 text-3xl text-ellipsis line-clamp-4">{currentComment?.content}</p>
 
 							<p
 								className="text-[#ee3f4d] leading-[1.2] mt-1"

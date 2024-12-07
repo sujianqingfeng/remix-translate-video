@@ -2,28 +2,49 @@ import fsp from 'node:fs/promises'
 import path from 'node:path'
 import type { ActionFunctionArgs } from '@remix-run/node'
 import { bundle } from '@remotion/bundler'
-import { renderMedia, selectComposition } from '@remotion/renderer'
 import invariant from 'tiny-invariant'
-import { YOUTUBE_COMMENT_ID_PREFIX } from '~/constants'
 import { webpackOverride } from '~/remotion/webpack-override'
 import type { YoutubeInfo } from '~/types'
 import { publicPlayVideoFile } from '~/utils'
 import { execCommand } from '~/utils/exec'
-import { bundleOnProgress, throttleRenderOnProgress } from '~/utils/remotion'
+import { updateFileJson } from '~/utils/file'
+import { bundleOnProgress, createRenderZipFile, uploadRenderZipFile } from '~/utils/remotion'
 import { buildRemotionRenderData, getYoutubeCommentOut } from '~/utils/translate-comment'
 import { tryGetYoutubeDownloadFile } from '~/utils/youtube'
 
 const entryPoint = path.join(process.cwd(), 'app', 'remotion', 'translate-comments', 'index.ts')
+
+async function youtubeCommentBundleFiles({ bundledPath, playVideoFileName }: { bundledPath: string; playVideoFileName: string }) {
+	const result: string[] = []
+
+	const files = await fsp.readdir(bundledPath)
+	for (const file of files) {
+		const filePath = path.join(bundledPath, file)
+		const fileStat = await fsp.stat(filePath)
+		if (fileStat.isFile()) {
+			result.push(file)
+		}
+	}
+
+	const publicFiles = [playVideoFileName]
+
+	for (const file of publicFiles) {
+		const filePath = path.join('public', file)
+		result.push(filePath)
+	}
+
+	return result
+}
 
 export async function action({ request, params }: ActionFunctionArgs) {
 	invariant(params.videoId, 'videoId is required')
 	const { videoId } = params
 
 	const formData = await request.formData()
-	const playVideoFileName = formData.get('playVideoFileName')
+	const playVideoFileName: string | null = formData.get('playVideoFileName') as string | null
 	invariant(playVideoFileName, 'playVideoFileName is required')
 
-	const { infoFile, outDir } = getYoutubeCommentOut(videoId)
+	const { infoFile, outDir, bundleDir, renderInfoFile } = getYoutubeCommentOut(videoId)
 
 	const infoStr = await fsp.readFile(infoFile, 'utf-8')
 	const info: YoutubeInfo = JSON.parse(infoStr)
@@ -34,8 +55,9 @@ export async function action({ request, params }: ActionFunctionArgs) {
 	})
 
 	const maybePlayVideoFile = await tryGetYoutubeDownloadFile(outDir)
+	const { destPath } = publicPlayVideoFile(maybePlayVideoFile)
+
 	if (maybePlayVideoFile) {
-		const { destPath } = publicPlayVideoFile(maybePlayVideoFile)
 		const end = commentsEndFrame / fps
 		const command = `ffmpeg -y -ss 0 -i ${maybePlayVideoFile} -t ${end} -threads 3 -preset medium -crf 40 -vf scale=-1:720 ${destPath} -progress pipe:1`
 		console.log('processing video...')
@@ -47,6 +69,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 		entryPoint,
 		webpackOverride,
 		onProgress: bundleOnProgress,
+		publicPath: './',
 	})
 
 	const inputProps = {
@@ -56,28 +79,34 @@ export async function action({ request, params }: ActionFunctionArgs) {
 		viewCount: info.viewCount,
 		coverDuration: +coverDuration,
 		author: info.author,
+		isRemoteRender: false,
 	}
 
-	const composition = await selectComposition({
-		serveUrl: bundled,
-		id: compositionId,
-		inputProps,
-	})
+	const files = await youtubeCommentBundleFiles({ bundledPath: bundled, playVideoFileName })
 
-	composition.durationInFrames = +totalDurationInFrames
-	composition.fps = +fps
-	composition.height = compositionHeight
-	composition.width = compositionWidth
+	for (const file of files) {
+		const filePath = path.join(bundled, file)
+		const targetDir = path.join(bundleDir, path.dirname(file))
+		await fsp.mkdir(targetDir, { recursive: true })
+		await fsp.copyFile(filePath, path.join(bundleDir, file))
+	}
 
-	await renderMedia({
-		codec: 'h264',
-		composition,
-		serveUrl: bundled,
+	const renderInfo = {
+		serveUrl: 'bundle/index.html',
 		inputProps,
-		outputLocation: `out/${YOUTUBE_COMMENT_ID_PREFIX}${videoId}/output.mp4`,
-		concurrency: 2,
-		onProgress: throttleRenderOnProgress,
-	})
+		composition: {
+			durationInFrames: totalDurationInFrames,
+			fps: +fps,
+			width: compositionWidth,
+			height: compositionHeight,
+		},
+		compositionId,
+	}
+
+	const zipPath = await createRenderZipFile(renderInfo, bundleDir, renderInfoFile)
+	const { id } = await uploadRenderZipFile(zipPath)
+
+	await updateFileJson(infoFile, { renderId: id })
 
 	return { success: true }
 }

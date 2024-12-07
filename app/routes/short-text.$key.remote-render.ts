@@ -56,10 +56,10 @@ export async function action({ request, params }: ActionFunctionArgs) {
 		audioDuration,
 		sentenceTranscript,
 		direction: shortText.direction,
-		isRemoteRender: true,
-		shortTextBgFile: `${shortTextBgFile}`,
-		shortTextCoverFile: `${shortTextCoverFile}`,
-		playAudioFile: `${playAudioFile}`,
+		isRemoteRender: false,
+		shortTextBgFile,
+		shortTextCoverFile,
+		playAudioFile,
 	}
 
 	const bundled = await bundle({

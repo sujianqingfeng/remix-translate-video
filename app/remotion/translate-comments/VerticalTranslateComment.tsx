@@ -11,6 +11,7 @@ export default function VerticalTranslateComment({
 	viewCount,
 	coverDuration,
 	author,
+	isRemoteRender = false,
 }: {
 	comments: RemotionVideoComment[]
 	title?: string
@@ -18,6 +19,7 @@ export default function VerticalTranslateComment({
 	viewCount: number
 	coverDuration: number
 	author?: string
+	isRemoteRender?: boolean
 }) {
 	const { currentComment, fontSize, viewCountFormat } = useTranslateComment({
 		viewCount,
@@ -29,6 +31,8 @@ export default function VerticalTranslateComment({
 
 	const { fps } = useVideoConfig()
 
+	const playSrc = isRemoteRender ? videoSrc : staticFile(videoSrc)
+
 	return (
 		<AbsoluteFill className="bg-white">
 			<Cover coverDuration={coverDuration} title={title} author={author} isSplit={false} />
@@ -36,7 +40,7 @@ export default function VerticalTranslateComment({
 			<Sequence from={coverDuration * fps}>
 				<AbsoluteFill>
 					<div className="flex justify-center items-center h-[30%] px-[6rem]">
-						<Video loop className="object-contain h-full" startFrom={0} crossOrigin="anonymous" src={staticFile(videoSrc)} />
+						<Video loop className="object-contain h-full" startFrom={0} crossOrigin="anonymous" src={playSrc} />
 					</div>
 				</AbsoluteFill>
 

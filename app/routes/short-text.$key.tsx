@@ -170,7 +170,7 @@ export default function ShortTextPage() {
 							<LoadingButtonWithState state={remoteRenderFetcher.state} idleText="Remote render" />
 						</remoteRenderFetcher.Form>
 
-						<Link className="underline" to={`/short-text/${key}/download-remote`} target="_blank" rel="noopener noreferrer">
+						<Link to={`/short-text/${key}/download-remote`} target="_blank" rel="noopener noreferrer">
 							<Button>Download Remote Video</Button>
 						</Link>
 					</div>
