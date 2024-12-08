@@ -2,7 +2,7 @@ import fsp from 'node:fs/promises'
 import path from 'node:path'
 import { Readable } from 'node:stream'
 import type { RenderMediaOnProgress } from '@remotion/renderer'
-import { fetch } from 'undici'
+import { FormData, fetch } from 'undici'
 import { REMOTION_ZIP_OUTPUT_FILE_NAME } from '~/constants'
 import { createRemotionZipArchive } from './file'
 import { throttle } from './timer'
@@ -51,8 +51,8 @@ export async function uploadRenderZipFile(zipFilePath: string) {
 	const data: any = await fetch(`${baseUrl}/api/upload`, {
 		method: 'POST',
 		headers,
-		// @ts-ignore - FormData type mismatch between node and browser
 		body: uploadFormData,
+		credentials: 'include',
 	}).then((res) => res.json())
 
 	const id = data.id as string
@@ -71,6 +71,7 @@ export async function uploadRenderZipFile(zipFilePath: string) {
 			id,
 			fileName: REMOTION_ZIP_OUTPUT_FILE_NAME,
 		}),
+		credentials: 'include',
 	}).then((res) => res.json() as Promise<{ id: string }>)
 
 	return renderData
@@ -94,6 +95,7 @@ export async function downloadRenderOutput(renderId: string) {
 	}
 	const buffer = await fetch(`${baseUrl}/api/remotion/render/${renderId}`, {
 		headers,
+		credentials: 'include',
 	}).then((res) => res.arrayBuffer())
 
 	return buffer
