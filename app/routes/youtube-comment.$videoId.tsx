@@ -17,7 +17,7 @@ import { PortraitTranslateComment, TranslateComment, VerticalTranslateComment } 
 import type { YoutubeInfo } from '~/types'
 import { copyMaybeOriginalVideoToPublic } from '~/utils'
 import { fileExist } from '~/utils/file'
-import { getRenderInfo } from '~/utils/remotion'
+import { taskStatus } from '~/utils/remote-render'
 import { buildRemotionRenderData, getYoutubeCommentOut } from '~/utils/translate-comment'
 import { createProxyYoutubeInnertube, generateYoutubeUrlByVideoId } from '~/utils/youtube'
 
@@ -70,10 +70,13 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 		mode: info.mode,
 	})
 
-	let renderProgress = ''
-	if (info.renderId) {
-		const { progress } = await getRenderInfo(info.renderId)
+	const { jobId } = info
+	let renderProgress = 0
+	let renderState = ''
+	if (jobId) {
+		const { progress, state } = await taskStatus(jobId)
 		renderProgress = progress
+		renderState = state
 	}
 
 	return {
@@ -89,6 +92,8 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 		compositionHeight,
 		compositionWidth,
 		renderProgress,
+		renderState,
+		jobId,
 	}
 }
 
@@ -106,6 +111,8 @@ export default function VideoCommentPage() {
 		compositionHeight,
 		compositionWidth,
 		renderProgress,
+		renderState,
+		jobId,
 	} = useLoaderData<typeof loader>()
 
 	const renderFetcher = useFetcher()
@@ -190,7 +197,12 @@ export default function VideoCommentPage() {
 						<Copy size={16} className="cursor-pointer" onClick={() => onCopy(desc)} />
 					</p>
 
-					<div className="text-red-300">Remote remotion render:{renderProgress}</div>
+					{jobId && (
+						<div className="flex items-center gap-2">
+							<p>Remote remotion render:{renderProgress}</p>
+							<p>Remote remotion render:{renderState}</p>
+						</div>
+					)}
 
 					<div className="flex items-center gap-2">
 						{!playVideoFileName && (
@@ -213,7 +225,7 @@ export default function VideoCommentPage() {
 							<LoadingButtonWithState state={remoteRenderFetcher.state} idleText="Remote Render" />
 						</remoteRenderFetcher.Form>
 
-						<Link to={`/youtube-comment/${videoId}/download-remote`} target="_blank" rel="noopener noreferrer">
+						<Link to="download-remote" target="_blank" rel="noopener noreferrer">
 							<Button>Download Remote Video</Button>
 						</Link>
 					</div>

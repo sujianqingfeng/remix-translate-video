@@ -2,8 +2,7 @@ import fsp from 'node:fs/promises'
 import path from 'node:path'
 import { Readable } from 'node:stream'
 import type { RenderMediaOnProgress } from '@remotion/renderer'
-import { FormData, fetch } from 'undici'
-import { REMOTION_ZIP_OUTPUT_FILE_NAME } from '~/constants'
+import { RENDER_ZIP_OUTPUT_FILE_NAME } from '~/constants'
 import { createRemotionZipArchive } from './file'
 import { throttle } from './timer'
 
@@ -31,72 +30,7 @@ export async function createRenderZipFile(renderInfo: any, bundleDir: string, re
 	await fsp.writeFile(renderInfoFile, renderInfoStream)
 
 	// Add zip creation logic here
-	const zipPath = path.join(path.dirname(renderInfoFile), REMOTION_ZIP_OUTPUT_FILE_NAME)
+	const zipPath = path.join(path.dirname(renderInfoFile), RENDER_ZIP_OUTPUT_FILE_NAME)
 	await createRemotionZipArchive(bundleDir, renderInfoFile, zipPath)
 	return zipPath
-}
-
-export async function uploadRenderZipFile(zipFilePath: string) {
-	const zipFile = await fsp.readFile(zipFilePath)
-	// Create FormData and append the zip file
-	const uploadFormData = new FormData()
-	uploadFormData.append('file', new Blob([zipFile], { type: 'application/zip' }), REMOTION_ZIP_OUTPUT_FILE_NAME)
-
-	const baseUrl = process.env.REMOTE_REMOTION_RENDER_API_URL
-	const headers = {
-		Authorization: `${process.env.REMOTE_REMOTION_API_KEY}`,
-	}
-
-	// Send the request with form-data
-	const data: any = await fetch(`${baseUrl}/api/upload`, {
-		method: 'POST',
-		headers,
-		body: uploadFormData,
-		credentials: 'include',
-	}).then((res) => res.json())
-
-	const id = data.id as string
-
-	if (!id) {
-		throw new Error('Upload failed')
-	}
-
-	const renderData = await fetch(`${baseUrl}/api/remotion/render`, {
-		method: 'POST',
-		headers: {
-			...headers,
-			'Content-Type': 'application/json',
-		},
-		body: JSON.stringify({
-			id,
-			fileName: REMOTION_ZIP_OUTPUT_FILE_NAME,
-		}),
-		credentials: 'include',
-	}).then((res) => res.json() as Promise<{ id: string }>)
-
-	return renderData
-}
-
-export async function getRenderInfo(renderId: string) {
-	const baseUrl = process.env.REMOTE_REMOTION_RENDER_API_URL
-	const headers = {
-		Authorization: `${process.env.REMOTE_REMOTION_API_KEY}`,
-	}
-	const renderData = await fetch(`${baseUrl}/api/remotion/progress/${renderId}`, {
-		headers,
-	}).then((res) => res.json() as Promise<{ progress: string }>)
-	return renderData
-}
-
-export async function downloadRenderOutput(renderId: string) {
-	const baseUrl = process.env.REMOTE_REMOTION_RENDER_API_URL
-	const headers = {
-		Authorization: `${process.env.REMOTE_REMOTION_API_KEY}`,
-	}
-	const buffer = await fetch(`${baseUrl}/api/remotion/render/${renderId}`, {
-		headers,
-		credentials: 'include',
-	}).then((res) => res.arrayBuffer())
-
-	return buffer
 }

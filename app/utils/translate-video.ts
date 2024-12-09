@@ -1,10 +1,12 @@
 import path from 'node:path'
 import {
 	OUT_DIR,
+	RENDER_ZIP_OUTPUT_FILE_NAME,
 	TRANSLATE_VIDEO_ASR_RESULT_FILE,
+	TRANSLATE_VIDEO_COMBINED_SRT_FILE,
 	TRANSLATE_VIDEO_ID_PREFIX,
 	TRANSLATE_VIDEO_INFO_FILE,
-	TRANSLATE_VIDEO_ORIGINAL_HTML_FILE,
+	TRANSLATE_VIDEO_RENDER_INFO_FILE,
 	TRANSLATE_VIDEO_TRANSCRIPTS_FILE,
 } from '~/constants'
 
@@ -22,14 +24,20 @@ export function getTranslateVideoOut(id: string) {
 		get infoFile() {
 			return join(TRANSLATE_VIDEO_INFO_FILE)
 		},
-		get originalHtmlFile() {
-			return join(TRANSLATE_VIDEO_ORIGINAL_HTML_FILE)
-		},
 		get transcriptsFile() {
 			return join(TRANSLATE_VIDEO_TRANSCRIPTS_FILE)
 		},
 		get asrResultFile() {
 			return join(TRANSLATE_VIDEO_ASR_RESULT_FILE)
+		},
+		get combinedSrtFile() {
+			return join(TRANSLATE_VIDEO_COMBINED_SRT_FILE)
+		},
+		get renderInfoFile() {
+			return join(TRANSLATE_VIDEO_RENDER_INFO_FILE)
+		},
+		get renderZipFile() {
+			return join(RENDER_ZIP_OUTPUT_FILE_NAME)
 		},
 	}
 }

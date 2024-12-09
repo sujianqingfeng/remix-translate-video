@@ -2,7 +2,7 @@ import type { LoaderFunctionArgs } from '@remix-run/node'
 import invariant from 'tiny-invariant'
 import type { YoutubeInfo } from '~/types'
 import { readFileJson } from '~/utils/file'
-import { downloadRenderOutput } from '~/utils/remotion'
+import { downloadTaskOutput } from '~/utils/remote-render'
 import { getYoutubeCommentOut } from '~/utils/translate-comment'
 
 // 添加 loader 函数处理 GET 请求
@@ -11,14 +11,13 @@ export async function loader({ params }: LoaderFunctionArgs) {
 	invariant(videoId, 'videoId is required')
 
 	const { infoFile } = getYoutubeCommentOut(videoId)
+	const info = await readFileJson<YoutubeInfo>(infoFile)
 
-	const shortText = await readFileJson<YoutubeInfo>(infoFile)
-
-	if (!shortText.renderId) {
-		throw new Error('renderId is not found')
+	if (!info.jobId) {
+		throw new Error('jobId is not found')
 	}
 
-	const buffer = await downloadRenderOutput(shortText.renderId)
+	const buffer = await downloadTaskOutput(info.jobId)
 
 	return new Response(buffer, {
 		status: 200,

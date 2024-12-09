@@ -5,12 +5,10 @@ import { bundle } from '@remotion/bundler'
 import invariant from 'tiny-invariant'
 import { webpackOverride } from '~/remotion/webpack-override'
 import type { YoutubeInfo } from '~/types'
-import { publicPlayVideoFile } from '~/utils'
-import { execCommand } from '~/utils/exec'
 import { updateFileJson } from '~/utils/file'
-import { bundleOnProgress, createRenderZipFile, uploadRenderZipFile } from '~/utils/remotion'
+import { addRenderTask, uploadRenderZipFile } from '~/utils/remote-render'
+import { bundleOnProgress, createRenderZipFile } from '~/utils/remotion'
 import { buildRemotionRenderData, getYoutubeCommentOut } from '~/utils/translate-comment'
-import { tryGetYoutubeDownloadFile } from '~/utils/youtube'
 
 const entryPoint = path.join(process.cwd(), 'app', 'remotion', 'translate-comments', 'index.ts')
 
@@ -54,17 +52,6 @@ export async function action({ request, params }: ActionFunctionArgs) {
 		mode: info.mode,
 	})
 
-	const maybePlayVideoFile = await tryGetYoutubeDownloadFile(outDir)
-	const { destPath } = publicPlayVideoFile(maybePlayVideoFile)
-
-	if (maybePlayVideoFile) {
-		const end = commentsEndFrame / fps
-		const command = `ffmpeg -y -ss 0 -i ${maybePlayVideoFile} -t ${end} -threads 3 -preset medium -crf 40 -vf scale=-1:720 ${destPath} -progress pipe:1`
-		console.log('processing video...')
-		await execCommand(command)
-		console.log('video processed')
-	}
-
 	const bundled = await bundle({
 		entryPoint,
 		webpackOverride,
@@ -104,9 +91,10 @@ export async function action({ request, params }: ActionFunctionArgs) {
 	}
 
 	const zipPath = await createRenderZipFile(renderInfo, bundleDir, renderInfoFile)
-	const { id } = await uploadRenderZipFile(zipPath)
 
-	await updateFileJson(infoFile, { renderId: id })
+	const { id: renderId } = await uploadRenderZipFile(zipPath)
+	const { jobId } = await addRenderTask(renderId, 'render-comments')
+	await updateFileJson(infoFile, { renderId, jobId })
 
 	return { success: true }
 }

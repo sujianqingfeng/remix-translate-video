@@ -32,6 +32,7 @@ export type YoutubeInfo = {
 	author: string
 	mode: 'landscape' | 'portrait' | 'vertical'
 	renderId?: string
+	jobId?: string
 }
 
 // translate video
@@ -78,6 +79,7 @@ export type GenerateShortTextActionData = {
 
 export type ShortText = GenerateShortText & {
 	renderId?: string
+	jobId?: string
 	// 0: portrait, 1: landscape
 	direction: 0 | 1
 }

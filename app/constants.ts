@@ -26,9 +26,11 @@ export const SHORT_TEXT_PUBLIC_BG_FILE = 'short-text-bg.png'
 
 export const TRANSLATE_VIDEO_ID_PREFIX = 'tv-'
 export const TRANSLATE_VIDEO_INFO_FILE = 'info.json'
-export const TRANSLATE_VIDEO_ORIGINAL_HTML_FILE = 'original.html'
 export const TRANSLATE_VIDEO_TRANSCRIPTS_FILE = 'tv-transcript.json'
 export const TRANSLATE_VIDEO_ASR_RESULT_FILE = 'audio.wav.json'
+
+export const TRANSLATE_VIDEO_COMBINED_SRT_FILE = 'combined.srt'
+export const TRANSLATE_VIDEO_RENDER_INFO_FILE = 'render-info.json'
 
 export const PROXY = 'http://127.0.0.1:7890'
 export const USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36'
@@ -38,4 +40,4 @@ export const SILICON_FLOW_API_KEY = process.env.SILICON_FLOW_API_KEY
 export const REMOTION_ZIP_BUNDLE_DIR_NAME = 'bundle'
 export const REMOTION_ZIP_RENDER_INFO_FILE = 'render-info.json'
 
-export const REMOTION_ZIP_OUTPUT_FILE_NAME = 'render.zip'
+export const RENDER_ZIP_OUTPUT_FILE_NAME = 'render.zip'

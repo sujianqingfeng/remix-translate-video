@@ -14,8 +14,9 @@ export async function action({ request }: ActionFunctionArgs) {
 	const { id } = getVideoId(url as string)
 	invariant(id, 'invalid youtube url')
 
-	const { outDir } = getTranslateVideoOut(id)
+	const { outDir, infoFile } = getTranslateVideoOut(id)
 	await fsp.mkdir(outDir, { recursive: true })
+	await fsp.writeFile(infoFile, JSON.stringify({ url }, null, 2))
 
 	return redirect(`/translate-video/${id}`)
 }

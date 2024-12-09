@@ -1,18 +1,16 @@
 import type { LoaderFunctionArgs } from '@remix-run/node'
 import invariant from 'tiny-invariant'
-import type { ShortText } from '~/types'
 import { readFileJson } from '~/utils/file'
 import { downloadTaskOutput } from '~/utils/remote-render'
-import { getShortTextOut } from '~/utils/short-text'
+import { getTranslateVideoOut } from '~/utils/translate-video'
 
 // 添加 loader 函数处理 GET 请求
 export async function loader({ params }: LoaderFunctionArgs) {
-	const { key } = params
-	invariant(key, 'key is required')
+	const id = params.id
+	invariant(id, 'id is required')
 
-	const { infoFile } = getShortTextOut(key)
-
-	const info = await readFileJson<ShortText>(infoFile)
+	const { infoFile } = getTranslateVideoOut(id)
+	const info = await readFileJson<any>(infoFile)
 
 	if (!info.jobId) {
 		throw new Error('jobId is not found')
@@ -24,7 +22,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
 		status: 200,
 		headers: {
 			'Content-Type': 'video/mp4',
-			'Content-Disposition': `attachment; filename="video-${key}.mp4"`,
+			'Content-Disposition': `attachment; filename="video-${id}.mp4"`,
 		},
 	})
 }

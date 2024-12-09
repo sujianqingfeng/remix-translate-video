@@ -1,7 +1,7 @@
 import fsp from 'node:fs/promises'
 import path from 'node:path'
 import type { LoaderFunctionArgs } from '@remix-run/node'
-import { Form, Link, useFetcher, useLoaderData } from '@remix-run/react'
+import { Link, useFetcher, useLoaderData } from '@remix-run/react'
 import { Player } from '@remotion/player'
 import { Copy } from 'lucide-react'
 import invariant from 'tiny-invariant'
@@ -11,7 +11,7 @@ import { Button } from '~/components/ui/button'
 import { PUBLIC_DIR, SHORT_TEXT_AUDIO_FILE } from '~/constants'
 import { toast } from '~/hooks/use-toast'
 import { ShortTexts } from '~/remotion/short-texts/ShortTexts'
-import { getRenderInfo } from '~/utils/remotion'
+import { taskStatus } from '~/utils/remote-render'
 import { buildRemotionRenderData } from '~/utils/short-text'
 
 async function copyAudioToPublic(audioFile: string) {
@@ -34,10 +34,13 @@ export async function loader({ params }: LoaderFunctionArgs) {
 		await copyAudioToPublic(audioFile)
 	}
 
-	let renderProgress = ''
-	if (shortText.renderId) {
-		const { progress } = await getRenderInfo(shortText.renderId)
+	const { jobId } = shortText
+	let renderProgress = 0
+	let renderState = ''
+	if (jobId) {
+		const { progress, state } = await taskStatus(jobId)
 		renderProgress = progress
+		renderState = state
 	}
 
 	return {
@@ -52,7 +55,9 @@ export async function loader({ params }: LoaderFunctionArgs) {
 		shortTextBgFile,
 		shortTextCoverFile,
 		playAudioFile,
+		jobId,
 		renderProgress,
+		renderState,
 	}
 }
 
@@ -69,7 +74,9 @@ export default function ShortTextPage() {
 		shortTextBgFile,
 		shortTextCoverFile,
 		playAudioFile,
+		jobId,
 		renderProgress,
+		renderState,
 	} = useLoaderData<typeof loader>()
 
 	const generateAudioFetcher = useFetcher()
@@ -141,7 +148,12 @@ export default function ShortTextPage() {
 							<Copy className="cursor-pointer" onClick={() => onCopy(words)} />
 						</p>
 
-						{renderProgress && <p className="flex items-center gap-2 text-red-400">Remote render progress: {renderProgress}</p>}
+						{jobId && (
+							<div className="text-red-400">
+								<p>Remote render progress: {renderProgress}</p>
+								<p>Remote render state: {renderState}</p>
+							</div>
+						)}
 					</div>
 
 					<div className="mt-4 flex gap-2">
