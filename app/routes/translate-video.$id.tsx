@@ -97,14 +97,14 @@ export default function TranslateVideoPage() {
 							controls
 						/>
 					</div>
-					<div className="flex items-center gap-2 mt-2">
-						{jobId && (
-							<div>
-								<div>State: {state}</div>
-								<div>Progress: {progress}</div>
-							</div>
-						)}
 
+					{jobId && (
+						<div>
+							<div>State: {state}</div>
+							<div>Progress: {progress}</div>
+						</div>
+					)}
+					<div className="flex items-center gap-2 mt-2">
 						{!playVideoFileName && (
 							<downloadFetcher.Form method="post" action="download">
 								<LoadingButtonWithState state={downloadFetcher.state} idleText="Download" />
@@ -125,16 +125,16 @@ export default function TranslateVideoPage() {
 							<LoadingButtonWithState state={renderFetcher.state} idleText="Render" />
 						</renderFetcher.Form>
 
+						<translateFetcher.Form method="post" action="translate">
+							<LoadingButtonWithState state={translateFetcher.state} idleText="Translate" />
+						</translateFetcher.Form>
+
 						<remoteRenderFetcher.Form method="post" action="remote-render">
 							<input type="hidden" name="fps" value={fps} />
 							<input type="hidden" name="totalDurationInFrames" value={totalDurationInFrames} />
 							<input type="hidden" name="playVideoFileName" value={playVideoFileName} />
 							<LoadingButtonWithState state={remoteRenderFetcher.state} idleText="Remote Render" />
 						</remoteRenderFetcher.Form>
-
-						<translateFetcher.Form method="post" action="translate">
-							<LoadingButtonWithState state={translateFetcher.state} idleText="Translate" />
-						</translateFetcher.Form>
 
 						<Link to="download-remote" target="_blank" rel="noopener noreferrer">
 							<Button>Download Remote Video</Button>

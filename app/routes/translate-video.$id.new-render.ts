@@ -59,6 +59,7 @@ export async function action({ params }: ActionFunctionArgs) {
 	// 背景
 	// `subtitles='${escapedCombinedSrtPath}':force_style='FontName=Microsoft YaHei,FontSize=16,Alignment=2,BorderStyle=4,MarginV=20,PrimaryColour=&HFFFFFF,BackColour=&H1A000000'`,
 
+	// &HFFFFFF
 	// 使用 FFmpeg 渲染带字幕的视频，只使用一个字幕文件
 	await new Promise((resolve, reject) => {
 		const ffmpeg = spawn('ffmpeg', [
@@ -68,7 +69,7 @@ export async function action({ params }: ActionFunctionArgs) {
 			'-i',
 			maybePlayVideoFile,
 			'-vf',
-			`subtitles='${escapedCombinedSrtPath}':force_style='FontSize=17,Alignment=2,BorderStyle=1,Outline=0.5,Shadow=0,MarginV=20,PrimaryColour=&HFFFFFF,OutlineColour=&H404040'`,
+			`subtitles='${escapedCombinedSrtPath}':force_style='FontSize=17,Alignment=2,BorderStyle=1,Outline=0.5,Shadow=0,MarginV=30,PrimaryColour=&H00FFFF,OutlineColour=&H404040'`,
 			'-c:v',
 			'libx264',
 			'-preset',

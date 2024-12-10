@@ -9,7 +9,7 @@ export const OUT_DIR = 'out'
 export const YOUTUBE_COMMENTS_FILE = 'comments.json'
 export const YOUTUBE_INFO_FILE = 'info.json'
 export const YOUTUBE_ORIGINAL_HTML_FILE = 'original.html'
-export const YOUTUBE_MAYBE_ORIGINAL_DOWNLOAD_FILE_SUFFIXES = ['.webm', '.mp4']
+export const YOUTUBE_MAYBE_ORIGINAL_DOWNLOAD_FILE_SUFFIXES = ['.webm', '.mp4', '.mkv']
 export const YOUTUBE_NAME_FILE = 'original'
 
 export const YOUTUBE_COMMENT_ID_PREFIX = 'yc-'
