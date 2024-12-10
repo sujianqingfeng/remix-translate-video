@@ -35,7 +35,7 @@ export async function action({ params }: ActionFunctionArgs) {
 
 	// whisper cpp
 	const words = data.transcription.map((item: any) => ({
-		word: item.text.trim(),
+		word: item.text,
 		start: item.offsets.from / 1000,
 		end: item.offsets.to / 1000,
 	}))

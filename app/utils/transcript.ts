@@ -61,7 +61,7 @@ export function processScientificNotation(sentence: SentenceWord[]) {
 function createSentence(words: SentenceWord[]): Sentence {
 	return {
 		words,
-		text: words.map((w) => w.word).join(' '),
+		text: words.map((w) => w.word).join(''),
 		start: words[0].start,
 		end: words[words.length - 1].end,
 	}
@@ -95,11 +95,14 @@ function getSentenceLength(sentence: { start: number; end: number; word: string 
 }
 
 // 检查是否需要合并的特殊缩写
-function isSpecialAbbreviation(words: SentenceWord[]): boolean {
-	const combinedText = words.map((w) => w.word).join('')
-	const abbreviations = ['u.s', 'e.g']
+function isSpecialAbbreviation(words: SentenceWord[], abbreviation: string): boolean {
+	const combinedText = words
+		.map((w) => w.word)
+		.join('')
+		.toLowerCase()
+		.trim()
 	// 检查组合文本中是否包含任何缩写
-	return abbreviations.some((abbr) => combinedText.toLowerCase() === abbr)
+	return combinedText === abbreviation
 }
 
 // 合并包含特殊缩写的句子
@@ -113,11 +116,15 @@ export function mergeSentencesWithAbbreviations(sentences: SentenceWord[][]): Se
 		if (currentSentence.length === 0) {
 			currentSentence = sentence
 		} else {
-			const lastThreeWords = currentSentence.slice(-2)
-			const firstThreeWords = sentence.slice(0, 1)
+			const abbreviations = ['u.s', 'e.g', 'd.c.']
 
+			const isSpecial = abbreviations.some((abbr) => {
+				const lastWords = currentSentence.slice(-2)
+				const firstWords = sentence.slice(0, abbr.length - 1)
+				return isSpecialAbbreviation([...lastWords, ...firstWords], abbr)
+			})
 			// 检查是否需要合并
-			if (isSpecialAbbreviation([...lastThreeWords, ...firstThreeWords])) {
+			if (isSpecial) {
 				// 合并当前句子到前一个句子
 				currentSentence = [...currentSentence, ...sentence]
 			} else {
