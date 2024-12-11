@@ -2,3 +2,10 @@
 
 - translate comments
 - generate short text
+- 
+
+
+# sqlite
+
+```
+```
