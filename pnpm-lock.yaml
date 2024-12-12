@@ -11,6 +11,12 @@ importers:
       '@ai-sdk/openai':
         specifier: ^1.0.2
         version: 1.0.2(zod@3.23.8)
+      '@conform-to/react':
+        specifier: ^1.2.2
+        version: 1.2.2(react@18.3.1)
+      '@conform-to/zod':
+        specifier: ^1.2.2
+        version: 1.2.2(zod@3.23.8)
       '@hookform/resolvers':
         specifier: ^3.9.1
         version: 3.9.1(react-hook-form@7.54.0(react@18.3.1))
@@ -435,6 +441,19 @@ packages:
 
   '@bundled-es-modules/tough-cookie@0.1.6':
     resolution: {integrity: sha512-dvMHbL464C0zI+Yqxbz6kZ5TOEp7GLW+pry/RWndAR8MJQAXZ2rPmIs8tziTZjeIyhSNZgZbCePtfSbdWqStJw==}
+
+  '@conform-to/dom@1.2.2':
+    resolution: {integrity: sha512-f05EClpNP31o6lX4LYmmLqgsiTOHdGfY7z2XXK6U6rRp+EtxrkUBdrFlIGsfkf7e9AFO19h3/Cb/cXHVd1k1FA==}
+
+  '@conform-to/react@1.2.2':
+    resolution: {integrity: sha512-1JBECb3NKi5/IlexaYLgnAxGJ55MRuO2sEQ10cJfUK2bfltNbTIQnYUDG6pU886A4lda/q6UH/adPsjiB/4Gkg==}
+    peerDependencies:
+      react: '>=18'
+
+  '@conform-to/zod@1.2.2':
+    resolution: {integrity: sha512-mNCzh0XsF2vhCtD8bfHYMYayEJ9dP6/KsGjmq8DFcO1ykDTNQZwfi1MIm4evGYVempSS3poYr4xZjd7cXEbtaw==}
+    peerDependencies:
+      zod: ^3.21.0
 
   '@csstools/cascade-layer-name-parser@1.0.13':
     resolution: {integrity: sha512-MX0yLTwtZzr82sQ0zOjqimpZbzjMaK/h2pmlrLK7DCzlmiZLYFpoO94WmN1akRVo6ll/TdpHb53vihHLUMyvng==}
@@ -5935,6 +5954,18 @@ snapshots:
       '@types/tough-cookie': 4.0.5
       tough-cookie: 4.1.4
     optional: true
+
+  '@conform-to/dom@1.2.2': {}
+
+  '@conform-to/react@1.2.2(react@18.3.1)':
+    dependencies:
+      '@conform-to/dom': 1.2.2
+      react: 18.3.1
+
+  '@conform-to/zod@1.2.2(zod@3.23.8)':
+    dependencies:
+      '@conform-to/dom': 1.2.2
+      zod: 3.23.8
 
   '@csstools/cascade-layer-name-parser@1.0.13(@csstools/css-parser-algorithms@2.7.1(@csstools/css-tokenizer@2.4.1))(@csstools/css-tokenizer@2.4.1)':
     dependencies:

@@ -17,6 +17,8 @@
 	},
 	"dependencies": {
 		"@ai-sdk/openai": "^1.0.2",
+		"@conform-to/react": "^1.2.2",
+		"@conform-to/zod": "^1.2.2",
 		"@hookform/resolvers": "^3.9.1",
 		"@libsql/client": "^0.14.0",
 		"@paralleldrive/cuid2": "^2.2.2",
