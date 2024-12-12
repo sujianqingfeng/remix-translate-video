@@ -1,17 +1,17 @@
 import { useLoaderData } from '@remix-run/react'
 import { Button } from '~/components/ui/button'
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '~/components/ui/table'
+import type { downloads } from '~/db/schema'
 import NewDownloadDialog from './NewDownloadDialog'
 
 export const loader = async () => {
 	return {
-		downloads: [],
+		downloads: [] as (typeof downloads.$inferSelect)[],
 	}
 }
 
 export default function DownloadsPages() {
 	const { downloads } = useLoaderData<typeof loader>()
-	console.log('🚀 ~ DownloadsPages ~ downloads:', downloads)
 
 	return (
 		<div className="p-2">
@@ -22,19 +22,25 @@ export default function DownloadsPages() {
 				<TableCaption>A list of your recent invoices.</TableCaption>
 				<TableHeader>
 					<TableRow>
-						<TableHead className="w-[100px]">Invoice</TableHead>
+						<TableHead className="w-[100px]">Type</TableHead>
+						<TableHead>Link</TableHead>
 						<TableHead>Status</TableHead>
-						<TableHead>Method</TableHead>
-						<TableHead className="text-right">Amount</TableHead>
+						<TableHead className="text-right">Actions</TableHead>
 					</TableRow>
 				</TableHeader>
 				<TableBody>
-					<TableRow>
-						<TableCell className="font-medium">INV001</TableCell>
-						<TableCell>Paid</TableCell>
-						<TableCell>Credit Card</TableCell>
-						<TableCell className="text-right">$250.00</TableCell>
-					</TableRow>
+					{downloads.map((download) => (
+						<TableRow key={download.id}>
+							<TableCell className="font-medium">{download.type}</TableCell>
+							<TableCell>{download.link}</TableCell>
+							<TableCell>{download.link}</TableCell>
+							<TableCell className="text-right">
+								<Button variant="ghost" size="sm">
+									Delete
+								</Button>
+							</TableCell>
+						</TableRow>
+					))}
 				</TableBody>
 			</Table>
 		</div>
