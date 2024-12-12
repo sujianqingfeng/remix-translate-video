@@ -287,3 +287,59 @@ export function trimPunctuation(sentence: string): string {
 	const punctuationRegex = /^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu
 	return sentence.replace(punctuationRegex, '')
 }
+
+// 生成 SRT 格式字幕，为英文和中文添加不同的样式标签
+export function generateSRT(transcripts: Transcript[]): string {
+	return transcripts
+		.map((transcript, index) => {
+			const startTime = formatSRTTime(transcript.start)
+			const endTime = formatSRTTime(transcript.end)
+
+			return `${index + 1}
+${startTime} --> ${endTime}
+${transcript.text}
+${transcript.textLiteralTranslation || ''}
+
+`
+		})
+		.join('')
+}
+
+// 格式化时间为 SRT 格式 (00:00:00,000)
+function formatSRTTime(seconds: number): string {
+	const date = new Date(seconds * 1000)
+	const hh = String(Math.floor(seconds / 3600)).padStart(2, '0')
+	const mm = String(date.getMinutes()).padStart(2, '0')
+	const ss = String(date.getSeconds()).padStart(2, '0')
+	const ms = String(date.getMilliseconds()).padStart(3, '0')
+
+	return `${hh}:${mm}:${ss},${ms}`
+}
+
+export function generateFFmpegCommand(sourcePath: string, srtPath: string) {
+	return [
+		'-y',
+		'-threads',
+		'2',
+		'-i',
+		sourcePath,
+		'-vf',
+		`subtitles='${srtPath}':force_style='FontName=Microsoft YaHei,FontSize=17,Alignment=2,BorderStyle=1,Outline=0.4,Shadow=0,MarginV=30,PrimaryColour=&H00FFFF,OutlineColour=&H404040'`,
+		'-c:v',
+		'libx264',
+		'-preset',
+		'slow',
+		'-crf',
+		'23',
+		'-maxrate',
+		'5M',
+		'-bufsize',
+		'4M',
+		'-c:a',
+		'aac',
+		'-b:a',
+		'256k',
+		'-movflags',
+		'+faststart',
+	]
+}

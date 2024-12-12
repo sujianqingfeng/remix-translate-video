@@ -9,35 +9,8 @@ import { getTranslateVideoOut } from '~/utils/translate-video'
 import { TRANSLATE_VIDEO_COMBINED_SRT_FILE } from '~/constants'
 import { createFfmpegZipArchive, updateFileJson } from '~/utils/file'
 import { addRenderTask, uploadRenderZipFile } from '~/utils/remote-render'
+import { generateFFmpegCommand, generateSRT } from '~/utils/transcript'
 import { tryGetYoutubeDownloadFile } from '~/utils/youtube'
-
-// 生成 SRT 格式字幕，为英文和中文添加不同的样式标签
-function generateSRT(transcripts: Transcript[]): string {
-	return transcripts
-		.map((transcript, index) => {
-			const startTime = formatSRTTime(transcript.start)
-			const endTime = formatSRTTime(transcript.end)
-
-			return `${index + 1}
-${startTime} --> ${endTime}
-${transcript.text}
-${transcript.textLiteralTranslation || ''}
-
-`
-		})
-		.join('')
-}
-
-// 格式化时间为 SRT 格式 (00:00:00,000)
-function formatSRTTime(seconds: number): string {
-	const date = new Date(seconds * 1000)
-	const hh = String(Math.floor(seconds / 3600)).padStart(2, '0')
-	const mm = String(date.getMinutes()).padStart(2, '0')
-	const ss = String(date.getSeconds()).padStart(2, '0')
-	const ms = String(date.getMilliseconds()).padStart(3, '0')
-
-	return `${hh}:${mm}:${ss},${ms}`
-}
 
 export async function action({ params }: ActionFunctionArgs) {
 	const id = params.id
@@ -58,6 +31,7 @@ export async function action({ params }: ActionFunctionArgs) {
 	const renderInfo = {
 		sourceFileName: videoFileName,
 		subtitlesFileName: TRANSLATE_VIDEO_COMBINED_SRT_FILE,
+		cmd: generateFFmpegCommand(videoFileName, TRANSLATE_VIDEO_COMBINED_SRT_FILE),
 	}
 
 	const renderInfoStream = new Readable()

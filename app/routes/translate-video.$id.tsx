@@ -130,9 +130,6 @@ export default function TranslateVideoPage() {
 						</translateFetcher.Form>
 
 						<remoteRenderFetcher.Form method="post" action="remote-render">
-							<input type="hidden" name="fps" value={fps} />
-							<input type="hidden" name="totalDurationInFrames" value={totalDurationInFrames} />
-							<input type="hidden" name="playVideoFileName" value={playVideoFileName} />
 							<LoadingButtonWithState state={remoteRenderFetcher.state} idleText="Remote Render" />
 						</remoteRenderFetcher.Form>
 
