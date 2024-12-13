@@ -2,6 +2,7 @@ import fsp from 'node:fs/promises'
 import type { LoaderFunctionArgs } from '@remix-run/node'
 import { Link, useFetcher, useLoaderData } from '@remix-run/react'
 import { Player } from '@remotion/player'
+import { format } from 'date-fns'
 import { Copy, Languages, LoaderCircle } from 'lucide-react'
 import invariant from 'tiny-invariant'
 import { ProxyAgent } from 'undici'
@@ -123,7 +124,8 @@ export default function VideoCommentPage() {
 	const convertFetcher = useFetcher()
 	const remoteRenderFetcher = useFetcher()
 
-	const desc = `原链接：${info.youtubeUrl}\n视频仅供娱乐，请勿过度解读`
+	const currentTime = format(new Date(), 'yyyy-MM-dd HH:mm')
+	const desc = `原链接：${info.youtubeUrl}\n视频仅供娱乐，请勿过度解读，评论拉取时间${currentTime}`
 
 	const onCopy = async (text?: string) => {
 		if (!text) {

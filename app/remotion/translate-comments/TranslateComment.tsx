@@ -68,7 +68,7 @@ export default function TranslateComment({
 
 				<AbsoluteFill>
 					<div className="absolute bottom-0 left-0 px-4 pb-2 h-[40%] w-full flex flex-col">
-						<div className="text-[16px] leading-[20px] flex items-center gap-2 mb-2">
+						<div className="text-xl leading-[20px] flex items-center gap-2 mb-2">
 							<div>
 								{currentComment?.author} ({currentComment?.publishedTime})
 							</div>
@@ -77,7 +77,7 @@ export default function TranslateComment({
 						</div>
 
 						<div className="flex flex-col">
-							<p className="leading-1.6 text-[24px] text-ellipsis line-clamp-1">{currentComment?.content}</p>
+							<p className="leading-1.2 text-3xl text-ellipsis line-clamp-1">{currentComment?.content}</p>
 
 							<p
 								className="text-[#ee3f4d] leading-[1.2] mt-1"

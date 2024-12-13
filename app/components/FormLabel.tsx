@@ -1,7 +1,9 @@
+import { Label } from './ui/label'
+
 export default function FormLabel({ name }: { name: string }) {
 	return (
-		<label className="first-letter:uppercase" htmlFor={name}>
+		<Label className="first-letter:uppercase leading-8" htmlFor={name}>
 			{name}
-		</label>
+		</Label>
 	)
 }

@@ -11,7 +11,8 @@
 		"remotion:ensure": "npx remotion browser ensure",
 		"test": "vitest",
 		"db:generate": "npx drizzle-kit generate",
-		"db:migrate": "npx drizzle-kit migrate"
+		"db:migrate": "npx drizzle-kit migrate",
+		"db:studio": "npx drizzle-kit studio"
 	},
 	"dependencies": {
 		"@ai-sdk/openai": "^1.0.2",
@@ -33,10 +34,12 @@
 		"@remotion/cli": "4.0.236",
 		"@remotion/google-fonts": "^4.0.236",
 		"@remotion/media-parser": "^4.0.236",
+		"@tobyg74/tiktok-api-dl": "^1.2.2",
 		"ai": "^4.0.2",
 		"archiver": "^7.0.1",
 		"class-variance-authority": "^0.7.0",
 		"clsx": "^2.1.1",
+		"date-fns": "^4.1.0",
 		"drizzle-orm": "^0.38.0",
 		"drizzle-zod": "^0.6.0",
 		"get-video-id": "^4.1.7",

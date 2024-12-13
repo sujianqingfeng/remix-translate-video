@@ -1,6 +1,5 @@
 import fsp from 'node:fs/promises'
 import type { ActionFunctionArgs } from '@remix-run/node'
-import { json } from '@remix-run/node'
 import invariant from 'tiny-invariant'
 import type { Transcript } from '~/types'
 import { deepSeek } from '~/utils/ai'
@@ -41,7 +40,7 @@ export async function action({ params }: ActionFunctionArgs) {
 
 	// 使用 asyncPool 替代 Promise.all，限制并发数为 50
 	await asyncPool(
-		50,
+		30,
 		data.filter((item) => !item.textLiteralTranslation),
 		async (item, index, array) => {
 			const prevText = index > 0 ? array[index - 1].text : ''

@@ -7,6 +7,8 @@ node_modules
 out
 .DS_Store
 
+local.sqlite
+
 public
 !public/short-text-cover.png
 !public/short-text-bg.png

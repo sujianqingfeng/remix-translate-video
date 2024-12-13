@@ -12,3 +12,13 @@ export const downloads = sqliteTable(
 	},
 	(t) => [index('id_idx').on(t.id)],
 )
+
+export const translateComments = sqliteTable(
+	'translate_comments',
+	{
+		id: text()
+			.$defaultFn(() => createId())
+			.unique(),
+	},
+	(t) => [index('id_idx').on(t.id)],
+)

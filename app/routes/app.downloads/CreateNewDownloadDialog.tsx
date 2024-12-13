@@ -1,20 +1,23 @@
-import { useForm } from '@conform-to/react'
+import { getFormProps, useForm } from '@conform-to/react'
 import { parseWithZod } from '@conform-to/zod'
-import { Form, useActionData, useNavigation } from '@remix-run/react'
+import { useFetcher } from '@remix-run/react'
+import { useEffect, useState } from 'react'
+import { downloadsInsertSchema } from '~/api/schema'
+import type { CreateNewDownloadActionData } from '~/api/types'
 import FormLabel from '~/components/FormLabel'
 import { Button } from '~/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '~/components/ui/dialog'
 import { Input } from '~/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select'
-import { type action, downloadsInsertSchema } from './new'
+import { useHydrated } from '~/hooks/useHydrated'
 
 export default function NewDownloadDialog() {
-	const lastResult = useActionData<typeof action>()
-	const navigation = useNavigation()
-	const isSubmitting = navigation.state === 'submitting'
+	const isHydrated = useHydrated()
+	const createFetcher = useFetcher<CreateNewDownloadActionData>()
+	const isSubmitting = createFetcher.state === 'submitting'
 
 	const [form, fields] = useForm({
-		lastResult,
+		lastResult: createFetcher.data?.submissionReply,
 		onValidate({ formData }) {
 			return parseWithZod(formData, { schema: downloadsInsertSchema })
 		},
@@ -22,23 +25,35 @@ export default function NewDownloadDialog() {
 		shouldRevalidate: 'onInput',
 	})
 
+	const [open, setOpen] = useState(false)
+
+	useEffect(() => {
+		if (createFetcher.data?.success) {
+			setOpen(false)
+		}
+	}, [createFetcher.data?.success])
+
+	const buttonElement = <Button>New Download</Button>
+
+	if (!isHydrated) {
+		return buttonElement
+	}
+
 	return (
-		<Dialog>
-			<DialogTrigger>
-				<Button>New Download</Button>
-			</DialogTrigger>
+		<Dialog open={open} onOpenChange={setOpen}>
+			<DialogTrigger asChild>{buttonElement}</DialogTrigger>
 			<DialogContent>
 				<DialogHeader>
 					<DialogTitle>New Download</DialogTitle>
 					<DialogDescription>Create a new download</DialogDescription>
 				</DialogHeader>
-				<Form action="/downloads/new" method="post" id={form.id} onSubmit={form.onSubmit} noValidate>
-					<div className="space-y-4">
+				<createFetcher.Form action="create-new" method="post" {...getFormProps(form)}>
+					<div className="space-y-2">
 						<div>
 							<FormLabel name={fields.type.name} />
-							<Select key={fields.type.key} name={fields.type.name} defaultValue={fields.type.initialValue}>
+							<Select key={fields.type.key} name={fields.type.name} defaultValue={fields.type.value}>
 								<SelectTrigger>
-									<SelectValue placeholder="Select type" />
+									<SelectValue placeholder="Please select a type" />
 								</SelectTrigger>
 								<SelectContent>
 									<SelectItem value="youtube">Youtube</SelectItem>
@@ -50,7 +65,7 @@ export default function NewDownloadDialog() {
 
 						<div>
 							<FormLabel name={fields.link.name} />
-							<Input type="url" key={fields.link.key} name={fields.link.name} defaultValue={fields.link.initialValue} />
+							<Input type="url" key={fields.link.key} name={fields.link.name} placeholder="Please enter a link" defaultValue={fields.link.value} />
 							<div className="text-red-500 text-sm">{fields.link.errors}</div>
 						</div>
 
@@ -60,7 +75,7 @@ export default function NewDownloadDialog() {
 							</Button>
 						</DialogFooter>
 					</div>
-				</Form>
+				</createFetcher.Form>
 			</DialogContent>
 		</Dialog>
 	)

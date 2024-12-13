@@ -316,30 +316,22 @@ function formatSRTTime(seconds: number): string {
 	return `${hh}:${mm}:${ss},${ms}`
 }
 
-export function generateFFmpegCommand(sourcePath: string, srtPath: string) {
+export function generateFFmpegCommand(videoPath: string, escapedSrtPath: string) {
 	return [
 		'-y',
 		'-threads',
 		'2',
 		'-i',
-		sourcePath,
+		videoPath,
 		'-vf',
-		`subtitles='${srtPath}':force_style='FontName=Microsoft YaHei,FontSize=17,Alignment=2,BorderStyle=1,Outline=0.4,Shadow=0,MarginV=20,PrimaryColour=&H00FFFF,OutlineColour=&H404040'`,
+		`subtitles='${escapedSrtPath}':force_style='FontSize=17,Alignment=2,BorderStyle=0,Outline=0.1,Shadow=0,MarginV=20,PrimaryColour=&H00FFFF,BackColour=&H80000000,BorderColour=&H80000000'`,
 		'-c:v',
 		'libx264',
 		'-preset',
-		'slow',
+		'medium',
 		'-crf',
 		'23',
-		'-maxrate',
-		'5M',
-		'-bufsize',
-		'4M',
 		'-c:a',
-		'aac',
-		'-b:a',
-		'256k',
-		'-movflags',
-		'+faststart',
+		'copy',
 	]
 }

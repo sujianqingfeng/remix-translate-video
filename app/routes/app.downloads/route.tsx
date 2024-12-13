@@ -1,12 +1,15 @@
-import { useLoaderData } from '@remix-run/react'
+import { Link, useLoaderData } from '@remix-run/react'
+import { Download, Languages, MessageSquare } from 'lucide-react'
 import { Button } from '~/components/ui/button'
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '~/components/ui/table'
-import type { downloads } from '~/db/schema'
-import NewDownloadDialog from './NewDownloadDialog'
+import { db } from '~/lib/drizzle'
+import NewDownloadDialog from './CreateNewDownloadDialog'
 
 export const loader = async () => {
+	const ds = await db.query.downloads.findMany()
+
 	return {
-		downloads: [] as (typeof downloads.$inferSelect)[],
+		downloads: ds,
 	}
 }
 
@@ -36,8 +39,18 @@ export default function DownloadsPages() {
 							<TableCell>{download.link}</TableCell>
 							<TableCell className="text-right">
 								<Button variant="ghost" size="sm">
-									Delete
+									<Download />
 								</Button>
+
+								<Button variant="ghost" size="sm">
+									<Languages />
+								</Button>
+
+								<Link to={`/app/translate-comment/${download.id}`}>
+									<Button variant="ghost" size="sm">
+										<MessageSquare />
+									</Button>
+								</Link>
 							</TableCell>
 						</TableRow>
 					))}
