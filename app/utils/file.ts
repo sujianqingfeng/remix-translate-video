@@ -1,7 +1,8 @@
 import { createWriteStream } from 'node:fs'
 import fsp from 'node:fs/promises'
+import path from 'node:path'
 import archiver from 'archiver'
-import { REMOTION_ZIP_BUNDLE_DIR_NAME, REMOTION_ZIP_RENDER_INFO_FILE, TRANSLATE_VIDEO_RENDER_INFO_FILE } from '~/constants'
+import { DOWNLOADS_DIR, REMOTION_ZIP_BUNDLE_DIR_NAME, REMOTION_ZIP_RENDER_INFO_FILE, TRANSLATE_VIDEO_RENDER_INFO_FILE } from '~/constants'
 
 export async function fileExist(path: string) {
 	return await fsp.access(path).then(
@@ -78,4 +79,10 @@ export async function updateFileJson<T>(path: string, update: Partial<T>) {
 export async function readFileJson<T>(path: string): Promise<T> {
 	const json = await fsp.readFile(path, 'utf-8')
 	return JSON.parse(json) as T
+}
+
+export async function createDownloadDir(id: string) {
+	const dir = path.join(DOWNLOADS_DIR, id)
+	await fsp.mkdir(dir, { recursive: true })
+	return dir
 }

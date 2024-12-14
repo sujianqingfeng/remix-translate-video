@@ -5,6 +5,7 @@ node_modules
 .env
 
 out
+downloads
 .DS_Store
 
 local.sqlite

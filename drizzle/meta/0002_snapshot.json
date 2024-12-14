@@ -1,8 +1,8 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "317b98ba-f044-4e27-8451-5a24b89e1e16",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "a14c5eaf-7abe-4b69-ace5-f973e7bc7b08",
+  "prevId": "7b34da56-852c-491f-9c79-0869f3b7270e",
   "tables": {
     "downloads": {
       "name": "downloads",
@@ -63,6 +63,13 @@
           "notNull": false,
           "autoincrement": false
         },
+        "file_path": {
+          "name": "file_path",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "comment_count_text": {
           "name": "comment_count_text",
           "type": "text",
@@ -76,6 +83,14 @@
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
+        },
+        "comments": {
+          "name": "comments",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "'[]'"
         }
       },
       "indexes": {

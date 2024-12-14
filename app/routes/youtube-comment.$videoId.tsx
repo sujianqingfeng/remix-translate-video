@@ -125,7 +125,7 @@ export default function VideoCommentPage() {
 	const remoteRenderFetcher = useFetcher()
 
 	const currentTime = format(new Date(), 'yyyy-MM-dd HH:mm')
-	const desc = `原链接：${info.youtubeUrl}\n视频仅供娱乐，请勿过度解读，评论拉取时间${currentTime}`
+	const desc = `原链接：${info.youtubeUrl}\n视频仅供娱乐，请勿过度解读\n评论权重受点赞等影响，在不同的时间，评论的内容可能不同，当前视频评论拉取时间${currentTime}`
 
 	const onCopy = async (text?: string) => {
 		if (!text) {

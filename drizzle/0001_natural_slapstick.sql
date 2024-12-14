@@ -1,0 +1,1 @@
+ALTER TABLE `downloads` ADD `file_path` text;

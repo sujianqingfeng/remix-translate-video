@@ -3,13 +3,15 @@ import { PROXY } from '~/constants'
 
 export async function tiktokDownloadInfo(url: string) {
 	return Tiktok.Downloader(url, {
-		version: 'v1',
+		version: 'v2',
 		proxy: PROXY,
 		showOriginalResponse: true,
 	})
 }
 
-export async function downloadTiktok(url: string) {
-	const info = await tiktokDownloadInfo(url)
-	console.log('🚀 ~ downloadTiktok ~ info:', info)
+export async function tiktokGetComments(url: string, commentLimit = 20) {
+	return Tiktok.GetComments(url, {
+		commentLimit,
+		proxy: PROXY,
+	})
 }

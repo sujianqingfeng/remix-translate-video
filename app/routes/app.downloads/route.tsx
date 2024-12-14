@@ -27,7 +27,7 @@ export default function DownloadsPages() {
 					<TableRow>
 						<TableHead className="w-[100px]">Type</TableHead>
 						<TableHead>Link</TableHead>
-						<TableHead>Status</TableHead>
+						<TableHead>Title</TableHead>
 						<TableHead className="text-right">Actions</TableHead>
 					</TableRow>
 				</TableHeader>
@@ -36,7 +36,7 @@ export default function DownloadsPages() {
 						<TableRow key={download.id}>
 							<TableCell className="font-medium">{download.type}</TableCell>
 							<TableCell>{download.link}</TableCell>
-							<TableCell>{download.link}</TableCell>
+							<TableCell>{download.title}</TableCell>
 							<TableCell className="text-right">
 								<Button variant="ghost" size="sm">
 									<Download />

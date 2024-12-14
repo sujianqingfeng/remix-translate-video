@@ -43,3 +43,5 @@ export const REMOTION_ZIP_RENDER_INFO_FILE = 'render-info.json'
 export const RENDER_ZIP_OUTPUT_FILE_NAME = 'render.zip'
 
 export const DB_FILE_NAME = process.env.DB_FILE_NAME
+
+export const DOWNLOADS_DIR = path.join(process.cwd(), 'downloads')
