@@ -2,29 +2,10 @@ import fsp from 'node:fs/promises'
 import type { ActionFunctionArgs } from '@remix-run/node'
 import invariant from 'tiny-invariant'
 import type { Transcript } from '~/types'
+import { asyncPool } from '~/utils'
 import { deepSeek } from '~/utils/ai'
 import { processTranslatedLongTranscripts } from '~/utils/transcript'
 import { getTranslateVideoOut } from '~/utils/translate-video'
-
-// 添加并发控制函数
-async function asyncPool<T, U>(poolLimit: number, items: T[], iteratorFn: (item: T, index: number, array: T[]) => Promise<U>): Promise<U[]> {
-	const ret: Promise<U>[] = []
-	const executing = new Set<Promise<U>>()
-
-	for (let i = 0; i < items.length; i++) {
-		const p = Promise.resolve().then(() => iteratorFn(items[i], i, items))
-		ret.push(p)
-		executing.add(p)
-
-		const clean = () => executing.delete(p)
-		p.then(clean).catch(clean)
-
-		if (executing.size >= poolLimit) {
-			await Promise.race(executing)
-		}
-	}
-	return Promise.all(ret)
-}
 
 export async function action({ params }: ActionFunctionArgs) {
 	const id = params.id

@@ -1,9 +1,9 @@
-import { Link, useLoaderData } from '@remix-run/react'
+import { Form, Link, useLoaderData } from '@remix-run/react'
 import { Download, Languages, MessageSquare } from 'lucide-react'
+import NewDownloadDialog from '~/components/business/download/CreateNewDownloadDialog'
 import { Button } from '~/components/ui/button'
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '~/components/ui/table'
 import { db } from '~/lib/drizzle'
-import NewDownloadDialog from './CreateNewDownloadDialog'
 
 export const loader = async () => {
 	const ds = await db.query.downloads.findMany()
@@ -46,11 +46,11 @@ export default function DownloadsPages() {
 									<Languages />
 								</Button>
 
-								<Link to={`/app/translate-comment/${download.id}`}>
+								<Form method="post" action={`/app/downloads/create-translate-comment/${download.id}`}>
 									<Button variant="ghost" size="sm">
 										<MessageSquare />
 									</Button>
-								</Link>
+								</Form>
 							</TableCell>
 						</TableRow>
 					))}

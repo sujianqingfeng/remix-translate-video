@@ -1,13 +1,13 @@
 import { createId } from '@paralleldrive/cuid2'
 import { index, integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 
-type Comment = {
+export type Comment = {
 	content: string
 	author: string
 	likes: number
 	authorThumbnail: string
 	publishedTime: string
-	translatedContent: string
+	translatedContent?: string
 }
 
 export const downloads = sqliteTable(
@@ -25,8 +25,6 @@ export const downloads = sqliteTable(
 		downloadUrl: text('download_url'),
 		filePath: text('file_path'),
 		commentCountText: text('comment_count_text'),
-		translatedTitle: text('translated_title'),
-		comments: text({ mode: 'json' }).$type<Comment[]>().default([]),
 	},
 	(t) => [index('downloads_id_idx').on(t.id)],
 )
@@ -37,13 +35,10 @@ export const translateComments = sqliteTable(
 		id: text()
 			.$defaultFn(() => createId())
 			.unique(),
-
-		content: text('content').notNull(),
-		author: text('author').notNull(),
-		likes: integer('likes'),
-		authorThumbnail: text('author_thumbnail'),
-		publishedTime: text('published_time'),
-		translatedContent: text('translated_content'),
+		translatedTitle: text('translated_title'),
+		downloadId: text('download_id').notNull(),
+		comments: text({ mode: 'json' }).$type<Comment[]>().default([]),
+		commentPullAt: integer('comment_pull_at', { mode: 'timestamp_ms' }),
 	},
 	(t) => [index('translate_comments_id_idx').on(t.id)],
 )

@@ -1,5 +1,6 @@
 import Tiktok from '@tobyg74/tiktok-api-dl'
 import { PROXY } from '~/constants'
+import { getCommentList } from './comment'
 
 export async function tiktokDownloadInfo(url: string) {
 	return Tiktok.Downloader(url, {
@@ -9,9 +10,8 @@ export async function tiktokDownloadInfo(url: string) {
 	})
 }
 
-export async function tiktokGetComments(url: string, commentLimit = 20) {
-	return Tiktok.GetComments(url, {
-		commentLimit,
-		proxy: PROXY,
-	})
+export async function tiktokGetComments({ url, proxy }: { url: string; proxy: string }) {
+	return getCommentList(url, proxy)
 }
+
+export type { Comments } from './comment'

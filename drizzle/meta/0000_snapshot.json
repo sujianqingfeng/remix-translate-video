@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "317b98ba-f044-4e27-8451-5a24b89e1e16",
+  "id": "e0a7cfae-17f2-4504-9b8d-0912031d17ed",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "downloads": {
@@ -63,15 +63,15 @@
           "notNull": false,
           "autoincrement": false
         },
-        "comment_count_text": {
-          "name": "comment_count_text",
+        "file_path": {
+          "name": "file_path",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
         },
-        "translated_title": {
-          "name": "translated_title",
+        "comment_count_text": {
+          "name": "comment_count_text",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -109,44 +109,31 @@
           "notNull": false,
           "autoincrement": false
         },
-        "content": {
-          "name": "content",
+        "translated_title": {
+          "name": "translated_title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "download_id": {
+          "name": "download_id",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
-        "author": {
-          "name": "author",
+        "comments": {
+          "name": "comments",
           "type": "text",
           "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
+          "notNull": false,
+          "autoincrement": false,
+          "default": "'[]'"
         },
-        "likes": {
-          "name": "likes",
+        "comment_pull_at": {
+          "name": "comment_pull_at",
           "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "author_thumbnail": {
-          "name": "author_thumbnail",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "published_time": {
-          "name": "published_time",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "translated_content": {
-          "name": "translated_content",
-          "type": "text",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
