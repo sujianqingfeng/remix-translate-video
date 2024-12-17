@@ -2,6 +2,7 @@ import fsp from 'node:fs/promises'
 import path from 'node:path'
 import { commentModeOptions } from '~/config'
 import { BUNDLE_DIR, OUT_DIR, RENDER_INFO_FILE, YOUTUBE_COMMENTS_FILE, YOUTUBE_COMMENT_ID_PREFIX, YOUTUBE_INFO_FILE, YOUTUBE_ORIGINAL_HTML_FILE } from '~/constants'
+import type { Comment } from '~/db/schema'
 import type { RemotionVideoComment, YoutubeComment, YoutubeInfo } from '~/types'
 import { fileExist } from './file'
 
@@ -104,6 +105,61 @@ export async function buildRemotionRenderData({
 		compositionHeight,
 		compositionWidth,
 		defaultSeconds,
+		compositionId,
+		commentsEndFrame,
+	}
+}
+
+function generateRemotionTranslateComment(comments: Comment[], fps = 60, secondsForEvery30Words = 5) {
+	let currentStartFrame = 0
+	const remotionVideoComments: RemotionVideoComment[] = comments.map((comment, i) => {
+		const textLength = comment.translatedContent?.length || 0
+		const calculatedDuration = Math.max(3, Math.ceil((textLength / 30) * secondsForEvery30Words))
+		const durationInFrames = fps * calculatedDuration
+
+		const result = {
+			...comment,
+			durationInFrames,
+			form: currentStartFrame,
+		}
+
+		currentStartFrame += durationInFrames
+		return result
+	})
+
+	return remotionVideoComments
+}
+
+export async function buildTranslateCommentRemotionRenderData({
+	fps,
+	secondsForEvery30Words,
+	coverDurationInSeconds,
+	mode,
+	comments,
+}: {
+	mode: YoutubeInfo['mode']
+	fps: number
+	secondsForEvery30Words: number
+	coverDurationInSeconds: number
+	comments: Comment[]
+}) {
+	const remotionVideoComments = generateRemotionTranslateComment(comments, fps, secondsForEvery30Words)
+
+	const coverDurationInFrames = coverDurationInSeconds * fps
+	const lastComment = remotionVideoComments[remotionVideoComments.length - 1]
+	const commentsEndFrame = lastComment ? lastComment.form + lastComment.durationInFrames : 0
+	const totalDurationInFrames = coverDurationInFrames + commentsEndFrame
+
+	const { playerHeight, playerWidth, compositionHeight, compositionWidth, compositionId } = findModeOption(mode)
+
+	return {
+		remotionVideoComments,
+		totalDurationInFrames,
+		coverDurationInFrames,
+		playerHeight,
+		playerWidth,
+		compositionHeight,
+		compositionWidth,
 		compositionId,
 		commentsEndFrame,
 	}

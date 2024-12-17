@@ -1,10 +1,27 @@
+import fs from 'node:fs'
+import path from 'node:path'
 import type { LoaderFunctionArgs } from '@remix-run/node'
 import { useFetcher, useLoaderData } from '@remix-run/react'
+import { Player } from '@remotion/player'
 import { eq } from 'drizzle-orm'
 import invariant from 'tiny-invariant'
 import LoadingButtonWithState from '~/components/LoadingButtonWithState'
 import Comments from '~/components/business/translate-comment/Comments'
+import { PUBLIC_DIR } from '~/constants'
 import { db, schema } from '~/lib/drizzle'
+import { PortraitTranslateComment, TranslateComment, VerticalTranslateComment } from '~/remotion'
+import { copyFileToPublic } from '~/utils/file'
+import { buildTranslateCommentRemotionRenderData } from '~/utils/translate-comment'
+
+type Mode = (typeof schema.translateComments.$inferSelect)['mode']
+function getRemotionTemplateComponent(mode: Mode) {
+	const componentMap = {
+		landscape: TranslateComment,
+		portrait: PortraitTranslateComment,
+		vertical: VerticalTranslateComment,
+	}
+	return componentMap[mode]
+}
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
 	const id = params.id
@@ -26,11 +43,29 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 		throw new Error('download is not correct')
 	}
 
-	return { dId: translateComment?.downloadId, id, download, comments: translateComment.comments }
+	if (download.filePath) {
+		const fileName = path.basename(download.filePath)
+		const destPath = path.join(PUBLIC_DIR, fileName)
+		if (!fs.existsSync(destPath)) {
+			await copyFileToPublic({
+				filePath: download.filePath,
+			})
+		}
+	}
+
+	const render = await buildTranslateCommentRemotionRenderData({
+		mode: translateComment.mode,
+		fps: translateComment.fps,
+		secondsForEvery30Words: translateComment.secondsForEvery30Words,
+		coverDurationInSeconds: translateComment.coverDurationInSeconds,
+		comments: translateComment.comments ?? [],
+	})
+
+	return { dId: translateComment.downloadId, id, download, render, translateComment }
 }
 
 export default function TranslateCommentPage() {
-	const { dId, comments } = useLoaderData<typeof loader>()
+	const { dId, download, render, translateComment } = useLoaderData<typeof loader>()
 	const downloadInfoFetcher = useFetcher()
 	const downloadVideoFetcher = useFetcher()
 	const downloadCommentsFetcher = useFetcher()
@@ -38,7 +73,28 @@ export default function TranslateCommentPage() {
 	return (
 		<div className="w-full h-full flex gap-2">
 			<div className="flex flex-col gap-2 flex-1">
-				<div>ffff</div>
+				<div>
+					<Player
+						component={getRemotionTemplateComponent(translateComment.mode)}
+						inputProps={{
+							comments: render.remotionVideoComments,
+							title: translateComment.translatedTitle || '',
+							videoSrc: '',
+							viewCount: download.viewCountText || '',
+							coverDuration: translateComment.coverDurationInSeconds,
+							author: download.author || '',
+						}}
+						durationInFrames={render.totalDurationInFrames}
+						compositionWidth={render.compositionWidth}
+						compositionHeight={render.compositionHeight}
+						fps={translateComment.fps}
+						style={{
+							width: render.playerWidth,
+							height: render.playerHeight,
+						}}
+						controls
+					/>
+				</div>
 				<div className="flex gap-2">
 					<downloadInfoFetcher.Form action="/app/downloads/download-info" method="post">
 						<input name="id" value={dId} hidden readOnly />
@@ -52,8 +108,8 @@ export default function TranslateCommentPage() {
 				</div>
 			</div>
 			<div className="w-[400px] h-full overflow-y-auto">
-				{comments?.length ? (
-					<Comments comments={comments ?? []} />
+				{translateComment.comments?.length ? (
+					<Comments comments={translateComment.comments ?? []} />
 				) : (
 					<div>
 						<p> No comments</p>

@@ -4,10 +4,17 @@ import { index, integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 export type Comment = {
 	content: string
 	author: string
-	likes: number
+	likes: string
 	authorThumbnail: string
 	publishedTime: string
 	translatedContent?: string
+}
+
+export type CompositionInfo = {
+	fps: number
+	durationInFrames: number
+	width: number
+	height: number
 }
 
 export const downloads = sqliteTable(
@@ -39,6 +46,13 @@ export const translateComments = sqliteTable(
 		downloadId: text('download_id').notNull(),
 		comments: text({ mode: 'json' }).$type<Comment[]>().default([]),
 		commentPullAt: integer('comment_pull_at', { mode: 'timestamp_ms' }),
+		jobId: text('job_id'),
+		mode: text('mode', { enum: ['landscape', 'portrait', 'vertical'] })
+			.notNull()
+			.$default(() => 'landscape'),
+		coverDurationInSeconds: integer('cover_duration_in_seconds').notNull().default(3),
+		secondsForEvery30Words: integer('seconds_for_every_30_words').notNull().default(5),
+		fps: integer('fps').notNull().default(30),
 	},
 	(t) => [index('translate_comments_id_idx').on(t.id)],
 )

@@ -5,6 +5,7 @@ import getVideoId from 'get-video-id'
 import invariant from 'tiny-invariant'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
+import { fileExist } from '~/utils/file'
 import { getTranslateVideoOut } from '~/utils/translate-video'
 
 export async function action({ request }: ActionFunctionArgs) {
@@ -16,7 +17,10 @@ export async function action({ request }: ActionFunctionArgs) {
 
 	const { outDir, infoFile } = getTranslateVideoOut(id)
 	await fsp.mkdir(outDir, { recursive: true })
-	await fsp.writeFile(infoFile, JSON.stringify({ url }, null, 2))
+
+	if (!(await fileExist(infoFile))) {
+		await fsp.writeFile(infoFile, JSON.stringify({ url }, null, 2))
+	}
 
 	return redirect(`/translate-video/${id}`)
 }
