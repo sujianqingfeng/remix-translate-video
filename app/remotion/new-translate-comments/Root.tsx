@@ -16,9 +16,9 @@ export function RemotionRoot() {
 				defaultProps={{
 					comments: [],
 					title: '',
-					videoSrc: '',
-					viewCount: 0,
-					coverDuration: 60 * 20,
+					playFile: '',
+					viewCountText: '',
+					coverDurationInSeconds: 60 * 20,
 				}}
 			/>
 
@@ -32,9 +32,9 @@ export function RemotionRoot() {
 				defaultProps={{
 					comments: [],
 					title: '',
-					videoSrc: '',
-					viewCount: 0,
-					coverDuration: 60 * 20,
+					playFile: '',
+					viewCountText: '',
+					coverDurationInSeconds: 60 * 20,
 				}}
 			/>
 
@@ -48,9 +48,9 @@ export function RemotionRoot() {
 				defaultProps={{
 					comments: [],
 					title: '',
-					videoSrc: '',
-					viewCount: 0,
-					coverDuration: 60 * 20,
+					playFile: '',
+					viewCountText: '',
+					coverDurationInSeconds: 60 * 20,
 				}}
 			/>
 		</>

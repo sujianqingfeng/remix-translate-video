@@ -4,14 +4,13 @@ import Cover from './Cover'
 import { useTranslateComment } from './hooks'
 import type { TranslateCommentProps } from './types'
 
-export default function PortraitTranslateComment({ comments, title, playFile, viewCount, coverDuration, author, isRemoteRender = false }: TranslateCommentProps) {
+export default function PortraitTranslateComment({ comments, title, playFile, viewCountText, coverDurationInSeconds, author, isRemoteRender = false }: TranslateCommentProps) {
 	const { fps } = useVideoConfig()
 
-	const { currentComment, fontSize, viewCountFormat, playSrc } = useTranslateComment({
+	const { currentComment, fontSize, playSrc } = useTranslateComment({
 		isRemoteRender,
 		playFile,
-		viewCount,
-		coverDuration,
+		coverDurationInSeconds,
 		comments,
 		availableWidth: 1920 / 2 - 32,
 		availableHeight: 800,
@@ -19,9 +18,9 @@ export default function PortraitTranslateComment({ comments, title, playFile, vi
 
 	return (
 		<AbsoluteFill className="bg-white">
-			<Cover coverDuration={coverDuration} title={title} author={author} />
+			<Cover coverDurationInSeconds={coverDurationInSeconds} title={title} author={author} />
 
-			<Sequence from={coverDuration * fps}>
+			<Sequence from={coverDurationInSeconds * fps}>
 				<AbsoluteFill>
 					<div className="flex justify-center items-center w-[40%] h-full p-4">
 						<Video loop className="object-contain h-full" startFrom={0} crossOrigin="anonymous" src={playSrc} />
@@ -33,7 +32,7 @@ export default function PortraitTranslateComment({ comments, title, playFile, vi
 						<div className="text-[#ee3f4d] flex flex-col justify-center">
 							<div>
 								<div className="flex items-center gap-2 text-3xl">
-									<span>播放量：{viewCountFormat}</span>
+									<span>播放量：{viewCountText}</span>
 								</div>
 								<p className="text-5xl mt-2 leading-[1.5]"> {title}</p>
 							</div>

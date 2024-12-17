@@ -1,15 +1,14 @@
 import { ThumbsUp } from 'lucide-react'
-import { AbsoluteFill, Sequence, Video, staticFile, useVideoConfig } from 'remotion'
+import { AbsoluteFill, Sequence, Video, useVideoConfig } from 'remotion'
 import Cover from './Cover'
 import { useTranslateComment } from './hooks'
 import type { TranslateCommentProps } from './types'
 
-export default function VerticalTranslateComment({ comments, title, playFile, viewCount, coverDuration, author, isRemoteRender = false }: TranslateCommentProps) {
-	const { currentComment, fontSize, viewCountFormat, playSrc } = useTranslateComment({
+export default function VerticalTranslateComment({ comments, title, playFile, viewCountText, coverDurationInSeconds, author, isRemoteRender = false }: TranslateCommentProps) {
+	const { currentComment, fontSize, playSrc } = useTranslateComment({
 		isRemoteRender,
 		playFile,
-		viewCount,
-		coverDuration,
+		coverDurationInSeconds,
 		comments,
 		availableWidth: 1080 - 32,
 		availableHeight: 1000,
@@ -19,9 +18,9 @@ export default function VerticalTranslateComment({ comments, title, playFile, vi
 
 	return (
 		<AbsoluteFill className="bg-white">
-			<Cover coverDuration={coverDuration} title={title} author={author} isSplit={false} />
+			<Cover coverDurationInSeconds={coverDurationInSeconds} title={title} author={author} isSplit={false} />
 
-			<Sequence from={coverDuration * fps}>
+			<Sequence from={coverDurationInSeconds * fps}>
 				<AbsoluteFill>
 					<div className="flex justify-center items-center h-[30%] px-[6rem]">
 						<Video loop className="object-contain h-full" startFrom={0} crossOrigin="anonymous" src={playSrc} />
@@ -32,7 +31,7 @@ export default function VerticalTranslateComment({ comments, title, playFile, vi
 					<div className="absolute bottom-0 left-0 px-[6rem] h-[70%] w-full flex flex-col gap-1">
 						<div className="text-5xl leading-[1.2] text-[#ee3f4d]">{title}</div>
 						<div className="flex items-center gap-2 text-3xl text-[#ee3f4d]">
-							<span>播放量：{viewCountFormat}</span>
+							<span>播放量：{viewCountText}</span>
 						</div>
 						<div className="text-2xl leading-[20px] flex items-center gap-2 my-4">
 							<div>

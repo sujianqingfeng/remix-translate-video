@@ -89,8 +89,11 @@ export async function createDownloadDir(id: string) {
 
 export async function copyFileToPublic({
 	filePath,
+	destFileName,
 }: {
 	filePath: string
+	destFileName?: string
 }) {
-	await fsp.copyFile(filePath, PUBLIC_DIR)
+	const destPath = path.join(PUBLIC_DIR, destFileName || path.basename(filePath))
+	await fsp.copyFile(filePath, destPath)
 }

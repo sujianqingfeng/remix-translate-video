@@ -14,17 +14,15 @@ export function useThrottledFrame(coverDuration: number) {
 }
 
 export function useTranslateComment({
-	viewCount,
-	coverDuration,
+	coverDurationInSeconds,
 	comments,
 	availableWidth,
 	availableHeight,
 	isRemoteRender,
 	playFile,
-}: { viewCount: number; coverDuration: number; comments: RemotionVideoComment[]; availableWidth: number; availableHeight: number; isRemoteRender: boolean; playFile: string }) {
-	const viewCountFormat = `${(viewCount / 1000).toFixed(1)}k`
+}: { coverDurationInSeconds: number; comments: RemotionVideoComment[]; availableWidth: number; availableHeight: number; isRemoteRender: boolean; playFile: string }) {
 	// 使用节流后的帧
-	const throttledFrame = useThrottledFrame(coverDuration)
+	const throttledFrame = useThrottledFrame(coverDurationInSeconds)
 
 	const currentComment = useMemo(() => {
 		return comments.find((item) => {
@@ -47,7 +45,6 @@ export function useTranslateComment({
 	return {
 		currentComment,
 		fontSize,
-		viewCountFormat,
 		playSrc,
 	}
 }

@@ -1,50 +1,70 @@
+import path from 'node:path'
 import type { ActionFunctionArgs } from '@remix-run/node'
-import { eq } from 'drizzle-orm'
+import { bundle } from '@remotion/bundler'
+import { renderMedia, selectComposition } from '@remotion/renderer'
 import invariant from 'tiny-invariant'
-import { db, schema } from '~/lib/drizzle'
-import { asyncPool } from '~/utils'
-import { translate } from '~/utils/ai'
+import { webpackOverride } from '~/remotion/webpack-override'
+import { createDownloadDir } from '~/utils/file'
+import { bundleOnProgress, throttleRenderOnProgress } from '~/utils/remotion'
+import { buildTranslateCommentRemotionRenderData } from '~/utils/translate-comment'
+import { getTranslateCommentAndDownloadInfo } from '~/utils/translate-comment.server'
+
+const entryPoint = path.join(process.cwd(), 'app', 'remotion', 'new-translate-comments', 'index.ts')
 
 export const action = async ({ params }: ActionFunctionArgs) => {
 	const id = params.id
 	invariant(id, 'id is required')
 
-	const translateComment = await db.query.translateComments.findFirst({
-		where: eq(schema.translateComments.id, id),
+	const { translateComment, download } = await getTranslateCommentAndDownloadInfo(id)
+
+	const render = await buildTranslateCommentRemotionRenderData({
+		mode: translateComment.mode,
+		fps: translateComment.fps,
+		secondsForEvery30Words: translateComment.secondsForEvery30Words,
+		coverDurationInSeconds: translateComment.coverDurationInSeconds,
+		comments: translateComment.comments ?? [],
 	})
 
-	if (!translateComment) {
-		throw new Error('id is not correct')
-	}
-
-	const download = await db.query.downloads.findFirst({
-		where: eq(schema.downloads.id, translateComment.downloadId),
+	const bundled = await bundle({
+		entryPoint,
+		webpackOverride,
+		onProgress: bundleOnProgress,
 	})
 
-	if (!download) {
-		throw new Error('download is not correct')
+	const playFile = download.filePath ? path.basename(download.filePath) : null
+
+	const inputProps = {
+		comments: render.remotionVideoComments,
+		title: translateComment.translatedTitle || '',
+		playFile,
+		viewCountText: download.viewCountText || '',
+		coverDurationInSeconds: translateComment.coverDurationInSeconds,
+		author: download.author || '',
 	}
 
-	const { title } = download
+	const composition = await selectComposition({
+		serveUrl: bundled,
+		id: render.compositionId,
+		inputProps,
+	})
 
-	let translatedTitle = ''
-	if (title) {
-		translatedTitle = await translate(title)
-	}
+	composition.durationInFrames = render.totalDurationInFrames
+	composition.fps = translateComment.fps
+	composition.height = render.compositionHeight
+	composition.width = render.compositionWidth
 
-	if (translateComment.comments?.length) {
-		await asyncPool(30, translateComment.comments, async (item) => {
-			const result = await translate(item.content)
-			item.translatedContent = result
-			return item
-		})
-	}
+	const dir = await createDownloadDir(download.id)
+	const outputPath = path.join(dir, 'output.mp4')
 
-	const data = {
-		comments: translateComment.comments,
-		translatedTitle,
-	}
-	await db.update(schema.translateComments).set(data).where(eq(schema.translateComments.id, id))
+	await renderMedia({
+		codec: 'h264',
+		composition,
+		serveUrl: bundled,
+		inputProps,
+		outputLocation: outputPath,
+		concurrency: 2,
+		onProgress: throttleRenderOnProgress,
+	})
 
 	return {}
 }

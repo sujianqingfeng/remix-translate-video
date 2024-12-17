@@ -49,7 +49,8 @@ export function ShortTexts({
 	const currentSentence = sentenceTranscript.find((item, index) => {
 		const isCurrentSentence = currentTime >= item.start && currentTime < item.end
 		if (isCurrentSentence) {
-			item.partZh = shortTextZh.split('。')[index]
+			const sentences = shortTextZh.split(/[。！？]/)
+			item.partZh = sentences[index]?.trim()
 		}
 		return isCurrentSentence
 	})

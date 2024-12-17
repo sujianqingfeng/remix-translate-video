@@ -1,13 +1,13 @@
 import { AbsoluteFill, Sequence, useVideoConfig } from 'remotion'
 
 type CoverProps = {
-	coverDuration: number
+	coverDurationInSeconds: number
 	title?: string
 	author?: string
 	isSplit?: boolean
 }
 
-export default function Cover({ coverDuration, title, author, isSplit = true }: CoverProps) {
+export default function Cover({ coverDurationInSeconds, title, author, isSplit = true }: CoverProps) {
 	const { fps } = useVideoConfig()
 	const splitTitle = (title?: string) => {
 		if (!title) return []
@@ -34,7 +34,7 @@ export default function Cover({ coverDuration, title, author, isSplit = true }: 
 	const titleLines = splitTitle(title)
 
 	return (
-		<Sequence from={0} durationInFrames={coverDuration * fps}>
+		<Sequence from={0} durationInFrames={coverDurationInSeconds * fps}>
 			<AbsoluteFill>
 				<div className="w-full h-full flex justify-center items-center">
 					<div className="text-left leading-[1.2] w-[50%]">

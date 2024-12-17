@@ -4,14 +4,13 @@ import Cover from './Cover'
 import { useTranslateComment } from './hooks'
 import type { TranslateCommentProps } from './types'
 
-export default function LandscapeTranslateComment({ comments, title, playFile, viewCount, coverDuration, author, isRemoteRender = false }: TranslateCommentProps) {
+export default function LandscapeTranslateComment({ comments, title, playFile, viewCountText, coverDurationInSeconds, author, isRemoteRender = false }: TranslateCommentProps) {
 	const { fps } = useVideoConfig()
 
-	const { currentComment, fontSize, viewCountFormat, playSrc } = useTranslateComment({
+	const { currentComment, fontSize, playSrc } = useTranslateComment({
 		isRemoteRender,
 		playFile,
-		viewCount,
-		coverDuration,
+		coverDurationInSeconds,
 		comments,
 		availableWidth: 1920 - 32,
 		availableHeight: 440,
@@ -19,15 +18,15 @@ export default function LandscapeTranslateComment({ comments, title, playFile, v
 
 	return (
 		<AbsoluteFill className="bg-white">
-			<Cover coverDuration={coverDuration} title={title} author={author} />
+			<Cover coverDurationInSeconds={coverDurationInSeconds} title={title} author={author} />
 
-			<Sequence from={coverDuration * fps}>
+			<Sequence from={coverDurationInSeconds * fps}>
 				<AbsoluteFill>
 					<div className="flex justify-center items-center gap-[100px] h-[64%] p-4">
 						<div className="text-[#ee3f4d] w-[450px] flex-shrink-0 h-full flex flex-col items-center justify-center p-[20px]">
 							<div>
 								<div className="flex items-center gap-2 text-3xl">
-									<span>播放量：{viewCountFormat}</span>
+									<span>播放量：{viewCountText}</span>
 								</div>
 								<p className="text-5xl mt-2 leading-[1.5]"> {title}</p>
 							</div>

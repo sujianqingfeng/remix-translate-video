@@ -21,6 +21,7 @@ export const downloads = sqliteTable(
 	'downloads',
 	{
 		id: text()
+			.notNull()
 			.$defaultFn(() => createId())
 			.unique(),
 		link: text('link').notNull(),
@@ -40,6 +41,7 @@ export const translateComments = sqliteTable(
 	'translate_comments',
 	{
 		id: text()
+			.notNull()
 			.$defaultFn(() => createId())
 			.unique(),
 		translatedTitle: text('translated_title'),

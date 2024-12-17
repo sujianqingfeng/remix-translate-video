@@ -324,7 +324,7 @@ export function generateFFmpegCommand(videoPath: string, escapedSrtPath: string)
 		'-i',
 		videoPath,
 		'-vf',
-		`subtitles='${escapedSrtPath}':force_style='FontName=Microsoft YaHei,FontSize=17,Alignment=2,BorderStyle=0,Outline=0.1,Shadow=0,MarginV=45,PrimaryColour=&H00FFFF,BackColour=&H80000000,BorderColour=&H80000000'`,
+		`subtitles='${escapedSrtPath}':force_style='FontName=Microsoft YaHei,FontSize=17,Alignment=2,BorderStyle=0,Outline=0.4,Shadow=0,MarginV=20,PrimaryColour=&H00FFFF,BackColour=&H80000000,BorderColour=&H80000000'`,
 		'-c:v',
 		'libx264',
 		'-preset',

@@ -4,8 +4,8 @@ export type TranslateCommentProps = {
 	comments: RemotionVideoComment[]
 	title?: string
 	playFile: string
-	viewCount: number
-	coverDuration: number
+	viewCountText: string
+	coverDurationInSeconds: number
 	author?: string
 	isRemoteRender?: boolean
 }
