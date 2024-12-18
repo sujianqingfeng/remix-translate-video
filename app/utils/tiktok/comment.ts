@@ -90,7 +90,7 @@ export async function getCommentList(reqUrl: string, proxyUrl: string): Promise<
 	const data = (await response.json()) as any
 
 	if (!data) {
-		throw new Error('爬取失败或没有评论')
+		throw new Error('Failed to fetch comments')
 	}
 
 	const comments: Comments[] = []

@@ -58,3 +58,24 @@ export const translateComments = sqliteTable(
 	},
 	(t) => [index('translate_comments_id_idx').on(t.id)],
 )
+
+export const tasks = sqliteTable(
+	'tasks',
+	{
+		id: text()
+			.notNull()
+			.$defaultFn(() => createId())
+			.unique(),
+		type: text('type', { enum: ['render-comments', 'render-short-texts', 'synthetic-subtitle'] }).notNull(),
+		jobId: text('job_id').notNull(),
+		status: text('status', { enum: ['pending', 'active', 'completed', 'failed'] })
+			.notNull()
+			.default('pending'),
+		progress: integer('progress').notNull().default(0),
+		desc: text('desc'),
+		createdAt: integer('created_at', { mode: 'timestamp_ms' })
+			.notNull()
+			.$defaultFn(() => new Date()),
+	},
+	(t) => [index('tasks_id_idx').on(t.id)],
+)

@@ -33,15 +33,15 @@ export async function action({ request, params }: ActionFunctionArgs) {
 		mode: info.mode,
 	})
 
-	const maybePlayVideoFile = await tryGetYoutubeDownloadFile(outDir)
-	if (maybePlayVideoFile) {
-		const { destPath } = publicPlayVideoFile(maybePlayVideoFile)
-		const end = commentsEndFrame / fps
-		const command = `ffmpeg -y -ss 0 -i ${maybePlayVideoFile} -t ${end} -threads 3 -preset medium -crf 40 -vf scale=-1:720 ${destPath} -progress pipe:1`
-		console.log('processing video...')
-		await execCommand(command)
-		console.log('video processed')
-	}
+	// const maybePlayVideoFile = await tryGetYoutubeDownloadFile(outDir)
+	// if (maybePlayVideoFile) {
+	// 	const { destPath } = publicPlayVideoFile(maybePlayVideoFile)
+	// 	const end = commentsEndFrame / fps
+	// 	const command = `ffmpeg -y -ss 0 -i ${maybePlayVideoFile} -t ${end} -threads 3 -preset medium -crf 40 -vf scale=-1:720 ${destPath} -progress pipe:1`
+	// 	console.log('processing video...')
+	// 	await execCommand(command)
+	// 	console.log('video processed')
+	// }
 
 	const bundled = await bundle({
 		entryPoint,

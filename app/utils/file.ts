@@ -97,3 +97,26 @@ export async function copyFileToPublic({
 	const destPath = path.join(PUBLIC_DIR, destFileName || path.basename(filePath))
 	await fsp.copyFile(filePath, destPath)
 }
+
+export async function remotionBundleFiles(bundledPath: string) {
+	const result: string[] = []
+
+	const files = await fsp.readdir(bundledPath)
+	for (const file of files) {
+		const filePath = path.join(bundledPath, file)
+		const fileStat = await fsp.stat(filePath)
+		if (fileStat.isFile()) {
+			result.push(file)
+		}
+	}
+
+	return result
+}
+
+export async function copyFiles(copyFileMaps: [string, string][]) {
+	for (const [src, dest] of copyFileMaps) {
+		const targetDir = path.dirname(dest)
+		await fsp.mkdir(targetDir, { recursive: true })
+		await fsp.copyFile(src, dest)
+	}
+}

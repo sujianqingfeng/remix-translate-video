@@ -112,11 +112,15 @@ export async function taskStatus(jobId: string) {
 	}).then((res) => res.json() as Promise<{ id: string; state: string; progress: number }>)
 }
 
-export async function downloadTaskOutput(jobId: string) {
-	const buffer = await fetch(`${baseUrl}/api/tasks/${jobId}/download`, {
+export async function downloadTaskOutput(jobId: string): Promise<ReadableStream<Uint8Array>> {
+	const response = await fetch(`${baseUrl}/api/tasks/${jobId}/download`, {
 		headers,
 		credentials: 'include',
-	}).then((res) => res.arrayBuffer())
+	})
 
-	return buffer
+	if (!response.ok || !response.body) {
+		throw new Error('Download failed')
+	}
+
+	return response.body
 }

@@ -61,6 +61,8 @@ export default function TranslateCommentPage() {
 	const downloadCommentsFetcher = useFetcher()
 	const updateFetcher = useFetcher()
 	const translateFetcher = useFetcher()
+	const renderFetcher = useFetcher()
+	const remoteRenderFetcher = useFetcher()
 
 	return (
 		<div className="w-full h-full">
@@ -92,48 +94,64 @@ export default function TranslateCommentPage() {
 
 					<div className="flex gap-2">
 						<updateFetcher.Form method="post" action="update">
-							<Select
-								name="mode"
-								defaultValue={translateComment.mode}
-								onValueChange={(value) => {
-									updateFetcher.submit({ mode: value }, { method: 'post', action: 'update' })
-								}}
-							>
-								<SelectTrigger className="w-[180px]">
-									<SelectValue placeholder="Select mode" />
-								</SelectTrigger>
-								<SelectContent>
-									{commentModeOptions.map((item) => (
-										<SelectItem key={item.value} value={item.value}>
-											{item.label}
-										</SelectItem>
-									))}
-								</SelectContent>
-							</Select>
+							<div className="flex gap-2">
+								<Select name="mode" defaultValue={translateComment.mode}>
+									<SelectTrigger className="w-[180px]">
+										<SelectValue placeholder="select mode" />
+									</SelectTrigger>
+									<SelectContent>
+										{commentModeOptions.map((item) => (
+											<SelectItem key={item.value} value={item.value}>
+												{item.label}
+											</SelectItem>
+										))}
+									</SelectContent>
+								</Select>
+
+								<LoadingButtonWithState state={updateFetcher.state} idleText="Update" />
+							</div>
 						</updateFetcher.Form>
 					</div>
 
 					<div className="flex gap-2">
-						<downloadInfoFetcher.Form action="/app/downloads/download-info" method="post">
-							<input name="id" value={dId} hidden readOnly />
-							<LoadingButtonWithState state={downloadInfoFetcher.state} idleText="Download info" />
-						</downloadInfoFetcher.Form>
+						{!download.author && (
+							<downloadInfoFetcher.Form action="/app/downloads/download-info" method="post">
+								<input name="id" value={dId} hidden readOnly />
+								<LoadingButtonWithState state={downloadInfoFetcher.state} idleText="Download info" />
+							</downloadInfoFetcher.Form>
+						)}
 
-						<downloadVideoFetcher.Form action="/app/downloads/download-video" method="post">
-							<input name="id" value={dId} hidden readOnly />
-							<LoadingButtonWithState state={downloadVideoFetcher.state} idleText="Download video" />
-						</downloadVideoFetcher.Form>
+						{download.author && !download.filePath && (
+							<downloadVideoFetcher.Form action="/app/downloads/download-video" method="post">
+								<input name="id" value={dId} hidden readOnly />
+								<LoadingButtonWithState state={downloadVideoFetcher.state} idleText="Download video" />
+							</downloadVideoFetcher.Form>
+						)}
 
 						<translateFetcher.Form action="translate" method="post">
 							<LoadingButtonWithState state={translateFetcher.state} idleText="Translate" />
 						</translateFetcher.Form>
+					</div>
+
+					<div className="flex gap-2">
+						{download.author && download.filePath && (
+							<renderFetcher.Form action="render" method="post">
+								<LoadingButtonWithState state={renderFetcher.state} idleText="Render" />
+							</renderFetcher.Form>
+						)}
+
+						{download.author && download.filePath && (
+							<remoteRenderFetcher.Form action="remote-render" method="post">
+								<LoadingButtonWithState state={remoteRenderFetcher.state} idleText="Remote Render" />
+							</remoteRenderFetcher.Form>
+						)}
 					</div>
 				</div>
 				<div className="w-[400px] h-full overflow-y-auto">
 					{translateComment.comments?.length ? (
 						<Comments comments={translateComment.comments ?? []} />
 					) : (
-						<div>
+						<div className="flex flex-col gap-2">
 							<p> No comments</p>
 							<downloadCommentsFetcher.Form action="download-comments" method="post">
 								<LoadingButtonWithState state={downloadCommentsFetcher.state} idleText="Download comments" />

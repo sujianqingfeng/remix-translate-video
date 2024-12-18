@@ -22,7 +22,7 @@ export default function DownloadsPages() {
 				<NewDownloadDialog />
 			</div>
 			<Table>
-				<TableCaption>A list of your recent invoices.</TableCaption>
+				<TableCaption>A list of your recent downloads.</TableCaption>
 				<TableHeader>
 					<TableRow>
 						<TableHead className="w-[100px]">Type</TableHead>
@@ -38,19 +38,21 @@ export default function DownloadsPages() {
 							<TableCell>{download.link}</TableCell>
 							<TableCell>{download.title}</TableCell>
 							<TableCell className="text-right">
-								<Button variant="ghost" size="sm">
-									<Download />
-								</Button>
-
-								<Button variant="ghost" size="sm">
-									<Languages />
-								</Button>
-
-								<Form method="post" action={`/app/downloads/create-translate-comment/${download.id}`}>
+								<div className="flex justify-end items-center gap-2">
 									<Button variant="ghost" size="sm">
-										<MessageSquare />
+										<Download />
 									</Button>
-								</Form>
+
+									<Button variant="ghost" size="sm">
+										<Languages />
+									</Button>
+
+									<Form method="post" action={`/app/tasks/create-translate-comment/${download.id}`}>
+										<Button variant="ghost" size="sm">
+											<MessageSquare />
+										</Button>
+									</Form>
+								</div>
 							</TableCell>
 						</TableRow>
 					))}

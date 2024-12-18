@@ -42,7 +42,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 	const playVideoFileName: string | null = formData.get('playVideoFileName') as string | null
 	invariant(playVideoFileName, 'playVideoFileName is required')
 
-	const { infoFile, outDir, bundleDir, renderInfoFile } = getYoutubeCommentOut(videoId)
+	const { infoFile, bundleDir, renderInfoFile } = getYoutubeCommentOut(videoId)
 
 	const infoStr = await fsp.readFile(infoFile, 'utf-8')
 	const info: YoutubeInfo = JSON.parse(infoStr)

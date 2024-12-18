@@ -8,12 +8,13 @@ import { type Comments, tiktokGetComments } from '~/utils/tiktok'
 
 const mapComment = (comment: Comments) => {
 	const { text, likeCount, user } = comment
+	const links = likeCount || 0
 	return {
 		content: text,
 		author: user.nickname,
-		likes: likeCount,
+		likes: `${links}`,
 		authorThumbnail: user.avatarThumb[0] || '',
-		publishedTime: formatDate(comment.createTime, 'yyyy-MM-dd HH:mm:ss'),
+		publishedTime: formatDate(new Date(comment.createTime * 1000), 'yyyy-MM-dd HH:mm:ss'),
 		translatedContent: '',
 	}
 }

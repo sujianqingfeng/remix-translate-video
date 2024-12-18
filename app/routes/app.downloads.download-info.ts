@@ -5,10 +5,10 @@ import { db, schema } from '~/lib/drizzle'
 import { tiktokDownloadInfo } from '~/utils/tiktok'
 
 async function downloadTiktokInfo({ url, id }: { url: string; id: string }) {
-	const { status, result } = await tiktokDownloadInfo(url)
+	const { status, result, message } = await tiktokDownloadInfo(url)
 
 	if (status === 'error' || !result) {
-		throw new Error('Tiktok download error')
+		throw new Error(`Tiktok download error: ${message}`)
 	}
 	const {
 		author: { nickname },
