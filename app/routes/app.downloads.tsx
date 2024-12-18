@@ -47,7 +47,7 @@ export default function DownloadsPages() {
 										<Languages />
 									</Button>
 
-									<Form method="post" action={`/app/tasks/create-translate-comment/${download.id}`}>
+									<Form method="post" action={`/app/downloads/create-translate-comment/${download.id}`}>
 										<Button variant="ghost" size="sm">
 											<MessageSquare />
 										</Button>

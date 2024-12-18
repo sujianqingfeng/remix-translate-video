@@ -79,3 +79,19 @@ export const tasks = sqliteTable(
 	},
 	(t) => [index('tasks_id_idx').on(t.id)],
 )
+
+export const translateVideos = sqliteTable(
+	'translate_videos',
+	{
+		id: text()
+			.notNull()
+			.$defaultFn(() => createId())
+			.unique(),
+		source: text('source', { enum: ['download', 'upload'] }).notNull(),
+		downloadId: text('download_id'),
+		filePath: text('file_path'),
+		asrResult: text('asr_result', { mode: 'json' }).$type<any[]>().default([]),
+		transcripts: text('transcripts', { mode: 'json' }).$type<any[]>().default([]),
+	},
+	(t) => [index('translate_videos_id_idx').on(t.id)],
+)

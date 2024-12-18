@@ -4,6 +4,7 @@ import { eq } from 'drizzle-orm'
 import invariant from 'tiny-invariant'
 import { db, schema } from '~/lib/drizzle'
 import { downloadFile } from '~/utils/download'
+import { execCommand } from '~/utils/exec'
 import { createDownloadDir } from '~/utils/file'
 
 async function downloadTiktokInfo({ id, downloadUrl }: { id: string; downloadUrl: string | null }) {
@@ -15,6 +16,21 @@ async function downloadTiktokInfo({ id, downloadUrl }: { id: string; downloadUrl
 	const filePath = path.join(dir, `${id}.mp4`)
 
 	await downloadFile(downloadUrl, filePath)
+	await db
+		.update(schema.downloads)
+		.set({
+			filePath,
+		})
+		.where(eq(schema.downloads.id, id))
+}
+
+async function downloadYoutubeInfo({ id, link }: { id: string; link: string }) {
+	const dir = await createDownloadDir(id)
+	const fileName = `${id}.%(ext)s`
+	const filePath = path.join(dir, `${id}.mp4`)
+
+	await execCommand(`cd ${dir} && yt-dlp ${link} -f "bv*[height<=720][ext=webm]+ba[ext=webm]/b[ext=webm] / bv*+ba/b" --merge-output-format mp4 -o "${fileName}"`)
+
 	await db
 		.update(schema.downloads)
 		.set({
@@ -38,7 +54,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 		throw new Error('id is not correct')
 	}
 
-	const { type, downloadUrl } = download
+	const { type, downloadUrl, link } = download
 
 	switch (type) {
 		case 'tiktok':
@@ -46,6 +62,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 			break
 
 		case 'youtube':
+			await downloadYoutubeInfo({ id, link })
 			break
 
 		default:

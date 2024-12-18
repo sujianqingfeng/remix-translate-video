@@ -1,8 +1,12 @@
 import type { ActionFunctionArgs } from '@remix-run/node'
 import { eq } from 'drizzle-orm'
+import getVideoId from 'get-video-id'
 import invariant from 'tiny-invariant'
+import { ProxyAgent } from 'undici'
+import { PROXY } from '~/constants'
 import { db, schema } from '~/lib/drizzle'
 import { tiktokDownloadInfo } from '~/utils/tiktok'
+import { createProxyYoutubeInnertube } from '~/utils/youtube'
 
 async function downloadTiktokInfo({ url, id }: { url: string; id: string }) {
 	const { status, result, message } = await tiktokDownloadInfo(url)
@@ -25,6 +29,31 @@ async function downloadTiktokInfo({ url, id }: { url: string; id: string }) {
 			author: nickname,
 			likeCountText: likeCount,
 			commentCountText: commentCount,
+		})
+		.where(eq(schema.downloads.id, id))
+}
+
+async function downloadYoutubeInfo({ id, link }: { id: string; link: string }) {
+	const result = getVideoId(link)
+	if (!result.id) {
+		throw new Error('No video id found')
+	}
+
+	const videoId = result.id
+
+	const innertube = await createProxyYoutubeInnertube(
+		new ProxyAgent({
+			uri: PROXY,
+		}),
+	)
+	const youtubeInfo = await innertube.getBasicInfo(videoId)
+
+	await db
+		.update(schema.downloads)
+		.set({
+			title: youtubeInfo.basic_info.title,
+			author: youtubeInfo.basic_info.author,
+			likeCountText: `${(youtubeInfo.basic_info?.like_count ?? 0) / 1000}k`,
 		})
 		.where(eq(schema.downloads.id, id))
 }
@@ -52,6 +81,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 			break
 
 		case 'youtube':
+			await downloadYoutubeInfo({ id, link })
 			break
 
 		default:
