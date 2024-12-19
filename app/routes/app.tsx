@@ -15,6 +15,11 @@ export default function LayoutPage() {
 					Translate Comment
 				</NavLink>
 
+				<NavLink className={({ isActive }) => `${isActive ? 'text-blue-500' : ''} flex items-center gap-2 px-2 py-1`} to="/app/translate-video">
+					<Languages />
+					Translate Video
+				</NavLink>
+
 				<NavLink className={({ isActive }) => `${isActive ? 'text-blue-500' : ''} flex items-center gap-2 px-2 py-1`} to="/app/tasks">
 					<FileCheck />
 					Tasks

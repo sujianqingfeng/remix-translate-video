@@ -1,0 +1,1 @@
+ALTER TABLE `translate_videos` ADD `audio_file_path` text;

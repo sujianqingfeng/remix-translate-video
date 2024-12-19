@@ -17,6 +17,20 @@ export type CompositionInfo = {
 	height: number
 }
 
+export type AsrWord = {
+	word: string
+	start: number
+	end: number
+}
+
+export type Transcript = {
+	text: string
+	start: number
+	end: number
+	words: AsrWord[]
+	textLiteralTranslation?: string
+}
+
 export const downloads = sqliteTable(
 	'downloads',
 	{
@@ -89,9 +103,10 @@ export const translateVideos = sqliteTable(
 			.unique(),
 		source: text('source', { enum: ['download', 'upload'] }).notNull(),
 		downloadId: text('download_id'),
-		filePath: text('file_path'),
-		asrResult: text('asr_result', { mode: 'json' }).$type<any[]>().default([]),
-		transcripts: text('transcripts', { mode: 'json' }).$type<any[]>().default([]),
+		uploadFilePath: text('upload_file_path'),
+		audioFilePath: text('audio_file_path'),
+		asrWords: text('asr_words', { mode: 'json' }).$type<AsrWord[]>().default([]),
+		transcripts: text('transcripts', { mode: 'json' }).$type<Transcript[]>().default([]),
 	},
 	(t) => [index('translate_videos_id_idx').on(t.id)],
 )

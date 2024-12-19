@@ -43,9 +43,11 @@ export default function DownloadsPages() {
 										<Download />
 									</Button>
 
-									<Button variant="ghost" size="sm">
-										<Languages />
-									</Button>
+									<Form method="post" action={`/app/downloads/create-translate-video/${download.id}`}>
+										<Button variant="ghost" size="sm">
+											<Languages />
+										</Button>
+									</Form>
 
 									<Form method="post" action={`/app/downloads/create-translate-comment/${download.id}`}>
 										<Button variant="ghost" size="sm">

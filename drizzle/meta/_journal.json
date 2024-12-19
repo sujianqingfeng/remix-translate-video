@@ -15,6 +15,20 @@
       "when": 1734508403386,
       "tag": "0001_colorful_susan_delgado",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1734618482161,
+      "tag": "0002_hesitant_klaw",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1734622672296,
+      "tag": "0003_eminent_banshee",
+      "breakpoints": true
     }
   ]
 }
