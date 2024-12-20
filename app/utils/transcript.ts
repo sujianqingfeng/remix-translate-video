@@ -143,7 +143,7 @@ export function mergeSentencesWithAbbreviations(sentences: SentenceWord[][]): Se
 	return result
 }
 
-export function processSentenceSegmentation({ words, maxSentenceLength = 60 }: SentenceSegmentationOptions) {
+export function processSentenceSegmentation({ words, maxSentenceLength = 80 }: SentenceSegmentationOptions) {
 	// 1. 组装长句
 	const longSentences = assembleLongSentences(words)
 
@@ -182,7 +182,7 @@ export function processSentenceSegmentation({ words, maxSentenceLength = 60 }: S
 // 需要处理start和end，text，其他不用处理
 // 返回新的Transcript数组
 
-export function processTranslatedLongTranscripts(transcripts: Transcript[], maxSentenceLength = 60) {
+export function processTranslatedLongTranscripts(transcripts: Transcript[], maxSentenceLength = 80) {
 	const result: Transcript[] = []
 
 	for (const transcript of transcripts) {
@@ -321,6 +321,8 @@ export function generateFFmpegCommand(videoPath: string, escapedSrtPath: string)
 		'-y',
 		'-threads',
 		'2',
+		// '-t',
+		// '30',
 		'-i',
 		videoPath,
 		'-vf',

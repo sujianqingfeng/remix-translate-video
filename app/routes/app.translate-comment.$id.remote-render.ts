@@ -5,7 +5,7 @@ import invariant from 'tiny-invariant'
 import { BUNDLE_DIR, RENDER_INFO_FILE } from '~/constants'
 import { db, schema } from '~/lib/drizzle'
 import { webpackOverride } from '~/remotion/webpack-override'
-import { copyFiles, createDownloadDir, remotionBundleFiles } from '~/utils/file'
+import { copyFiles, createOperationDir, remotionBundleFiles } from '~/utils/file'
 import { addRenderTask, uploadRenderZipFile } from '~/utils/remote-render'
 import { bundleOnProgress, createRenderZipFile } from '~/utils/remotion'
 import { buildTranslateCommentRemotionRenderData } from '~/utils/translate-comment'
@@ -49,7 +49,7 @@ export const action = async ({ params }: ActionFunctionArgs) => {
 		publicPath: './',
 	})
 
-	const downloadPath = await createDownloadDir(download.id)
+	const downloadPath = await createOperationDir(download.id)
 	const bundleFiles = await remotionBundleFiles(bundledPath)
 	const destBundlePath = path.join(downloadPath, BUNDLE_DIR)
 	const renderInfoFilePath = path.join(downloadPath, RENDER_INFO_FILE)

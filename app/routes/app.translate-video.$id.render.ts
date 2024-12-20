@@ -1,26 +1,17 @@
+import { spawn } from 'node:child_process'
+import fsp from 'node:fs/promises'
 import path from 'node:path'
 import type { ActionFunctionArgs } from '@remix-run/node'
-import { bundle } from '@remotion/bundler'
-import { renderMedia, selectComposition } from '@remotion/renderer'
 import { eq } from 'drizzle-orm'
 import invariant from 'tiny-invariant'
+import { TRANSLATE_VIDEO_COMBINED_SRT_FILE } from '~/constants'
 import { db, schema } from '~/lib/drizzle'
-import { webpackOverride } from '~/remotion/webpack-override'
-import { createDownloadDir } from '~/utils/file'
-import { bundleOnProgress, throttleRenderOnProgress } from '~/utils/remotion'
+import { createOperationDir } from '~/utils/file'
+import { generateFFmpegCommand, generateSRT } from '~/utils/transcript'
 
-const entryPoint = path.join(process.cwd(), 'app', 'remotion', 'translate-videos', 'index.ts')
-
-export const action = async ({ request, params }: ActionFunctionArgs) => {
+export const action = async ({ params }: ActionFunctionArgs) => {
 	const { id } = params
 	invariant(id, 'id is required')
-
-	const formData = await request.formData()
-	const index = formData.get('index')
-	invariant(typeof index === 'string', 'index is required')
-
-	const indexNum = Number.parseInt(index, 10)
-	invariant(!Number.isNaN(indexNum), 'index must be a number')
 
 	const where = eq(schema.translateVideos.id, id)
 
@@ -29,39 +20,52 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 	})
 	invariant(translateVideo, 'translateVideo not found')
 
-	const { transcripts } = translateVideo
+	const { transcripts, downloadId, source } = translateVideo
 
-	const bundled = await bundle({
-		entryPoint,
-		webpackOverride,
-		onProgress: bundleOnProgress,
-	})
-
-	const inputProps = {
-		transcripts,
-		playVideoFileName: 0,
+	let filePath = ''
+	if (source === 'download' && downloadId) {
+		const download = await db.query.downloads.findFirst({
+			where: eq(schema.downloads.id, downloadId),
+		})
+		invariant(download, 'download not found')
+		filePath = download.filePath || ''
 	}
 
-	const composition = await selectComposition({
-		serveUrl: bundled,
-		id: 'TranslateVideos',
-		inputProps,
-	})
+	const operationDir = await createOperationDir(id)
+	const outputPath = path.join(operationDir, 'output.mp4')
 
-	composition.durationInFrames = 1000
-	composition.fps = 30
+	// 生成合并的 SRT 字幕文件
+	const combined = generateSRT(transcripts ?? [])
+	const combinedSrtFile = path.join(operationDir, TRANSLATE_VIDEO_COMBINED_SRT_FILE)
+	await fsp.writeFile(combinedSrtFile, combined)
 
-	const dir = await createDownloadDir(id)
-	const outputPath = path.join(dir, 'output.mp4')
+	const escapedCombinedSrtPath = combinedSrtFile.replace(/\\/g, '/').replace(/:/g, '\\:').replace(/'/g, "'\\\\''")
 
-	await renderMedia({
-		codec: 'h264',
-		composition,
-		serveUrl: bundled,
-		inputProps,
-		outputLocation: outputPath,
-		concurrency: 2,
-		onProgress: throttleRenderOnProgress,
+	await new Promise((resolve, reject) => {
+		const cmd = generateFFmpegCommand(filePath, escapedCombinedSrtPath)
+
+		const ffmpeg = spawn('ffmpeg', cmd.concat(outputPath))
+
+		// 收集错误输出
+		let stderr = ''
+		ffmpeg.stderr.on('data', (data) => {
+			stderr += data.toString()
+			console.log('FFmpeg progress:', data.toString())
+		})
+
+		ffmpeg.on('error', (error) => {
+			reject(new Error(`FFmpeg process error: ${error.message}`))
+		})
+
+		ffmpeg.on('close', (code) => {
+			if (code === 0) {
+				console.log('FFmpeg finished successfully')
+				resolve(null)
+			} else {
+				console.error('FFmpeg stderr:', stderr)
+				reject(new Error(`FFmpeg process exited with code ${code}\n${stderr}`))
+			}
+		})
 	})
 
 	return { success: true }

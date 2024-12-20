@@ -30,8 +30,6 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 		end: item.offsets.to / 1000,
 	}))
 
-	console.log('🚀 ~ words ~ words:', words)
-
 	const segments = processSentenceSegmentation({ words })
 
 	// 去除句子两边的符号 和 words

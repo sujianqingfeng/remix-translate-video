@@ -28,9 +28,6 @@ export async function action({ params }: ActionFunctionArgs) {
 
 	const escapedCombinedSrtPath = combinedSrtFile.replace(/\\/g, '/').replace(/:/g, '\\:').replace(/'/g, "'\\\\''")
 
-	// 背景
-	// `subtitles='${escapedCombinedSrtPath}':force_style='FontName=Microsoft YaHei,FontSize=16,Alignment=2,MarginV=20,PrimaryColour=&HFFFFFF,BorderStyle=4,BackColour=&H1A000000'`,
-
 	// &HFFFFFF
 	// 使用 FFmpeg 渲染带字幕的视频，只使用一个字幕文件
 	await new Promise((resolve, reject) => {
@@ -46,7 +43,6 @@ export async function action({ params }: ActionFunctionArgs) {
 		})
 
 		ffmpeg.on('error', (error) => {
-			console.error('FFmpeg error:', error)
 			reject(new Error(`FFmpeg process error: ${error.message}`))
 		})
 
@@ -55,7 +51,6 @@ export async function action({ params }: ActionFunctionArgs) {
 				console.log('FFmpeg finished successfully')
 				resolve(null)
 			} else {
-				console.error('FFmpeg failed with code:', code)
 				console.error('FFmpeg stderr:', stderr)
 				reject(new Error(`FFmpeg process exited with code ${code}\n${stderr}`))
 			}

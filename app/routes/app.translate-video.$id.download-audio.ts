@@ -5,13 +5,13 @@ import { eq } from 'drizzle-orm'
 import invariant from 'tiny-invariant'
 import { db, schema } from '~/lib/drizzle'
 import { execCommand } from '~/utils/exec'
-import { createDownloadDir } from '~/utils/file'
+import { createOperationDir } from '~/utils/file'
 
-async function downloadYoutubeAudio({ link, id, downloadId }: { link: string; id: string; downloadId: string }) {
-	const dir = await createDownloadDir(downloadId)
-	const fileName = `${downloadId}.wav`
+async function downloadYoutubeAudio({ link, id }: { link: string; id: string }) {
+	const dir = await createOperationDir(id)
+	const fileName = `${id}.wav`
 	const audioFilePath = path.join(dir, fileName)
-	await execCommand(`cd ${dir} && yt-dlp -f "ba" --extract-audio --audio-format wav --postprocessor-args "ffmpeg:-ar 16000" ${link} --output "${downloadId}.%(ext)s"`)
+	await execCommand(`cd ${dir} && yt-dlp -f "ba" --extract-audio --audio-format wav --postprocessor-args "ffmpeg:-ar 16000" ${link} --output "${id}.%(ext)s"`)
 
 	await db
 		.update(schema.translateVideos)
@@ -31,12 +31,24 @@ async function parseDownloadAudio({ id, downloadId }: { id: string; downloadId: 
 
 	switch (type) {
 		case 'youtube':
-			await downloadYoutubeAudio({ link, id, downloadId })
+			await downloadYoutubeAudio({ link, id })
 			break
 
 		default:
 			break
 	}
+}
+
+async function returnAudioFile(audioFilePath: string, id: string) {
+	const buffer = await readFile(audioFilePath)
+	return new Response(buffer, {
+		status: 200,
+		headers: {
+			'Content-Type': 'audio/wav',
+			'Content-Disposition': `attachment; filename="audio-${id}.wav"`,
+			'Content-Length': buffer.length.toString(),
+		},
+	})
 }
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
@@ -51,6 +63,10 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 
 	const { source, downloadId } = translateVideo
 
+	if (translateVideo.audioFilePath) {
+		return returnAudioFile(translateVideo.audioFilePath, id)
+	}
+
 	switch (source) {
 		case 'download':
 			invariant(downloadId, 'downloadId is required')
@@ -64,21 +80,10 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 	const newTranslateVideo = await db.query.translateVideos.findFirst({
 		where,
 	})
-
 	invariant(newTranslateVideo, 'newTranslateVideo not found')
 
 	const { audioFilePath } = newTranslateVideo
-
 	invariant(audioFilePath, 'audioFilePath is required')
 
-	const buffer = await readFile(audioFilePath)
-
-	return new Response(buffer, {
-		status: 200,
-		headers: {
-			'Content-Type': 'audio/wav',
-			'Content-Disposition': `attachment; filename="audio-${id}.wav"`,
-			'Content-Length': buffer.length.toString(),
-		},
-	})
+	return returnAudioFile(audioFilePath, id)
 }

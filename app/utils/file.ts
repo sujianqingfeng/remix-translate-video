@@ -81,7 +81,7 @@ export async function readFileJson<T>(path: string): Promise<T> {
 	return JSON.parse(json) as T
 }
 
-export async function createDownloadDir(id: string) {
+export async function createOperationDir(id: string) {
 	const dir = path.join(DOWNLOADS_DIR, id)
 	await fsp.mkdir(dir, { recursive: true })
 	return dir

@@ -6,7 +6,7 @@ import invariant from 'tiny-invariant'
 import { PUBLIC_DIR } from '~/constants'
 import { webpackOverride } from '~/remotion/webpack-override'
 import { execCommand } from '~/utils/exec'
-import { createDownloadDir } from '~/utils/file'
+import { createOperationDir } from '~/utils/file'
 import { bundleOnProgress, throttleRenderOnProgress } from '~/utils/remotion'
 import { buildTranslateCommentRemotionRenderData } from '~/utils/translate-comment'
 import { getTranslateCommentAndDownloadInfo } from '~/utils/translate-comment.server'
@@ -63,7 +63,7 @@ export const action = async ({ params }: ActionFunctionArgs) => {
 	composition.height = render.compositionHeight
 	composition.width = render.compositionWidth
 
-	const dir = await createDownloadDir(download.id)
+	const dir = await createOperationDir(id)
 	const outputPath = path.join(dir, 'output.mp4')
 
 	await renderMedia({

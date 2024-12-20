@@ -1,8 +1,7 @@
 import { useFetcher } from '@remix-run/react'
 import { Trash } from 'lucide-react'
 import { Button } from '~/components/ui/button'
-import type { Transcript } from '~/db/schema'
-
+import type { Transcript } from '~/types'
 export default function Transcripts({ transcripts }: { transcripts: Transcript[] }) {
 	const deleteFetcher = useFetcher()
 	return (

@@ -49,15 +49,6 @@ export type Sentence = {
 	end: number // 句子结束时间
 }
 
-export type Transcript = {
-	words: SentenceWord[]
-	text: string
-	start: number
-	end: number
-	textLiteralTranslation?: string
-	textInterpretation?: string
-}
-
 // short text
 export type WordTranscript = {
 	start: number
@@ -82,4 +73,35 @@ export type ShortText = GenerateShortText & {
 	jobId?: string
 	// 0: portrait, 1: landscape
 	direction: 0 | 1
+}
+
+export type Comment = {
+	content: string
+	author: string
+	likes: string
+	authorThumbnail: string
+	publishedTime: string
+	translatedContent?: string
+}
+
+export type CompositionInfo = {
+	fps: number
+	durationInFrames: number
+	width: number
+	height: number
+}
+
+export type AsrWord = {
+	word: string
+	start: number
+	end: number
+}
+
+export type Transcript = {
+	text: string
+	start: number
+	end: number
+	words: AsrWord[]
+	textLiteralTranslation?: string
+	textInterpretation?: string
 }
