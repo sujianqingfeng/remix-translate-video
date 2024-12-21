@@ -23,6 +23,7 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
 	const formData = await request.formData()
 	const data = translateCommentUpdateSchema.parse({
 		mode: formData.get('mode'),
+		translatedTitle: formData.get('translatedTitle'),
 	})
 
 	await db

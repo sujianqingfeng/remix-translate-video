@@ -1,5 +1,5 @@
-import { Link, useLoaderData } from '@remix-run/react'
-import { Languages } from 'lucide-react'
+import { Link, useFetcher, useLoaderData } from '@remix-run/react'
+import { Languages, Trash } from 'lucide-react'
 import { Button } from '~/components/ui/button'
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '~/components/ui/table'
 import { db } from '~/lib/drizzle'
@@ -14,6 +14,8 @@ export const loader = async () => {
 
 export default function TranslateCommentPage() {
 	const { translateVideos } = useLoaderData<typeof loader>()
+
+	const deleteFetcher = useFetcher()
 
 	return (
 		<div>
@@ -33,11 +35,19 @@ export default function TranslateCommentPage() {
 							<TableCell>{video.source}</TableCell>
 
 							<TableCell className="text-right">
-								<Link to={`/app/translate-video/${video.id}`}>
-									<Button variant="ghost" size="sm">
-										<Languages />
-									</Button>
-								</Link>
+								<div className="flex">
+									<deleteFetcher.Form method="post" action={`/app/translate-video/${video.id}/delete`}>
+										<Button variant="ghost" size="sm">
+											<Trash />
+										</Button>
+									</deleteFetcher.Form>
+
+									<Link to={`/app/translate-video/${video.id}`}>
+										<Button variant="ghost" size="sm">
+											<Languages />
+										</Button>
+									</Link>
+								</div>
 							</TableCell>
 						</TableRow>
 					))}

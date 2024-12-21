@@ -27,7 +27,8 @@ export const action = async ({ params }: ActionFunctionArgs) => {
 		comments: translateComment.comments ?? [],
 	})
 
-	let playFile = download.filePath ? path.basename(download.filePath) : null
+	const filePath = translateComment.sourceFilePath || download.filePath
+	let playFile = filePath ? path.basename(filePath) : null
 
 	// scale video to 720p
 	const newPlayFile = `new-${playFile}`

@@ -19,8 +19,10 @@ export const action = async ({ params }: ActionFunctionArgs) => {
 
 	const { translateComment, download } = await getTranslateCommentAndDownloadInfo(id)
 
-	if (!download.filePath) {
-		throw new Error('download filePath is required')
+	const filePath = translateComment.sourceFilePath || download.filePath
+
+	if (!filePath) {
+		throw new Error('filePath is required')
 	}
 
 	const render = await buildTranslateCommentRemotionRenderData({
@@ -31,7 +33,7 @@ export const action = async ({ params }: ActionFunctionArgs) => {
 		comments: translateComment.comments ?? [],
 	})
 
-	const playFile = path.basename(download.filePath)
+	const playFile = path.basename(filePath)
 
 	const inputProps = {
 		comments: render.remotionVideoComments,
@@ -56,7 +58,7 @@ export const action = async ({ params }: ActionFunctionArgs) => {
 
 	const createPublicPrefixPath = path.join.bind(null, destBundlePath, 'public')
 
-	const copyFileMaps = [[download.filePath, createPublicPrefixPath(playFile)], ...bundleFiles.map((file) => [path.join(bundledPath, file), path.join(destBundlePath, file)])] as [
+	const copyFileMaps = [[filePath, createPublicPrefixPath(playFile)], ...bundleFiles.map((file) => [path.join(bundledPath, file), path.join(destBundlePath, file)])] as [
 		string,
 		string,
 	][]

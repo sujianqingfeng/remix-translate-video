@@ -1,5 +1,5 @@
-import { Form, Link, useLoaderData } from '@remix-run/react'
-import { Download, Languages, MessageSquare } from 'lucide-react'
+import { Form, Link, useFetcher, useLoaderData } from '@remix-run/react'
+import { Download, Languages, MessageSquare, Trash } from 'lucide-react'
 import NewDownloadDialog from '~/components/business/download/CreateNewDownloadDialog'
 import { Button } from '~/components/ui/button'
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '~/components/ui/table'
@@ -15,6 +15,8 @@ export const loader = async () => {
 
 export default function DownloadsPages() {
 	const { downloads } = useLoaderData<typeof loader>()
+
+	const deleteFetcher = useFetcher()
 
 	return (
 		<div className="p-2">
@@ -42,6 +44,12 @@ export default function DownloadsPages() {
 									<Button variant="ghost" size="sm">
 										<Download />
 									</Button>
+
+									<deleteFetcher.Form method="post" action={`/app/downloads/delete/${download.id}`}>
+										<Button variant="ghost" size="sm">
+											<Trash />
+										</Button>
+									</deleteFetcher.Form>
 
 									<Form method="post" action={`/app/downloads/create-translate-video/${download.id}`}>
 										<Button variant="ghost" size="sm">

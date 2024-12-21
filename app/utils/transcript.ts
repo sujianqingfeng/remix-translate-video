@@ -319,20 +319,32 @@ function formatSRTTime(seconds: number): string {
 export function generateFFmpegCommand(videoPath: string, escapedSrtPath: string) {
 	return [
 		'-y',
+		// Limit CPU usage
 		'-threads',
 		'2',
-		// '-t',
-		// '30',
+		'-thread_queue_size',
+		'512',
+		'-filter_threads',
+		'2',
+		'-filter_complex_threads',
+		'2',
+		// Input file
 		'-i',
 		videoPath,
+		// Subtitle filter
 		'-vf',
 		`subtitles='${escapedSrtPath}':force_style='FontName=Microsoft YaHei,FontSize=17,Alignment=2,BorderStyle=0,Outline=0.4,Shadow=0,MarginV=20,PrimaryColour=&H00FFFF,BackColour=&H80000000,BorderColour=&H80000000'`,
+		// Video encoding settings with CPU optimization
 		'-c:v',
 		'libx264',
 		'-preset',
-		'medium',
+		'faster', // Using faster preset to reduce CPU usage (options: ultrafast, superfast, veryfast, faster, fast, medium)
 		'-crf',
 		'30',
+		// Additional CPU optimization for x264
+		'-x264-params',
+		'ref=2:me=dia:subme=4:trellis=0',
+		// Copy audio stream without re-encoding
 		'-c:a',
 		'copy',
 	]

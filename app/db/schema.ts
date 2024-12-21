@@ -40,6 +40,7 @@ export const translateComments = sqliteTable(
 		coverDurationInSeconds: integer('cover_duration_in_seconds').notNull().default(3),
 		secondsForEvery30Words: integer('seconds_for_every_30_words').notNull().default(5),
 		fps: integer('fps').notNull().default(30),
+		sourceFilePath: text('source_file_path'),
 	},
 	(t) => [index('translate_comments_id_idx').on(t.id)],
 )
@@ -78,6 +79,7 @@ export const translateVideos = sqliteTable(
 		audioFilePath: text('audio_file_path'),
 		asrWords: text('asr_words', { mode: 'json' }).$type<AsrWord[]>().default([]),
 		transcripts: text('transcripts', { mode: 'json' }).$type<Transcript[]>().default([]),
+		outputFilePath: text('output_file_path'),
 	},
 	(t) => [index('translate_videos_id_idx').on(t.id)],
 )

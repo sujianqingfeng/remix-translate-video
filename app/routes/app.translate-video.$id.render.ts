@@ -68,5 +68,9 @@ export const action = async ({ params }: ActionFunctionArgs) => {
 		})
 	})
 
+	await db.update(schema.translateVideos).set({
+		outputFilePath: outputPath,
+	})
+
 	return { success: true }
 }

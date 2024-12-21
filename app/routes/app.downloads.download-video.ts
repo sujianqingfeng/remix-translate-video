@@ -5,14 +5,14 @@ import invariant from 'tiny-invariant'
 import { db, schema } from '~/lib/drizzle'
 import { downloadFile } from '~/utils/download'
 import { execCommand } from '~/utils/exec'
-import { createDownloadDir } from '~/utils/file'
+import { createOperationDir } from '~/utils/file'
 
 async function downloadTiktokInfo({ id, downloadUrl }: { id: string; downloadUrl: string | null }) {
 	if (!downloadUrl) {
 		throw new Error('downloadUrl is required')
 	}
 
-	const dir = await createDownloadDir(id)
+	const dir = await createOperationDir(id)
 	const filePath = path.join(dir, `${id}.mp4`)
 
 	await downloadFile(downloadUrl, filePath)
@@ -25,7 +25,7 @@ async function downloadTiktokInfo({ id, downloadUrl }: { id: string; downloadUrl
 }
 
 async function downloadYoutubeInfo({ id, link }: { id: string; link: string }) {
-	const dir = await createDownloadDir(id)
+	const dir = await createOperationDir(id)
 	const fileName = `${id}.%(ext)s`
 	const filePath = path.join(dir, `${id}.mp4`)
 

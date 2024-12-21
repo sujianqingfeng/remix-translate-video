@@ -7,6 +7,7 @@ import invariant from 'tiny-invariant'
 import BackPrevious from '~/components/BackPrevious'
 import LoadingButtonWithState from '~/components/LoadingButtonWithState'
 import Comments from '~/components/business/translate-comment/Comments'
+import { Input } from '~/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select'
 import { commentModeOptions } from '~/config'
 import { PUBLIC_DIR } from '~/constants'
@@ -31,7 +32,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 	invariant(id, 'id is required')
 	const { translateComment, download } = await getTranslateCommentAndDownloadInfo(id)
 
-	let playFile = ''
+	let playFile = translateComment.sourceFilePath || ''
 	if (download.filePath) {
 		const fileName = path.basename(download.filePath)
 		const destPath = path.join(PUBLIC_DIR, fileName)
@@ -63,7 +64,6 @@ export default function TranslateCommentPage() {
 	const translateFetcher = useFetcher()
 	const renderFetcher = useFetcher()
 	const remoteRenderFetcher = useFetcher()
-
 	return (
 		<div className="w-full h-full">
 			<BackPrevious />
@@ -107,6 +107,8 @@ export default function TranslateCommentPage() {
 										))}
 									</SelectContent>
 								</Select>
+
+								<Input name="translatedTitle" defaultValue={translateComment.translatedTitle || ''} />
 
 								<LoadingButtonWithState state={updateFetcher.state} idleText="Update" />
 							</div>

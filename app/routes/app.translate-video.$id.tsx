@@ -1,8 +1,9 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import type { LoaderFunctionArgs } from '@remix-run/node'
-import { Link, useFetcher, useLoaderData } from '@remix-run/react'
+import { Form, Link, useFetcher, useLoaderData } from '@remix-run/react'
 import { eq } from 'drizzle-orm'
+import { MessageSquare } from 'lucide-react'
 import invariant from 'tiny-invariant'
 import LoadingButtonWithState from '~/components/LoadingButtonWithState'
 import Transcripts from '~/components/business/translate-video/Transcripts'
@@ -106,6 +107,12 @@ export default function TranslateVideoPage() {
 						<remoteRenderFetcher.Form method="post" action="remote-render">
 							<LoadingButtonWithState state={remoteRenderFetcher.state} idleText="Remote Render" />
 						</remoteRenderFetcher.Form>
+
+						<Form method="post" action="create-translate-comment">
+							<Button>
+								<MessageSquare />
+							</Button>
+						</Form>
 					</div>
 				</div>
 
