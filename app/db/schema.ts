@@ -1,6 +1,6 @@
 import { createId } from '@paralleldrive/cuid2'
 import { index, integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
-import type { AsrWord, Comment, CompositionInfo, Transcript } from '~/types'
+import type { AsrWord, Comment, CompositionInfo, LittleDifficultWord, Transcript } from '~/types'
 
 export const downloads = sqliteTable(
 	'downloads',
@@ -45,6 +45,48 @@ export const translateComments = sqliteTable(
 	(t) => [index('translate_comments_id_idx').on(t.id)],
 )
 
+export const translateVideos = sqliteTable(
+	'translate_videos',
+	{
+		id: text()
+			.notNull()
+			.$defaultFn(() => createId())
+			.unique(),
+		source: text('source', { enum: ['download', 'upload'] }).notNull(),
+		downloadId: text('download_id'),
+		uploadFilePath: text('upload_file_path'),
+		audioFilePath: text('audio_file_path'),
+		asrWords: text('asr_words', { mode: 'json' }).$type<AsrWord[]>().default([]),
+		transcripts: text('transcripts', { mode: 'json' }).$type<Transcript[]>().default([]),
+		outputFilePath: text('output_file_path'),
+	},
+	(t) => [index('translate_videos_id_idx').on(t.id)],
+)
+
+export const shortTexts = sqliteTable(
+	'short_texts',
+	{
+		id: text()
+			.notNull()
+			.$defaultFn(() => createId())
+			.unique(),
+
+		fps: integer('fps').notNull().default(120),
+
+		title: text('title').notNull(),
+		titleZh: text('title_zh').notNull(),
+		shortText: text('short_text').notNull(),
+		shortTextZh: text('short_text_zh').notNull(),
+		littleDifficultWords: text('little_difficult_words', { mode: 'json' }).$type<LittleDifficultWord[]>().default([]),
+
+		audioFilePath: text('audio_file_path'),
+		coverFilePath: text('cover_file_path'),
+		outputFilePath: text('output_file_path'),
+		jobId: text('job_id'),
+	},
+	(t) => [index('short_texts_id_idx').on(t.id)],
+)
+
 export const tasks = sqliteTable(
 	'tasks',
 	{
@@ -64,22 +106,4 @@ export const tasks = sqliteTable(
 			.$defaultFn(() => new Date()),
 	},
 	(t) => [index('tasks_id_idx').on(t.id)],
-)
-
-export const translateVideos = sqliteTable(
-	'translate_videos',
-	{
-		id: text()
-			.notNull()
-			.$defaultFn(() => createId())
-			.unique(),
-		source: text('source', { enum: ['download', 'upload'] }).notNull(),
-		downloadId: text('download_id'),
-		uploadFilePath: text('upload_file_path'),
-		audioFilePath: text('audio_file_path'),
-		asrWords: text('asr_words', { mode: 'json' }).$type<AsrWord[]>().default([]),
-		transcripts: text('transcripts', { mode: 'json' }).$type<Transcript[]>().default([]),
-		outputFilePath: text('output_file_path'),
-	},
-	(t) => [index('translate_videos_id_idx').on(t.id)],
 )

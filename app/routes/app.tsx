@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from '@remix-run/react'
-import { Download, FileCheck, Headset, Languages, MessageSquare, SquarePlay } from 'lucide-react'
+import { Download, FileCheck, Languages, MessageSquare, Type } from 'lucide-react'
 
 export default function LayoutPage() {
 	return (
@@ -18,6 +18,11 @@ export default function LayoutPage() {
 				<NavLink className={({ isActive }) => `${isActive ? 'text-blue-500' : ''} flex items-center gap-2 px-2 py-1`} to="/app/translate-video">
 					<Languages />
 					Translate Video
+				</NavLink>
+
+				<NavLink className={({ isActive }) => `${isActive ? 'text-blue-500' : ''} flex items-center gap-2 px-2 py-1`} to="/app/short-text">
+					<Type />
+					Short Text
 				</NavLink>
 
 				<NavLink className={({ isActive }) => `${isActive ? 'text-blue-500' : ''} flex items-center gap-2 px-2 py-1`} to="/app/tasks">

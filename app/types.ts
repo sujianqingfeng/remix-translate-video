@@ -75,6 +75,11 @@ export type ShortText = GenerateShortText & {
 	direction: 0 | 1
 }
 
+export type LittleDifficultWord = {
+	word: string
+	translation: string
+}
+
 export type Comment = {
 	content: string
 	author: string
