@@ -32,7 +32,7 @@ export const action = async ({ params }: ActionFunctionArgs) => {
 	}
 
 	const operationDir = await createOperationDir(id)
-	const outputPath = path.join(operationDir, 'output.mp4')
+	const outputPath = path.join(operationDir, `${id}-output.mp4`)
 
 	// 生成合并的 SRT 字幕文件
 	const combined = generateSRT(transcripts ?? [])

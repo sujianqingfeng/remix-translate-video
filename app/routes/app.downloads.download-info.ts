@@ -54,6 +54,7 @@ async function downloadYoutubeInfo({ id, link }: { id: string; link: string }) {
 			title: youtubeInfo.basic_info.title,
 			author: youtubeInfo.basic_info.author,
 			likeCountText: `${(youtubeInfo.basic_info?.like_count ?? 0) / 1000}k`,
+			viewCountText: `${(youtubeInfo.basic_info?.view_count ?? 0) / 1000}k`,
 		})
 		.where(eq(schema.downloads.id, id))
 }

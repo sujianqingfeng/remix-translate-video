@@ -34,7 +34,7 @@ export const action = async ({ params }: ActionFunctionArgs) => {
 	const newPlayFile = `new-${playFile}`
 	const newPlayFilePath = path.join(PUBLIC_DIR, newPlayFile)
 	const end = render.commentsEndFrame / translateComment.fps
-	const command = `ffmpeg -y -ss 0 -i ${download.filePath} -t ${end} -threads 3 -preset medium -crf 30 -vf "scale=trunc(oh*a/2)*2:720" ${newPlayFilePath} -progress pipe:1`
+	const command = `ffmpeg -y -ss 0 -i ${filePath} -t ${end} -threads 3 -preset medium -crf 30 -vf "scale=trunc(oh*a/2)*2:720" ${newPlayFilePath} -progress pipe:1`
 	await execCommand(command)
 	playFile = newPlayFile
 
@@ -65,7 +65,7 @@ export const action = async ({ params }: ActionFunctionArgs) => {
 	composition.width = render.compositionWidth
 
 	const dir = await createOperationDir(id)
-	const outputPath = path.join(dir, 'output.mp4')
+	const outputPath = path.join(dir, `${id}-output.mp4`)
 
 	await renderMedia({
 		codec: 'h264',

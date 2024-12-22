@@ -30,6 +30,7 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
 		.update(schema.translateComments)
 		.set({
 			mode: data.mode,
+			translatedTitle: data.translatedTitle,
 		})
 		.where(where)
 

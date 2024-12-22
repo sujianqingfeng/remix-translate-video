@@ -3,6 +3,8 @@ import path from 'node:path'
 import type { LoaderFunctionArgs } from '@remix-run/node'
 import { useFetcher, useLoaderData } from '@remix-run/react'
 import { Player } from '@remotion/player'
+import { format } from 'date-fns'
+import { Copy } from 'lucide-react'
 import invariant from 'tiny-invariant'
 import BackPrevious from '~/components/BackPrevious'
 import LoadingButtonWithState from '~/components/LoadingButtonWithState'
@@ -11,6 +13,7 @@ import { Input } from '~/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select'
 import { commentModeOptions } from '~/config'
 import { PUBLIC_DIR } from '~/constants'
+import { toast } from '~/hooks/use-toast'
 import type { schema } from '~/lib/drizzle'
 import { NewLandscapeTranslateComment, NewPortraitTranslateComment, NewVerticalTranslateComment } from '~/remotion'
 import { copyFileToPublic } from '~/utils/file'
@@ -32,13 +35,14 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 	invariant(id, 'id is required')
 	const { translateComment, download } = await getTranslateCommentAndDownloadInfo(id)
 
-	let playFile = translateComment.sourceFilePath || ''
-	if (download.filePath) {
-		const fileName = path.basename(download.filePath)
+	const playFilePath = translateComment.sourceFilePath || download.filePath
+	let playFile = ''
+	if (playFilePath) {
+		const fileName = path.basename(playFilePath)
 		const destPath = path.join(PUBLIC_DIR, fileName)
 		if (!fs.existsSync(destPath)) {
 			await copyFileToPublic({
-				filePath: download.filePath,
+				filePath: playFilePath,
 			})
 		}
 		playFile = fileName
@@ -64,6 +68,22 @@ export default function TranslateCommentPage() {
 	const translateFetcher = useFetcher()
 	const renderFetcher = useFetcher()
 	const remoteRenderFetcher = useFetcher()
+
+	const currentTime = format(translateComment.commentPullAt ?? new Date(), 'yyyy-MM-dd HH:mm')
+	const desc = `原链接：${download.link}\n视频仅供娱乐，请勿过度解读\n评论权重受点赞等影响，在不同的时间，评论的内容可能不同，当前视频评论拉取时间${currentTime}`
+
+	const publishTitle = `外网真实评论：${translateComment.translatedTitle}`
+
+	const onCopy = async (text?: string) => {
+		if (!text) {
+			return
+		}
+		await navigator.clipboard.writeText(text)
+		toast({
+			title: 'copy successful!',
+		})
+	}
+
 	return (
 		<div className="w-full h-full">
 			<BackPrevious />
@@ -92,6 +112,17 @@ export default function TranslateCommentPage() {
 						/>
 					</div>
 
+					<div>
+						<p className="flex items-center gap-2">
+							{publishTitle}
+							<Copy size={16} className="cursor-pointer" onClick={() => onCopy(publishTitle)} />
+						</p>
+						<p className="flex items-center gap-2">
+							{desc}
+							<Copy size={16} className="cursor-pointer" onClick={() => onCopy(desc)} />
+						</p>
+					</div>
+
 					<div className="flex gap-2">
 						<updateFetcher.Form method="post" action="update">
 							<div className="flex gap-2">
@@ -108,7 +139,7 @@ export default function TranslateCommentPage() {
 									</SelectContent>
 								</Select>
 
-								<Input name="translatedTitle" defaultValue={translateComment.translatedTitle || ''} />
+								<Input className="w-[400px]" name="translatedTitle" defaultValue={translateComment.translatedTitle || ''} />
 
 								<LoadingButtonWithState state={updateFetcher.state} idleText="Update" />
 							</div>

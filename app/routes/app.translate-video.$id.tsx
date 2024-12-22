@@ -3,7 +3,6 @@ import path from 'node:path'
 import type { LoaderFunctionArgs } from '@remix-run/node'
 import { Form, Link, useFetcher, useLoaderData } from '@remix-run/react'
 import { eq } from 'drizzle-orm'
-import { MessageSquare } from 'lucide-react'
 import invariant from 'tiny-invariant'
 import LoadingButtonWithState from '~/components/LoadingButtonWithState'
 import Transcripts from '~/components/business/translate-video/Transcripts'
@@ -109,9 +108,7 @@ export default function TranslateVideoPage() {
 						</remoteRenderFetcher.Form>
 
 						<Form method="post" action="create-translate-comment">
-							<Button>
-								<MessageSquare />
-							</Button>
+							<Button>Start Translate Comment</Button>
 						</Form>
 					</div>
 				</div>
