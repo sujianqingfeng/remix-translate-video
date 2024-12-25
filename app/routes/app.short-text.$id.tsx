@@ -1,7 +1,8 @@
 import type { LoaderFunctionArgs } from '@remix-run/node'
-import { useLoaderData } from '@remix-run/react'
+import { useFetcher, useLoaderData } from '@remix-run/react'
 import { eq } from 'drizzle-orm'
 import invariant from 'tiny-invariant'
+import LoadingButtonWithState from '~/components/LoadingButtonWithState'
 import { db, schema } from '~/lib/drizzle'
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
@@ -20,5 +21,17 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 
 export default function ShortTextPage() {
 	const { shortText } = useLoaderData<typeof loader>()
-	return <div>ShortTextPage</div>
+
+	const generateAudioFetcher = useFetcher()
+	return (
+		<div className="flex">
+			<div>fff</div>
+			<div>
+				<generateAudioFetcher.Form action="generate-audio" method="post">
+					{/* <input name="key" value={key} hidden readOnly /> */}
+					<LoadingButtonWithState state={generateAudioFetcher.state} idleText="Generate audio" />
+				</generateAudioFetcher.Form>
+			</div>
+		</div>
+	)
 }

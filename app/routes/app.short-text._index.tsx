@@ -1,5 +1,5 @@
 import { Link, useFetcher, useLoaderData } from '@remix-run/react'
-import { MessageSquare, Trash } from 'lucide-react'
+import { Headphones, MessageSquare, Trash } from 'lucide-react'
 import { Button } from '~/components/ui/button'
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '~/components/ui/table'
 import { db } from '~/lib/drizzle'
@@ -47,7 +47,7 @@ export default function TranslateCommentPage() {
 
 									<Link to={`/app/short-text/${shortText.id}`}>
 										<Button variant="ghost" size="sm">
-											<MessageSquare />
+											<Headphones />
 										</Button>
 									</Link>
 								</div>
