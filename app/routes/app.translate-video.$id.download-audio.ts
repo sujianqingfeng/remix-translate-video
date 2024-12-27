@@ -11,7 +11,7 @@ async function downloadYoutubeAudio({ link, id }: { link: string; id: string }) 
 	const dir = await createOperationDir(id)
 	const fileName = `${id}.wav`
 	const audioFilePath = path.join(dir, fileName)
-	await execCommand(`cd ${dir} && yt-dlp -f "ba" --extract-audio --audio-format wav --postprocessor-args "ffmpeg:-ar 16000" ${link} --output "${id}.%(ext)s"`)
+	await execCommand(`cd ${dir} && yt-dlp -f 'ba' --extract-audio --audio-format wav --postprocessor-args 'ffmpeg:-ar 16000' '${link}' -o '${id}.%(ext)s'`)
 
 	await db
 		.update(schema.translateVideos)

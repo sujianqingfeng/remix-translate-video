@@ -12,10 +12,10 @@ import {
 	SHORT_TEXT_PUBLIC_COVER_FILE,
 	SHORT_TEXT_SENTENCES_FILE,
 } from '~/constants'
+import type { schema } from '~/lib/drizzle'
 import type { SentenceTranscript, ShortText, WordTranscript } from '~/types'
 import { translate } from './ai'
 import { fileExist } from './file'
-
 export function getShortTextOut(key: string) {
 	const outDir = path.join(process.cwd(), OUT_DIR, key)
 
@@ -145,5 +145,60 @@ export async function buildRemotionRenderData({ key, fps }: { key: string; fps: 
 		shortTextCoverFile,
 		playAudioFile,
 		infoFile,
+	}
+}
+
+export async function parseSentencesByWords({
+	wordTranscripts,
+}: {
+	wordTranscripts: WordTranscript[]
+}) {
+	const sentences = mergeSentences(wordTranscripts)
+
+	const translateSentences = await Promise.all(
+		sentences.map(async (sentence) => {
+			const translated = await translate(sentence.part)
+			sentence.partZh = translated
+			return sentence
+		}),
+	)
+
+	return translateSentences
+}
+
+export async function buildShortRenderData(shortText: typeof schema.shortTexts.$inferSelect) {
+	const audioDuration = getAudioDurationInFrames(shortText.wordTranscripts || [], shortText.fps)
+
+	const translateZhDuration = shortText.fps * 5
+	const totalDurationInFrames = audioDuration + translateZhDuration
+
+	let playAudioFile = ''
+	if (shortText.audioFilePath) {
+		playAudioFile = path.basename(shortText.audioFilePath)
+	}
+
+	let shortTextCoverFile = ''
+	if (shortText.coverFilePath) {
+		shortTextCoverFile = path.basename(shortText.coverFilePath)
+	}
+
+	const shortTextBgFile = SHORT_TEXT_PUBLIC_BG_FILE
+
+	const compositionWidth = shortText.direction ? 1920 : 1080
+	const compositionHeight = shortText.direction ? 1080 : 1920
+
+	const playWidth = shortText.direction ? 1080 : 720
+	const playHeight = shortText.direction ? 720 : 1080
+
+	return {
+		totalDurationInFrames,
+		audioDuration,
+		shortTextBgFile,
+		shortTextCoverFile,
+		playAudioFile,
+		compositionWidth,
+		compositionHeight,
+		playWidth,
+		playHeight,
 	}
 }

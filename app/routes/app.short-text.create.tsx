@@ -28,8 +28,6 @@ const insertShortTextSchema = z.object({
 	fps: z.number(),
 })
 
-type InsertShortText = z.infer<typeof insertShortTextSchema>
-
 export async function action({ request }: ActionFunctionArgs) {
 	const formData = await request.formData()
 	const rawData = {

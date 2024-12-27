@@ -29,7 +29,7 @@ async function downloadYoutubeInfo({ id, link }: { id: string; link: string }) {
 	const fileName = `${id}.%(ext)s`
 	const filePath = path.join(dir, `${id}.mp4`)
 
-	await execCommand(`cd ${dir} && yt-dlp ${link} -f "bv*[height<=720][ext=webm]+ba[ext=webm]/b[ext=webm] / bv*+ba/b" --merge-output-format mp4 -o "${fileName}"`)
+	await execCommand(`cd ${dir} && yt-dlp '${link}' -f 'bv*[height<=720][ext=webm]+ba[ext=webm]/b[ext=webm] / bv*+ba/b' --merge-output-format mp4 -o '${fileName}'`)
 
 	await db
 		.update(schema.downloads)

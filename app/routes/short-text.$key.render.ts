@@ -24,8 +24,6 @@ export async function action({ request, params }: ActionFunctionArgs) {
 			fps: +fps,
 		})
 
-	console.log('🚀 ~ action ~ shortTextCoverFile:', shortTextCoverFile)
-
 	const inputProps = {
 		wordTranscripts,
 		littleDifficultWords: shortText.words.map((word) => word.word),

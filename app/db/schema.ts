@@ -1,6 +1,6 @@
 import { createId } from '@paralleldrive/cuid2'
 import { index, integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
-import type { AsrWord, Comment, CompositionInfo, LittleDifficultWord, Transcript } from '~/types'
+import type { AsrWord, Comment, CompositionInfo, LittleDifficultWord, SentenceTranscript, Transcript, WordTranscript } from '~/types'
 
 export const downloads = sqliteTable(
 	'downloads',
@@ -40,6 +40,7 @@ export const translateComments = sqliteTable(
 		coverDurationInSeconds: integer('cover_duration_in_seconds').notNull().default(3),
 		secondsForEvery30Words: integer('seconds_for_every_30_words').notNull().default(5),
 		fps: integer('fps').notNull().default(30),
+		outputFilePath: text('output_file_path'),
 		sourceFilePath: text('source_file_path'),
 	},
 	(t) => [index('translate_comments_id_idx').on(t.id)],
@@ -78,6 +79,11 @@ export const shortTexts = sqliteTable(
 		shortText: text('short_text').notNull(),
 		shortTextZh: text('short_text_zh').notNull(),
 		littleDifficultWords: text('little_difficult_words', { mode: 'json' }).$type<LittleDifficultWord[]>().default([]),
+
+		wordTranscripts: text('word_transcripts', { mode: 'json' }).$type<WordTranscript[]>().default([]),
+		sentenceTranscripts: text('sentence_transcripts', { mode: 'json' }).$type<SentenceTranscript[]>().default([]),
+
+		direction: integer('direction').notNull().default(0),
 
 		audioFilePath: text('audio_file_path'),
 		coverFilePath: text('cover_file_path'),

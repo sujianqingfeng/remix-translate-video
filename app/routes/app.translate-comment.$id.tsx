@@ -68,7 +68,7 @@ export default function TranslateCommentPage() {
 	const translateFetcher = useFetcher()
 	const renderFetcher = useFetcher()
 	const remoteRenderFetcher = useFetcher()
-
+	const transformFetcher = useFetcher()
 	const currentTime = format(translateComment.commentPullAt ?? new Date(), 'yyyy-MM-dd HH:mm')
 	const desc = `原链接：${download.link}\n视频仅供娱乐，请勿过度解读\n评论权重受点赞等影响，在不同的时间，评论的内容可能不同，当前视频评论拉取时间${currentTime}`
 
@@ -164,6 +164,10 @@ export default function TranslateCommentPage() {
 						<translateFetcher.Form action="translate" method="post">
 							<LoadingButtonWithState state={translateFetcher.state} idleText="Translate" />
 						</translateFetcher.Form>
+
+						<transformFetcher.Form action="transform" method="post">
+							<LoadingButtonWithState state={transformFetcher.state} idleText="Transform" />
+						</transformFetcher.Form>
 					</div>
 
 					<div className="flex gap-2">

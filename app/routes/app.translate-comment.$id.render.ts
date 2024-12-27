@@ -2,8 +2,10 @@ import path from 'node:path'
 import type { ActionFunctionArgs } from '@remix-run/node'
 import { bundle } from '@remotion/bundler'
 import { renderMedia, selectComposition } from '@remotion/renderer'
+import { eq } from 'drizzle-orm'
 import invariant from 'tiny-invariant'
 import { PUBLIC_DIR } from '~/constants'
+import { db, schema } from '~/lib/drizzle'
 import { webpackOverride } from '~/remotion/webpack-override'
 import { execCommand } from '~/utils/exec'
 import { createOperationDir } from '~/utils/file'
@@ -76,6 +78,13 @@ export const action = async ({ params }: ActionFunctionArgs) => {
 		concurrency: 2,
 		onProgress: throttleRenderOnProgress,
 	})
+
+	await db
+		.update(schema.translateComments)
+		.set({
+			outputFilePath: outputPath,
+		})
+		.where(eq(schema.translateComments.id, id))
 
 	return {}
 }

@@ -1,4 +1,4 @@
-import type { ShortText } from '~/z-schema'
+import type { ShortText } from '~/types'
 import createDeepSeek from './deep-seek'
 import createDouBao from './doubao'
 
@@ -10,7 +10,7 @@ const deepSeek = createDeepSeek({ apiKey })
 
 export function translate(text: string) {
 	return deepSeek.generateText({
-		system: '你是一个精通多语言的翻译大师，将文本翻译成中文。如果是中文，就返回原文。',
+		system: '你是一个精通多语言的翻译大师，将文本翻译成中文。如果是中文，就返回原文。不要去解释内容。',
 		prompt: text,
 		maxTokens: 300,
 	})
