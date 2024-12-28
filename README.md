@@ -6,7 +6,10 @@
 
 
 
+删除local.sqlite
+删除drizzle文件夹
+nr db:generate
+nr db:migrate
 
 
 
-https://vt.tiktok.com/7437320651205135624

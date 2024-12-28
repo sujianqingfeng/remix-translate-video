@@ -1,7 +1,6 @@
-import fs from 'node:fs'
 import path from 'node:path'
 import type { LoaderFunctionArgs } from '@remix-run/node'
-import { useFetcher, useLoaderData } from '@remix-run/react'
+import { Link, useFetcher, useLoaderData } from '@remix-run/react'
 import { Player } from '@remotion/player'
 import { format } from 'date-fns'
 import { Copy } from 'lucide-react'
@@ -9,14 +8,14 @@ import invariant from 'tiny-invariant'
 import BackPrevious from '~/components/BackPrevious'
 import LoadingButtonWithState from '~/components/LoadingButtonWithState'
 import Comments from '~/components/business/translate-comment/Comments'
+import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select'
 import { commentModeOptions } from '~/config'
-import { PUBLIC_DIR } from '~/constants'
 import { toast } from '~/hooks/use-toast'
 import type { schema } from '~/lib/drizzle'
 import { NewLandscapeTranslateComment, NewPortraitTranslateComment, NewVerticalTranslateComment } from '~/remotion'
-import { copyFileToPublic } from '~/utils/file'
+import { safeCopyFileToPublic } from '~/utils/file'
 import { buildTranslateCommentRemotionRenderData } from '~/utils/translate-comment'
 import { getTranslateCommentAndDownloadInfo } from '~/utils/translate-comment.server'
 
@@ -39,12 +38,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 	let playFile = ''
 	if (playFilePath) {
 		const fileName = path.basename(playFilePath)
-		const destPath = path.join(PUBLIC_DIR, fileName)
-		if (!fs.existsSync(destPath)) {
-			await copyFileToPublic({
-				filePath: playFilePath,
-			})
-		}
+		await safeCopyFileToPublic(playFilePath)
 		playFile = fileName
 	}
 
@@ -181,6 +175,12 @@ export default function TranslateCommentPage() {
 							<remoteRenderFetcher.Form action="remote-render" method="post">
 								<LoadingButtonWithState state={remoteRenderFetcher.state} idleText="Remote Render" />
 							</remoteRenderFetcher.Form>
+						)}
+
+						{translateComment.outputFilePath && (
+							<Link to="local-download" target="_blank" rel="noopener noreferrer">
+								<Button>Download Local</Button>
+							</Link>
 						)}
 					</div>
 				</div>

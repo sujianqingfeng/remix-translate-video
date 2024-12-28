@@ -42,8 +42,13 @@ export default function PortraitTranslateComment({ comments, title, playFile, vi
 							<div>
 								{currentComment?.author} ({currentComment?.publishedTime})
 							</div>
-							<ThumbsUp size={24} />
-							<span>{currentComment?.likes}</span>
+
+							{currentComment?.likes && +currentComment.likes > 0 && (
+								<div className="flex items-center gap-2">
+									<ThumbsUp size={24} />
+									<span>{currentComment?.likes}</span>
+								</div>
+							)}
 						</div>
 
 						<div className="flex flex-col">

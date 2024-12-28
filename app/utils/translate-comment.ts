@@ -2,8 +2,7 @@ import fsp from 'node:fs/promises'
 import path from 'node:path'
 import { commentModeOptions } from '~/config'
 import { BUNDLE_DIR, OUT_DIR, RENDER_INFO_FILE, YOUTUBE_COMMENTS_FILE, YOUTUBE_COMMENT_ID_PREFIX, YOUTUBE_INFO_FILE, YOUTUBE_ORIGINAL_HTML_FILE } from '~/constants'
-import type { Comment } from '~/db/schema'
-import type { RemotionVideoComment, YoutubeComment, YoutubeInfo } from '~/types'
+import type { Comment, RemotionVideoComment, YoutubeComment, YoutubeInfo } from '~/types'
 import { fileExist } from './file'
 
 export function getYoutubeCommentFullId(id: string) {

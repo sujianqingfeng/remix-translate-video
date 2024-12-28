@@ -2,7 +2,7 @@ import { createWriteStream } from 'node:fs'
 import fsp from 'node:fs/promises'
 import path from 'node:path'
 import archiver from 'archiver'
-import { OPERATIONS_DIR, PUBLIC_DIR, REMOTION_ZIP_BUNDLE_DIR_NAME, REMOTION_ZIP_RENDER_INFO_FILE, TRANSLATE_VIDEO_RENDER_INFO_FILE } from '~/constants'
+import { OPERATIONS_DIR, PUBLIC_DIR, REMOTION_ZIP_BUNDLE_DIR_NAME, REMOTION_ZIP_RENDER_INFO_FILE, TRANSLATE_VIDEO_RENDER_INFO_FILE, UPLOADS_DIR } from '~/constants'
 
 export async function fileExist(path: string) {
 	return await fsp.access(path).then(
@@ -95,7 +95,16 @@ export async function copyFileToPublic({
 	destFileName?: string
 }) {
 	const destPath = path.join(PUBLIC_DIR, destFileName || path.basename(filePath))
+
 	await fsp.copyFile(filePath, destPath)
+}
+
+export async function safeCopyFileToPublic(filePath: string | null) {
+	if (filePath && (await fileExist(filePath))) {
+		await copyFileToPublic({
+			filePath,
+		})
+	}
 }
 
 export async function remotionBundleFiles(bundledPath: string) {

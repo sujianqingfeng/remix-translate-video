@@ -45,3 +45,4 @@ export const RENDER_ZIP_OUTPUT_FILE_NAME = 'render.zip'
 export const DB_FILE_NAME = process.env.DB_FILE_NAME
 
 export const OPERATIONS_DIR = path.join(process.cwd(), 'operations')
+export const UPLOADS_DIR = path.join(process.cwd(), 'uploads')

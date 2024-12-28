@@ -1,4 +1,3 @@
-import fs from 'node:fs'
 import path from 'node:path'
 import type { LoaderFunctionArgs } from '@remix-run/node'
 import { Form, Link, useFetcher, useLoaderData } from '@remix-run/react'
@@ -8,9 +7,8 @@ import LoadingButtonWithState from '~/components/LoadingButtonWithState'
 import Transcripts from '~/components/business/translate-video/Transcripts'
 import VideoPlayer from '~/components/business/translate-video/VideoPlayer'
 import { Button } from '~/components/ui/button'
-import { PUBLIC_DIR } from '~/constants'
 import { db, schema } from '~/lib/drizzle'
-import { copyFileToPublic } from '~/utils/file'
+import { safeCopyFileToPublic } from '~/utils/file'
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
 	const { id } = params
@@ -21,7 +19,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 	})
 	invariant(translateVideo, 'translateVideo not found')
 
-	const { source, downloadId } = translateVideo
+	const { source, downloadId, uploadFilePath } = translateVideo
 
 	let playFile = ''
 	if (source === 'download' && downloadId) {
@@ -32,15 +30,14 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 		const filePath = download.filePath || ''
 
 		if (filePath) {
-			const fileName = path.basename(filePath)
-			const destPath = path.join(PUBLIC_DIR, fileName)
-			if (!fs.existsSync(destPath)) {
-				await copyFileToPublic({
-					filePath,
-				})
-			}
-			playFile = fileName
+			await safeCopyFileToPublic(filePath)
+			playFile = path.basename(filePath)
 		}
+	}
+
+	if (source === 'upload' && uploadFilePath) {
+		await safeCopyFileToPublic(uploadFilePath)
+		playFile = path.basename(uploadFilePath)
 	}
 
 	return {
@@ -106,6 +103,12 @@ export default function TranslateVideoPage() {
 						<remoteRenderFetcher.Form method="post" action="remote-render">
 							<LoadingButtonWithState state={remoteRenderFetcher.state} idleText="Remote Render" />
 						</remoteRenderFetcher.Form>
+
+						{translateVideo.outputFilePath && (
+							<Link to="local-download" target="_blank" rel="noopener noreferrer">
+								<Button>Download Local</Button>
+							</Link>
+						)}
 
 						<Form method="post" action="create-translate-comment">
 							<Button>Start Translate Comment</Button>

@@ -4,30 +4,25 @@ import { Download, FileCheck, Languages, MessageSquare, Type } from 'lucide-reac
 export default function LayoutPage() {
 	return (
 		<div className="flex h-screen">
-			<div className="w-[200px] p-4 border-r">
+			<div className="p-4 border-r flex flex-col gap-2">
 				<NavLink className={({ isActive }) => `${isActive ? 'text-blue-500' : ''} flex items-center gap-2 px-2 py-1`} to="/app/downloads">
 					<Download />
-					Downloads
 				</NavLink>
 
 				<NavLink className={({ isActive }) => `${isActive ? 'text-blue-500' : ''} flex items-center gap-2 px-2 py-1`} to="/app/translate-comment">
 					<MessageSquare />
-					Translate Comment
 				</NavLink>
 
 				<NavLink className={({ isActive }) => `${isActive ? 'text-blue-500' : ''} flex items-center gap-2 px-2 py-1`} to="/app/translate-video">
 					<Languages />
-					Translate Video
 				</NavLink>
 
 				<NavLink className={({ isActive }) => `${isActive ? 'text-blue-500' : ''} flex items-center gap-2 px-2 py-1`} to="/app/short-text">
 					<Type />
-					Short Text
 				</NavLink>
 
 				<NavLink className={({ isActive }) => `${isActive ? 'text-blue-500' : ''} flex items-center gap-2 px-2 py-1`} to="/app/tasks">
 					<FileCheck />
-					Tasks
 				</NavLink>
 			</div>
 

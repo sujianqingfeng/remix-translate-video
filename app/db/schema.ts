@@ -38,7 +38,7 @@ export const translateComments = sqliteTable(
 			.notNull()
 			.$default(() => 'landscape'),
 		coverDurationInSeconds: integer('cover_duration_in_seconds').notNull().default(3),
-		secondsForEvery30Words: integer('seconds_for_every_30_words').notNull().default(5),
+		secondsForEvery30Words: integer('seconds_for_every_30_words').notNull().default(3),
 		fps: integer('fps').notNull().default(30),
 		outputFilePath: text('output_file_path'),
 		sourceFilePath: text('source_file_path'),

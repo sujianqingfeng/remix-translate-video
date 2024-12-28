@@ -20,9 +20,9 @@ export const action = async ({ params }: ActionFunctionArgs) => {
 	})
 	invariant(translateVideo, 'translateVideo not found')
 
-	const { transcripts, downloadId, source } = translateVideo
+	const { transcripts, downloadId, source, uploadFilePath } = translateVideo
 
-	let filePath = ''
+	let filePath = uploadFilePath || ''
 	if (source === 'download' && downloadId) {
 		const download = await db.query.downloads.findFirst({
 			where: eq(schema.downloads.id, downloadId),

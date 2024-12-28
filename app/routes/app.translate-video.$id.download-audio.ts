@@ -51,6 +51,20 @@ async function returnAudioFile(audioFilePath: string, id: string) {
 	})
 }
 
+async function parseUploadAudioFile({ id, uploadFilePath }: { id: string; uploadFilePath: string }) {
+	const dir = await createOperationDir(id)
+	const fileName = `${id}.wav`
+	const audioFilePath = path.join(dir, fileName)
+	await execCommand(`ffmpeg -i "${uploadFilePath}" -ar 16000 -ac 1 -c:a pcm_s16le "${audioFilePath}"`)
+
+	await db
+		.update(schema.translateVideos)
+		.set({
+			audioFilePath,
+		})
+		.where(eq(schema.translateVideos.id, id))
+}
+
 export const loader = async ({ params }: LoaderFunctionArgs) => {
 	const { id } = params
 	invariant(id, 'id is required')
@@ -61,7 +75,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 	})
 	invariant(translateVideo, 'translateVideo not found')
 
-	const { source, downloadId } = translateVideo
+	const { source, downloadId, uploadFilePath } = translateVideo
 
 	if (translateVideo.audioFilePath) {
 		return returnAudioFile(translateVideo.audioFilePath, id)
@@ -71,6 +85,11 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 		case 'download':
 			invariant(downloadId, 'downloadId is required')
 			await parseDownloadAudio({ id, downloadId })
+			break
+
+		case 'upload':
+			invariant(uploadFilePath, 'uploadFilePath is required')
+			await parseUploadAudioFile({ id, uploadFilePath })
 			break
 
 		default:

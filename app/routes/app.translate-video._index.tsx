@@ -19,6 +19,12 @@ export default function TranslateCommentPage() {
 
 	return (
 		<div>
+			<div>
+				<Link to="/app/translate-video/create">
+					<Button>Create</Button>
+				</Link>
+			</div>
+
 			<Table>
 				<TableCaption>A list of your recent invoices.</TableCaption>
 				<TableHeader>
