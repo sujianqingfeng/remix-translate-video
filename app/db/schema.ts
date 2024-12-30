@@ -1,6 +1,6 @@
 import { createId } from '@paralleldrive/cuid2'
 import { index, integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
-import type { AsrWord, Comment, CompositionInfo, LittleDifficultWord, SentenceTranscript, Transcript, WordTranscript } from '~/types'
+import type { AsrWord, Comment, LittleDifficultWord, SentenceTranscript, Transcript, WordTranscript } from '~/types'
 
 export const downloads = sqliteTable(
 	'downloads',
@@ -18,6 +18,9 @@ export const downloads = sqliteTable(
 		downloadUrl: text('download_url'),
 		filePath: text('file_path'),
 		commentCountText: text('comment_count_text'),
+		createdAt: integer('created_at', { mode: 'timestamp_ms' })
+			.notNull()
+			.$defaultFn(() => new Date()),
 	},
 	(t) => [index('downloads_id_idx').on(t.id)],
 )
@@ -42,6 +45,9 @@ export const translateComments = sqliteTable(
 		fps: integer('fps').notNull().default(30),
 		outputFilePath: text('output_file_path'),
 		sourceFilePath: text('source_file_path'),
+		createdAt: integer('created_at', { mode: 'timestamp_ms' })
+			.notNull()
+			.$defaultFn(() => new Date()),
 	},
 	(t) => [index('translate_comments_id_idx').on(t.id)],
 )
@@ -60,6 +66,9 @@ export const translateVideos = sqliteTable(
 		asrWords: text('asr_words', { mode: 'json' }).$type<AsrWord[]>().default([]),
 		transcripts: text('transcripts', { mode: 'json' }).$type<Transcript[]>().default([]),
 		outputFilePath: text('output_file_path'),
+		createdAt: integer('created_at', { mode: 'timestamp_ms' })
+			.notNull()
+			.$defaultFn(() => new Date()),
 	},
 	(t) => [index('translate_videos_id_idx').on(t.id)],
 )
@@ -89,6 +98,9 @@ export const shortTexts = sqliteTable(
 		coverFilePath: text('cover_file_path'),
 		outputFilePath: text('output_file_path'),
 		jobId: text('job_id'),
+		createdAt: integer('created_at', { mode: 'timestamp_ms' })
+			.notNull()
+			.$defaultFn(() => new Date()),
 	},
 	(t) => [index('short_texts_id_idx').on(t.id)],
 )

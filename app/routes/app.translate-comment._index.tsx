@@ -1,11 +1,14 @@
 import { Link, useFetcher, useLoaderData } from '@remix-run/react'
+import { desc } from 'drizzle-orm'
 import { MessageSquare, Trash } from 'lucide-react'
 import { Button } from '~/components/ui/button'
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '~/components/ui/table'
-import { db } from '~/lib/drizzle'
+import { db, schema } from '~/lib/drizzle'
 
 export const loader = async () => {
-	const translateComments = await db.query.translateComments.findMany()
+	const translateComments = await db.query.translateComments.findMany({
+		orderBy: desc(schema.translateComments.createdAt),
+	})
 
 	return {
 		translateComments,
@@ -19,7 +22,7 @@ export default function TranslateCommentPage() {
 	return (
 		<div>
 			<Table>
-				<TableCaption>A list of your recent invoices.</TableCaption>
+				<TableCaption>A list of your recent translate comments.</TableCaption>
 				<TableHeader>
 					<TableRow>
 						<TableHead className="w-[100px]">Id</TableHead>

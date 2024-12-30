@@ -28,15 +28,16 @@ export const action = async ({ params }: ActionFunctionArgs) => {
 		const download = await db.query.downloads.findFirst({
 			where: eq(schema.downloads.id, downloadId),
 		})
-		invariant(download, 'download not found')
 
-		const filePath = download.filePath || ''
+		if (download) {
+			const filePath = download.filePath || ''
 
-		if (filePath) {
-			const fileName = path.basename(filePath)
-			const destPath = path.join(PUBLIC_DIR, fileName)
-			if (await fileExist(destPath)) {
-				await unlink(destPath)
+			if (filePath) {
+				const fileName = path.basename(filePath)
+				const destPath = path.join(PUBLIC_DIR, fileName)
+				if (await fileExist(destPath)) {
+					await unlink(destPath)
+				}
 			}
 		}
 	}

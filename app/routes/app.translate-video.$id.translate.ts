@@ -4,6 +4,7 @@ import invariant from 'tiny-invariant'
 import { db, schema } from '~/lib/drizzle'
 import { asyncPool } from '~/utils'
 import { deepSeek } from '~/utils/ai'
+import { processTranslatedLongTranscripts } from '~/utils/transcript'
 
 const literalPrompt =
 	'你是一个精通多语言的字幕翻译大师，给你两句话，一个是上一句，一个是当前需要翻译的句子，根据上一句的语境将当前句子的内容直译成中文，保留原文特定的术语或媒体名称（如有），只返回当前句的翻译，不要去解释内容，末尾不需要加任何标点符号。'
@@ -38,10 +39,12 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 		},
 	)
 
+	const processedTranscripts = processTranslatedLongTranscripts(transcripts ?? [])
+
 	await db
 		.update(schema.translateVideos)
 		.set({
-			transcripts,
+			transcripts: processedTranscripts,
 		})
 		.where(where)
 

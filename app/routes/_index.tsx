@@ -1,7 +1,7 @@
 import { Link, redirect } from '@remix-run/react'
 
 export async function loader() {
-	return redirect('/youtube-comment')
+	return redirect('/app/downloads')
 }
 
 export default function IndexPage() {

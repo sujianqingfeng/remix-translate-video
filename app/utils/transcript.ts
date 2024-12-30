@@ -333,7 +333,7 @@ export function generateFFmpegCommand(videoPath: string, escapedSrtPath: string)
 		videoPath,
 		// Subtitle filter
 		'-vf',
-		`subtitles='${escapedSrtPath}':force_style='FontName=Microsoft YaHei,FontSize=17,Alignment=2,BorderStyle=0,Outline=0.4,Shadow=0,MarginV=20,PrimaryColour=&H00FFFF,BackColour=&H80000000,BorderColour=&H80000000'`,
+		`subtitles='${escapedSrtPath}':force_style='FontName=Microsoft YaHei,FontSize=16,Alignment=2,BorderStyle=0,Outline=0.4,Shadow=0,MarginV=20,PrimaryColour=&H00FFFF,BackColour=&H80000000,BorderColour=&H80000000'`,
 		// Video encoding settings with CPU optimization
 		'-c:v',
 		'libx264',

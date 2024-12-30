@@ -35,6 +35,11 @@ export const action = async ({ params }: ActionFunctionArgs) => {
 		if (await fileExist(destPath)) {
 			await unlink(destPath)
 		}
+
+		const newDestPath = path.join(PUBLIC_DIR, `new-${fileName}`)
+		if (await fileExist(newDestPath)) {
+			await unlink(newDestPath)
+		}
 	}
 
 	await db.delete(schema.translateComments).where(where)

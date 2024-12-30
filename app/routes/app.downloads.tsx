@@ -1,12 +1,15 @@
-import { Form, Link, useFetcher, useLoaderData } from '@remix-run/react'
+import { Form, useFetcher, useLoaderData } from '@remix-run/react'
+import { desc } from 'drizzle-orm'
 import { Download, Languages, MessageSquare, Trash } from 'lucide-react'
 import NewDownloadDialog from '~/components/business/download/CreateNewDownloadDialog'
 import { Button } from '~/components/ui/button'
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '~/components/ui/table'
-import { db } from '~/lib/drizzle'
+import { db, schema } from '~/lib/drizzle'
 
 export const loader = async () => {
-	const ds = await db.query.downloads.findMany()
+	const ds = await db.query.downloads.findMany({
+		orderBy: desc(schema.downloads.createdAt),
+	})
 
 	return {
 		downloads: ds,

@@ -63,6 +63,8 @@ export default function TranslateCommentPage() {
 	const renderFetcher = useFetcher()
 	const remoteRenderFetcher = useFetcher()
 	const transformFetcher = useFetcher()
+	const checkSensitiveWordsFetcher = useFetcher()
+
 	const currentTime = format(translateComment.commentPullAt ?? new Date(), 'yyyy-MM-dd HH:mm')
 	const desc = `原链接：${download.link}\n视频仅供娱乐，请勿过度解读\n评论权重受点赞等影响，在不同的时间，评论的内容可能不同，当前视频评论拉取时间${currentTime}`
 
@@ -107,13 +109,15 @@ export default function TranslateCommentPage() {
 					</div>
 
 					<div>
-						<p className="flex items-center gap-2">
-							{publishTitle}
+						<p>{download.title}</p>
+
+						<p className="flex items-start gap-2">
 							<Copy size={16} className="cursor-pointer" onClick={() => onCopy(publishTitle)} />
+							{publishTitle}
 						</p>
-						<p className="flex items-center gap-2">
-							{desc}
+						<p className="flex items-start gap-2">
 							<Copy size={16} className="cursor-pointer" onClick={() => onCopy(desc)} />
+							{desc}
 						</p>
 					</div>
 
@@ -162,6 +166,10 @@ export default function TranslateCommentPage() {
 						<transformFetcher.Form action="transform" method="post">
 							<LoadingButtonWithState state={transformFetcher.state} idleText="Transform" />
 						</transformFetcher.Form>
+
+						<checkSensitiveWordsFetcher.Form action="check-sensitive-words" method="post">
+							<LoadingButtonWithState state={checkSensitiveWordsFetcher.state} idleText="Check Sensitive Words" />
+						</checkSensitiveWordsFetcher.Form>
 					</div>
 
 					<div className="flex gap-2">

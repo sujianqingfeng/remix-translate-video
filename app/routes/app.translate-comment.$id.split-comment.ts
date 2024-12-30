@@ -25,7 +25,8 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
 	invariant(currentComment, 'index is not correct')
 
 	invariant(currentComment.translatedContent, 'translatedContent is required')
-	const halfLength = Math.ceil(currentComment.translatedContent.length / 2)
+	// const halfLength = Math.ceil(currentComment.translatedContent.length / 2)
+	const halfLength = 80
 	const content = currentComment.translatedContent
 	currentComment.translatedContent = content.slice(0, halfLength)
 

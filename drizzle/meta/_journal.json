@@ -5,57 +5,8 @@
     {
       "idx": 0,
       "version": "6",
-      "when": 1734445981951,
-      "tag": "0000_loud_jamie_braddock",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "6",
-      "when": 1734508403386,
-      "tag": "0001_colorful_susan_delgado",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "6",
-      "when": 1734618482161,
-      "tag": "0002_hesitant_klaw",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "6",
-      "when": 1734622672296,
-      "tag": "0003_eminent_banshee",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "6",
-      "when": 1734800481870,
-      "tag": "0004_premium_white_queen",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "6",
-      "when": 1734801867652,
-      "tag": "0005_oval_chronomancer",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "6",
-      "when": 1735310462476,
-      "tag": "0006_serious_prism",
-      "breakpoints": true
-    },
-    {
-      "idx": 7,
-      "version": "6",
-      "when": 1735314271208,
-      "tag": "0007_outstanding_lionheart",
+      "when": 1735544493568,
+      "tag": "0000_yielding_winter_soldier",
       "breakpoints": true
     }
   ]

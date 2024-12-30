@@ -1,11 +1,14 @@
 import { Link, useFetcher, useLoaderData } from '@remix-run/react'
-import { Headphones, MessageSquare, Trash } from 'lucide-react'
+import { desc } from 'drizzle-orm'
+import { Headphones, Trash } from 'lucide-react'
 import { Button } from '~/components/ui/button'
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '~/components/ui/table'
-import { db } from '~/lib/drizzle'
+import { db, schema } from '~/lib/drizzle'
 
 export const loader = async () => {
-	const shortTexts = await db.query.shortTexts.findMany()
+	const shortTexts = await db.query.shortTexts.findMany({
+		orderBy: desc(schema.shortTexts.createdAt),
+	})
 
 	return {
 		shortTexts,
@@ -23,7 +26,7 @@ export default function TranslateCommentPage() {
 			</Link>
 
 			<Table>
-				<TableCaption>A list of your recent invoices.</TableCaption>
+				<TableCaption>A list of your recent short texts.</TableCaption>
 				<TableHeader>
 					<TableRow>
 						<TableHead className="w-[100px]">Id</TableHead>

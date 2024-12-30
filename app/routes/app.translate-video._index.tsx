@@ -1,11 +1,14 @@
 import { Link, useFetcher, useLoaderData } from '@remix-run/react'
+import { desc } from 'drizzle-orm'
 import { Languages, Trash } from 'lucide-react'
 import { Button } from '~/components/ui/button'
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '~/components/ui/table'
-import { db } from '~/lib/drizzle'
+import { db, schema } from '~/lib/drizzle'
 
 export const loader = async () => {
-	const translateVideos = await db.query.translateVideos.findMany()
+	const translateVideos = await db.query.translateVideos.findMany({
+		orderBy: desc(schema.translateVideos.createdAt),
+	})
 
 	return {
 		translateVideos,
@@ -26,7 +29,7 @@ export default function TranslateCommentPage() {
 			</div>
 
 			<Table>
-				<TableCaption>A list of your recent invoices.</TableCaption>
+				<TableCaption>A list of your recent translate videos.</TableCaption>
 				<TableHeader>
 					<TableRow>
 						<TableHead className="w-[100px]">Id</TableHead>
