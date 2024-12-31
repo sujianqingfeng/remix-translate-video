@@ -5,56 +5,70 @@ type SentenceSegmentationOptions = {
 	maxSentenceLength?: number
 }
 
-// 先组装成长句
+// 先组装成长句，同时处理科学计数法、小数和特殊缩写
 export function assembleLongSentences(words: SentenceWord[]) {
 	const sentences: SentenceWord[][] = []
 	let currentSentence: typeof words = []
 	const sentenceEndMarks = /[.!?。！？]/
+	const specialAbbreviations = ['u.s', 'd.c']
 
 	for (let i = 0; i < words.length; i++) {
 		const word = words[i]
+		const nextWord = words[i + 1]
+		const prevWord = words[i - 1]
+
+		// 处理科学计数法和小数
+		if ((word.word === ',' || word.word === '.') && prevWord?.word?.match(/\d+/) && nextWord?.word?.match(/\d+/)) {
+			// 合并数字
+			if (currentSentence.length > 0) {
+				const lastWord = currentSentence[currentSentence.length - 1]
+				lastWord.word = `${lastWord.word}${word.word}${nextWord.word}`
+				lastWord.end = nextWord.end
+				i++ // 跳过下一个数字
+				continue
+			}
+		}
+
+		// 处理特殊缩写
+		if (word.word === '.' && prevWord && nextWord) {
+			const prevTwoChars = prevWord.word.toLowerCase()
+			const nextTwoChars = nextWord.word.toLowerCase()
+			const possibleAbbr = `${prevTwoChars}.${nextTwoChars}`
+
+			if (specialAbbreviations.some((abbr) => possibleAbbr.includes(abbr))) {
+				if (currentSentence.length > 0) {
+					const lastWord = currentSentence[currentSentence.length - 1]
+					lastWord.word = `${lastWord.word}.${nextWord.word}`
+					lastWord.end = nextWord.end
+					i++ // 跳过下一个字符
+					continue
+				}
+			}
+		}
+
 		currentSentence.push(word)
 
-		if (sentenceEndMarks.test(word.word) || i === words.length - 1) {
+		// 检查是否是句子结尾，但要排除特殊缩写的情况
+		if (sentenceEndMarks.test(word.word)) {
+			const isPartOfAbbreviation = specialAbbreviations.some((abbr) => {
+				const lastFewWords = currentSentence
+					.slice(-2)
+					.map((w) => w.word)
+					.join('')
+					.toLowerCase()
+				return lastFewWords.includes(abbr)
+			})
+
+			if (!isPartOfAbbreviation || i === words.length - 1) {
+				sentences.push(currentSentence)
+				currentSentence = []
+			}
+		} else if (i === words.length - 1) {
 			sentences.push(currentSentence)
-			currentSentence = []
 		}
 	}
 
 	return sentences
-}
-
-// 处理科学计数法中的逗号
-export function processScientificNotation(sentence: SentenceWord[]) {
-	// 1. 过滤掉空的 word
-	const filteredSentence = sentence.filter((w) => w.word.trim() !== '')
-
-	// 2. 处理科学计数法中的逗号
-	// 检查前后是否为数字的逗号，如果是则将其与后面的数字合并
-	const result: SentenceWord[] = []
-
-	for (let i = 0; i < filteredSentence.length; i++) {
-		const current = filteredSentence[i]
-		const next = filteredSentence[i + 1]
-		const prev = filteredSentence[i - 1]
-
-		// 如果当前是逗号，且前后都是数字，跳过这个逗号
-		if (current.word === ',' && prev?.word?.match(/\d+/) && next?.word?.match(/\d+/)) {
-			continue
-		}
-
-		// 如果当前是数字，且前一个是被跳过的逗号，将当前数字与前一个数字合并
-		if (current.word.match(/\d+/) && prev?.word?.match(/\d+/) && filteredSentence[i - 1]?.word?.match(/\d+/)) {
-			const lastResult = result[result.length - 1]
-			lastResult.word = lastResult.word + current.word
-			lastResult.end = current.end
-			continue
-		}
-
-		result.push(current)
-	}
-
-	return result
 }
 
 // 创建句子对象
@@ -94,68 +108,13 @@ function getSentenceLength(sentence: { start: number; end: number; word: string 
 	return sentence.reduce((length, word) => length + word.word.length, 0)
 }
 
-// 检查是否需要合并的特殊缩写
-function isSpecialAbbreviation(words: SentenceWord[], abbreviation: string): boolean {
-	const combinedText = words
-		.map((w) => w.word)
-		.join('')
-		.toLowerCase()
-		.trim()
-	// 检查组合文本中是否包含任何缩写
-	return combinedText.includes(abbreviation)
-}
-
-// 合并包含特殊缩写的句子
-export function mergeSentencesWithAbbreviations(sentences: SentenceWord[][]): SentenceWord[][] {
-	const result: SentenceWord[][] = []
-	let currentSentence: SentenceWord[] = []
-
-	for (let i = 0; i < sentences.length; i++) {
-		const sentence = sentences[i]
-
-		if (currentSentence.length === 0) {
-			currentSentence = sentence
-		} else {
-			const abbreviations = ['u.s', 'd.c.']
-
-			const isSpecial = abbreviations.some((abbr) => {
-				const lastWords = currentSentence.slice(-2)
-				const firstWords = sentence.slice(0, abbr.length - 1)
-				return isSpecialAbbreviation([...lastWords, ...firstWords], abbr)
-			})
-			// 检查是否需要合并
-			if (isSpecial) {
-				// 合并当前句子到前一个句子
-				currentSentence = [...currentSentence, ...sentence]
-			} else {
-				// 如果不需要合并，将当前累积的句子加入结果，并开始新的句子
-				result.push(currentSentence)
-				currentSentence = sentence
-			}
-		}
-	}
-
-	// 不要忘记最后一个句子
-	if (currentSentence.length > 0) {
-		result.push(currentSentence)
-	}
-
-	return result
-}
-
 export function processSentenceSegmentation({ words, maxSentenceLength = 70 }: SentenceSegmentationOptions) {
-	// 1. 组装长句
+	// 1. 组装长句（已包含科学计数法、小数和特殊缩写的处理）
 	const longSentences = assembleLongSentences(words)
 
-	// 2. 处理科学计数法
-	const processedLongSentences = longSentences.map(processScientificNotation)
-
-	// 3. 合并包含特殊缩写的句子
-	const mergedSentences = mergeSentencesWithAbbreviations(processedLongSentences)
-
-	// 4. 处理每个长句
+	// 2. 处理每个长句
 	const sentences: Sentence[] = []
-	for (const longSentence of mergedSentences) {
+	for (const longSentence of longSentences) {
 		// 根据句子字符长度决定是否需要切分
 		const sentenceLength = getSentenceLength(longSentence)
 		if (sentenceLength > maxSentenceLength) {
@@ -333,7 +292,7 @@ export function generateFFmpegCommand(videoPath: string, escapedSrtPath: string)
 		videoPath,
 		// Subtitle filter
 		'-vf',
-		`subtitles='${escapedSrtPath}':force_style='FontName=Microsoft YaHei,FontSize=16,Alignment=2,BorderStyle=0,Outline=0.4,Shadow=0,MarginV=20,PrimaryColour=&H00FFFF,BackColour=&H80000000,BorderColour=&H80000000'`,
+		`subtitles='${escapedSrtPath}':force_style='FontName=Microsoft YaHei,FontSize=17,Alignment=2,BorderStyle=0,Outline=0.4,Shadow=0,MarginV=20,PrimaryColour=&H00FFFF,BackColour=&H80000000,BorderColour=&H80000000'`,
 		// Video encoding settings with CPU optimization
 		'-c:v',
 		'libx264',

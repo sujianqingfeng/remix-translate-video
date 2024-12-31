@@ -7,7 +7,7 @@ export async function loader() {
 export default function IndexPage() {
 	return (
 		<div>
-			<Link to="/youtube-comment">Youtube Comment</Link>
+			<Link to="/app/downloads">Downloads</Link>
 		</div>
 	)
 }

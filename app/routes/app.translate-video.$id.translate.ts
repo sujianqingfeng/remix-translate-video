@@ -23,7 +23,6 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
 	const { transcripts } = translateVideo
 
-	// 使用 asyncPool 替代 Promise.all，限制并发数为 50
 	await asyncPool(
 		30,
 		(transcripts ?? []).filter((item) => !item.textLiteralTranslation),

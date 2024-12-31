@@ -20,6 +20,7 @@ export default function DownloadsPages() {
 	const { downloads } = useLoaderData<typeof loader>()
 
 	const deleteFetcher = useFetcher()
+	const downloadFetcher = useFetcher()
 
 	return (
 		<div className="p-2">
@@ -32,6 +33,7 @@ export default function DownloadsPages() {
 					<TableRow>
 						<TableHead className="w-[100px]">Type</TableHead>
 						<TableHead>Link</TableHead>
+						<TableHead>Author</TableHead>
 						<TableHead>Title</TableHead>
 						<TableHead className="text-right">Actions</TableHead>
 					</TableRow>
@@ -41,12 +43,16 @@ export default function DownloadsPages() {
 						<TableRow key={download.id}>
 							<TableCell className="font-medium">{download.type}</TableCell>
 							<TableCell>{download.link}</TableCell>
+							<TableCell>{download.author}</TableCell>
 							<TableCell>{download.title}</TableCell>
 							<TableCell className="text-right">
 								<div className="flex justify-end items-center gap-2">
-									<Button variant="ghost" size="sm">
-										<Download />
-									</Button>
+									<downloadFetcher.Form method="post" action="/app/downloads/download-info">
+										<input type="hidden" name="id" value={download.id} />
+										<Button variant="ghost" size="sm">
+											<Download />
+										</Button>
+									</downloadFetcher.Form>
 
 									<deleteFetcher.Form method="post" action={`/app/downloads/delete/${download.id}`}>
 										<Button variant="ghost" size="sm">

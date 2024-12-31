@@ -1,12 +1,33 @@
 import { useFetcher } from '@remix-run/react'
-import { Languages, Split, Trash } from 'lucide-react'
+import { Check, Languages, Pencil, Split, Trash } from 'lucide-react'
+import { useState } from 'react'
 import { Button } from '~/components/ui/button'
+import { Input } from '~/components/ui/input'
 import type { Comment } from '~/types'
 
 export default function Comments({ comments }: { comments: Comment[] }) {
 	const deleteFetcher = useFetcher()
 	const translateFetcher = useFetcher()
 	const splitFetcher = useFetcher()
+	const updateContentFetcher = useFetcher()
+	const [editingIndex, setEditingIndex] = useState<number | null>(null)
+	const [editContent, setEditContent] = useState('')
+
+	const handleEdit = (index: number, content: string) => {
+		setEditingIndex(index)
+		setEditContent(content)
+	}
+
+	const handleSave = (index: number) => {
+		updateContentFetcher.submit(
+			{
+				index: index.toString(),
+				translatedContent: editContent,
+			},
+			{ method: 'post', action: 'update-content' },
+		)
+		setEditingIndex(null)
+	}
 
 	return (
 		<div className="flex flex-col gap-2">
@@ -43,8 +64,24 @@ export default function Comments({ comments }: { comments: Comment[] }) {
 							</deleteFetcher.Form>
 						</div>
 					</div>
-					<p className="text-sm"> {comment.content}</p>
-					<p className="text-md"> {comment.translatedContent}</p>
+					<p className="text-sm">{comment.content}</p>
+					<div className="flex items-center gap-2">
+						{editingIndex === index ? (
+							<>
+								<Input value={editContent} onChange={(e) => setEditContent(e.target.value)} className="flex-1" />
+								<Button variant="ghost" size="icon" onClick={() => handleSave(index)}>
+									<Check size={16} />
+								</Button>
+							</>
+						) : (
+							<>
+								<p className="text-md flex-1">{comment.translatedContent}</p>
+								<Button variant="ghost" size="icon" onClick={() => handleEdit(index, comment.translatedContent || '')}>
+									<Pencil size={16} />
+								</Button>
+							</>
+						)}
+					</div>
 				</div>
 			))}
 		</div>

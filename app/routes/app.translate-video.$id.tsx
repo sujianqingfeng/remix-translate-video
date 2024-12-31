@@ -73,6 +73,7 @@ export default function TranslateVideoPage() {
 							<downloadVideoFetcher.Form action="/app/downloads/download-video" method="post">
 								{/* biome-ignore lint/style/noNonNullAssertion: <explanation> */}
 								<input name="id" value={downloadId!} hidden readOnly />
+								<input name="highQuality" value="true" hidden readOnly />
 								<LoadingButtonWithState state={downloadVideoFetcher.state} idleText="Download video" />
 							</downloadVideoFetcher.Form>
 						)}
