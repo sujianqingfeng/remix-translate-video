@@ -1,4 +1,5 @@
 import { createWriteStream } from 'node:fs'
+import { unlink } from 'node:fs/promises'
 import fsp from 'node:fs/promises'
 import path from 'node:path'
 import archiver from 'archiver'
@@ -104,6 +105,17 @@ export async function safeCopyFileToPublic(filePath: string | null) {
 		await copyFileToPublic({
 			filePath,
 		})
+	}
+}
+
+export async function safeDeletePublicFile(filePath: string | null) {
+	if (!filePath) return
+
+	const fileName = path.basename(filePath)
+	const publicPath = path.join(PUBLIC_DIR, fileName)
+
+	if (await fileExist(publicPath)) {
+		await unlink(publicPath)
 	}
 }
 

@@ -112,7 +112,7 @@ export const fillInBlanks = sqliteTable(
 			.notNull()
 			.$defaultFn(() => createId())
 			.unique(),
-		fps: integer('fps').notNull().default(120),
+		fps: integer('fps').notNull().default(60),
 		sentences: text('sentences', { mode: 'json' }).notNull().$type<FillInBlankSentence[]>().default([]),
 		outputFilePath: text('output_file_path'),
 		jobId: text('job_id'),

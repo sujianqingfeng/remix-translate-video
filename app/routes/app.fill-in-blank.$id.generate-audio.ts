@@ -34,7 +34,7 @@ export async function action({ params }: ActionFunctionArgs) {
 				outPath: audioFilePath,
 				proxy: PROXY,
 				saveSubtitles: false,
-				rate: '0',
+				rate: '0%',
 			})
 
 			sentence.audioFilePath = audioFilePath

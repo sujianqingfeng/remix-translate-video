@@ -33,16 +33,19 @@ function createDeepSeek({ apiKey }: { apiKey: string }) {
 			system,
 			prompt,
 			schema,
+			temperature,
 		}: {
 			system: string
 			prompt: string
 			schema: z.Schema<OBJECT, z.ZodTypeDef, any> | Schema<OBJECT>
+			temperature: number
 		}) => {
 			const { object } = await generateObject({
 				model: openai('deepseek-chat'),
 				schema,
 				system,
 				prompt,
+				temperature,
 			})
 
 			return object

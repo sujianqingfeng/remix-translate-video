@@ -1,4 +1,5 @@
 import { Link, useFetcher, useLoaderData } from '@remix-run/react'
+import { format } from 'date-fns'
 import { desc } from 'drizzle-orm'
 import { BookOpen, Trash } from 'lucide-react'
 import { Button } from '~/components/ui/button'
@@ -31,6 +32,7 @@ export default function AppFillInBlankIndexPage() {
 				<TableHeader>
 					<TableRow>
 						<TableHead className="w-[100px]">Id</TableHead>
+						<TableHead>Created At</TableHead>
 						<TableHead className="text-right">Actions</TableHead>
 					</TableRow>
 				</TableHeader>
@@ -38,10 +40,10 @@ export default function AppFillInBlankIndexPage() {
 					{fillInBlanks.map((fillInBlank) => (
 						<TableRow key={fillInBlank.id}>
 							<TableCell className="font-medium">{fillInBlank.id}</TableCell>
-
+							<TableCell>{format(fillInBlank.createdAt, 'yyyy-MM-dd HH:mm')}</TableCell>
 							<TableCell className="text-right">
 								<div className="flex">
-									<deleteFetcher.Form method="post" action={`/app/short-text/${fillInBlank.id}/delete`}>
+									<deleteFetcher.Form method="post" action={`/app/fill-in-blank/${fillInBlank.id}/delete`}>
 										<Button variant="ghost" size="sm">
 											<Trash />
 										</Button>

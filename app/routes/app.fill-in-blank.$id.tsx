@@ -1,11 +1,12 @@
 import type { LoaderFunctionArgs } from '@remix-run/node'
-import { useFetcher, useLoaderData } from '@remix-run/react'
+import { Link, useFetcher, useLoaderData } from '@remix-run/react'
 import { Player } from '@remotion/player'
 import { eq } from 'drizzle-orm'
 import invariant from 'tiny-invariant'
 import BackPrevious from '~/components/BackPrevious'
 import LoadingButtonWithState from '~/components/LoadingButtonWithState'
 import Sentences from '~/components/business/fill-in-blank/Sentences'
+import { Button } from '~/components/ui/button'
 import { db, schema } from '~/lib/drizzle'
 import { FillInBlank } from '~/remotion'
 import { safeCopyFileToPublic } from '~/utils/file'
@@ -58,6 +59,7 @@ export default function AppFillInBlankPage() {
 	const { fillInBlank, remotionFillInBlankSentences, totalDurationInFrames, compositionWidth, compositionHeight, playWidth, playHeight } = useLoaderData<typeof loader>()
 
 	const generateAudioFetcher = useFetcher()
+	const renderFetcher = useFetcher()
 
 	return (
 		<div className="h-full w-full">
@@ -81,10 +83,20 @@ export default function AppFillInBlankPage() {
 							controls
 						/>
 
-						<div className="flex ">
+						<div className="flex gap-2">
 							<generateAudioFetcher.Form method="post" action="generate-audio">
 								<LoadingButtonWithState state={generateAudioFetcher.state} idleText="Generate Audio" />
 							</generateAudioFetcher.Form>
+
+							<renderFetcher.Form method="post" action="render">
+								<LoadingButtonWithState state={renderFetcher.state} idleText="Render" />
+							</renderFetcher.Form>
+
+							{fillInBlank.outputFilePath && (
+								<Link to="download" target="_blank" rel="noopener noreferrer">
+									<Button>Download</Button>
+								</Link>
+							)}
 						</div>
 					</div>
 				</div>
