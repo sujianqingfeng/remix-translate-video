@@ -1,6 +1,6 @@
 import { createId } from '@paralleldrive/cuid2'
 import { index, integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
-import type { AsrWord, Comment, LittleDifficultWord, SentenceTranscript, Transcript, WordTranscript } from '~/types'
+import type { AsrWord, Comment, FillInBlankSentence, LittleDifficultWord, SentenceTranscript, Transcript, WordTranscript } from '~/types'
 
 export const downloads = sqliteTable(
 	'downloads',
@@ -103,6 +103,24 @@ export const shortTexts = sqliteTable(
 			.$defaultFn(() => new Date()),
 	},
 	(t) => [index('short_texts_id_idx').on(t.id)],
+)
+
+export const fillInBlanks = sqliteTable(
+	'fill_in_blanks',
+	{
+		id: text()
+			.notNull()
+			.$defaultFn(() => createId())
+			.unique(),
+		fps: integer('fps').notNull().default(120),
+		sentences: text('sentences', { mode: 'json' }).notNull().$type<FillInBlankSentence[]>().default([]),
+		outputFilePath: text('output_file_path'),
+		jobId: text('job_id'),
+		createdAt: integer('created_at', { mode: 'timestamp_ms' })
+			.notNull()
+			.$defaultFn(() => new Date()),
+	},
+	(t) => [index('fill_in_blank_id_idx').on(t.id)],
 )
 
 export const tasks = sqliteTable(

@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from '@remix-run/react'
-import { Download, FileCheck, Languages, MessageSquare, Type } from 'lucide-react'
+import { BookOpen, Download, FileCheck, Languages, MessageSquare, Type } from 'lucide-react'
 
 export default function LayoutPage() {
 	return (
@@ -19,6 +19,10 @@ export default function LayoutPage() {
 
 				<NavLink className={({ isActive }) => `${isActive ? 'text-blue-500' : ''} flex items-center gap-2 px-2 py-1`} to="/app/short-text">
 					<Type />
+				</NavLink>
+
+				<NavLink className={({ isActive }) => `${isActive ? 'text-blue-500' : ''} flex items-center gap-2 px-2 py-1`} to="/app/fill-in-blank">
+					<BookOpen />
 				</NavLink>
 
 				<NavLink className={({ isActive }) => `${isActive ? 'text-blue-500' : ''} flex items-center gap-2 px-2 py-1`} to="/app/tasks">

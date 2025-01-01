@@ -14,6 +14,17 @@ CREATE TABLE `downloads` (
 --> statement-breakpoint
 CREATE UNIQUE INDEX `downloads_id_unique` ON `downloads` (`id`);--> statement-breakpoint
 CREATE INDEX `downloads_id_idx` ON `downloads` (`id`);--> statement-breakpoint
+CREATE TABLE `fill_in_blanks` (
+	`id` text NOT NULL,
+	`fps` integer DEFAULT 120 NOT NULL,
+	`sentences` text DEFAULT '[]' NOT NULL,
+	`output_file_path` text,
+	`job_id` text,
+	`created_at` integer NOT NULL
+);
+--> statement-breakpoint
+CREATE UNIQUE INDEX `fill_in_blanks_id_unique` ON `fill_in_blanks` (`id`);--> statement-breakpoint
+CREATE INDEX `fill_in_blank_id_idx` ON `fill_in_blanks` (`id`);--> statement-breakpoint
 CREATE TABLE `short_texts` (
 	`id` text NOT NULL,
 	`fps` integer DEFAULT 120 NOT NULL,

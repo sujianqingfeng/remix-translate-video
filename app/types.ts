@@ -110,3 +110,22 @@ export type Transcript = {
 	textLiteralTranslation?: string
 	textInterpretation?: string
 }
+
+// fill in blank
+export type FillInBlankSentence = {
+	sentence: string
+	word: string
+	sentenceZh: string
+	wordZh: string
+	wordPronunciation: string
+
+	audioFilePath?: string
+	coverFilePath?: string
+}
+
+export type RemotionFillInBlankSentence = FillInBlankSentence & {
+	durationInFrames: number
+	form: number
+	publicCoverPath?: string
+	publicAudioPath?: string
+}

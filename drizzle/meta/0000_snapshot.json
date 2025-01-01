@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "8df3dbae-3b7a-4fae-89c6-d11901dcf0f6",
+  "id": "620f057c-ab58-4a46-8c15-e76103ae4e6f",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "downloads": {
@@ -95,6 +95,75 @@
         },
         "downloads_id_idx": {
           "name": "downloads_id_idx",
+          "columns": [
+            "id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "fill_in_blanks": {
+      "name": "fill_in_blanks",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "fps": {
+          "name": "fps",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 120
+        },
+        "sentences": {
+          "name": "sentences",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'[]'"
+        },
+        "output_file_path": {
+          "name": "output_file_path",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "job_id": {
+          "name": "job_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "fill_in_blanks_id_unique": {
+          "name": "fill_in_blanks_id_unique",
+          "columns": [
+            "id"
+          ],
+          "isUnique": true
+        },
+        "fill_in_blank_id_idx": {
+          "name": "fill_in_blank_id_idx",
           "columns": [
             "id"
           ],
