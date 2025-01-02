@@ -23,7 +23,6 @@ export default function TranslateCommentPage() {
 		<div className="w-full h-full p-6">
 			<div className="rounded-lg border bg-card text-card-foreground shadow-sm">
 				<Table>
-					<TableCaption>A list of your recent translate comments.</TableCaption>
 					<TableHeader>
 						<TableRow>
 							<TableHead className="w-[100px]">Id</TableHead>

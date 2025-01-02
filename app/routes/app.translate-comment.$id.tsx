@@ -81,11 +81,14 @@ export default function TranslateCommentPage() {
 	}
 
 	return (
-		<div className="w-full h-full">
+		<div className="container mx-auto p-6">
 			<BackPrevious />
-			<div className="w-full flex gap-4 justify-center">
-				<div className="flex flex-col gap-2 ">
-					<div>
+
+			<div className="grid grid-cols-[1fr,400px] gap-8 mt-6">
+				{/* Left Column */}
+				<div className="space-y-6">
+					{/* Video Player */}
+					<div className="bg-card rounded-lg p-4 shadow-sm">
 						<Player
 							component={getRemotionTemplateComponent(translateComment.mode)}
 							inputProps={{
@@ -108,22 +111,26 @@ export default function TranslateCommentPage() {
 						/>
 					</div>
 
-					<div>
-						<p>{download.title}</p>
+					{/* Video Info */}
+					<div className="bg-card rounded-lg p-4 space-y-3 shadow-sm">
+						<p className="text-sm text-muted-foreground">{download.title}</p>
 
-						<p className="flex items-start gap-2">
-							<Copy size={16} className="cursor-pointer" onClick={() => onCopy(publishTitle)} />
-							{publishTitle}
-						</p>
-						<p className="flex items-start gap-2">
-							<Copy size={16} className="cursor-pointer" onClick={() => onCopy(desc)} />
-							{desc}
-						</p>
+						<div className="flex items-start gap-2 group cursor-pointer" onClick={() => onCopy(publishTitle)}>
+							<Copy size={16} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+							<p className="text-sm font-medium">{publishTitle}</p>
+						</div>
+
+						<div className="flex items-start gap-2 group cursor-pointer" onClick={() => onCopy(desc)}>
+							<Copy size={16} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+							<p className="text-sm text-muted-foreground whitespace-pre-line">{desc}</p>
+						</div>
 					</div>
 
-					<div className="flex gap-2">
-						<updateFetcher.Form method="post" action="update">
-							<div className="flex gap-2">
+					{/* Controls */}
+					<div className="space-y-4">
+						{/* Mode & Title Update */}
+						<updateFetcher.Form method="post" action="update" className="bg-card rounded-lg p-4 shadow-sm">
+							<div className="flex gap-3">
 								<Select name="mode" defaultValue={translateComment.mode}>
 									<SelectTrigger className="w-[180px]">
 										<SelectValue placeholder="select mode" />
@@ -137,67 +144,68 @@ export default function TranslateCommentPage() {
 									</SelectContent>
 								</Select>
 
-								<Input className="w-[400px]" name="translatedTitle" defaultValue={translateComment.translatedTitle || ''} />
+								<Input className="flex-1" name="translatedTitle" defaultValue={translateComment.translatedTitle || ''} placeholder="Translated Title" />
 
 								<LoadingButtonWithState state={updateFetcher.state} idleText="Update" />
 							</div>
 						</updateFetcher.Form>
-					</div>
 
-					<div className="flex gap-2">
-						{!download.author && (
-							<downloadInfoFetcher.Form action="/app/downloads/download-info" method="post">
-								<input name="id" value={dId} hidden readOnly />
-								<LoadingButtonWithState state={downloadInfoFetcher.state} idleText="Download info" />
-							</downloadInfoFetcher.Form>
-						)}
+						{/* Action Buttons */}
+						<div className="flex flex-wrap gap-3">
+							{!download.author && (
+								<downloadInfoFetcher.Form action="/app/downloads/download-info" method="post">
+									<input name="id" value={dId} hidden readOnly />
+									<LoadingButtonWithState variant="outline" state={downloadInfoFetcher.state} idleText="Download info" />
+								</downloadInfoFetcher.Form>
+							)}
 
-						{download.author && !download.filePath && (
-							<downloadVideoFetcher.Form action="/app/downloads/download-video" method="post">
-								<input name="id" value={dId} hidden readOnly />
-								<LoadingButtonWithState state={downloadVideoFetcher.state} idleText="Download video" />
-							</downloadVideoFetcher.Form>
-						)}
+							{download.author && !download.filePath && (
+								<downloadVideoFetcher.Form action="/app/downloads/download-video" method="post">
+									<input name="id" value={dId} hidden readOnly />
+									<LoadingButtonWithState variant="outline" state={downloadVideoFetcher.state} idleText="Download video" />
+								</downloadVideoFetcher.Form>
+							)}
 
-						<translateFetcher.Form action="translate" method="post">
-							<LoadingButtonWithState state={translateFetcher.state} idleText="Translate" />
-						</translateFetcher.Form>
+							<translateFetcher.Form action="translate" method="post">
+								<LoadingButtonWithState variant="outline" state={translateFetcher.state} idleText="Translate" />
+							</translateFetcher.Form>
 
-						<transformFetcher.Form action="transform" method="post">
-							<LoadingButtonWithState state={transformFetcher.state} idleText="Transform" />
-						</transformFetcher.Form>
+							<transformFetcher.Form action="transform" method="post">
+								<LoadingButtonWithState variant="outline" state={transformFetcher.state} idleText="Transform" />
+							</transformFetcher.Form>
 
-						<checkSensitiveWordsFetcher.Form action="check-sensitive-words" method="post">
-							<LoadingButtonWithState state={checkSensitiveWordsFetcher.state} idleText="Check Sensitive Words" />
-						</checkSensitiveWordsFetcher.Form>
-					</div>
+							<checkSensitiveWordsFetcher.Form action="check-sensitive-words" method="post">
+								<LoadingButtonWithState variant="outline" state={checkSensitiveWordsFetcher.state} idleText="Check Sensitive Words" />
+							</checkSensitiveWordsFetcher.Form>
 
-					<div className="flex gap-2">
-						{download.author && download.filePath && (
-							<renderFetcher.Form action="render" method="post">
-								<LoadingButtonWithState state={renderFetcher.state} idleText="Render" />
-							</renderFetcher.Form>
-						)}
+							{download.author && download.filePath && (
+								<>
+									<renderFetcher.Form action="render" method="post">
+										<LoadingButtonWithState variant="outline" state={renderFetcher.state} idleText="Render" />
+									</renderFetcher.Form>
 
-						{download.author && download.filePath && (
-							<remoteRenderFetcher.Form action="remote-render" method="post">
-								<LoadingButtonWithState state={remoteRenderFetcher.state} idleText="Remote Render" />
-							</remoteRenderFetcher.Form>
-						)}
+									<remoteRenderFetcher.Form action="remote-render" method="post">
+										<LoadingButtonWithState variant="outline" state={remoteRenderFetcher.state} idleText="Remote Render" />
+									</remoteRenderFetcher.Form>
+								</>
+							)}
 
-						{translateComment.outputFilePath && (
-							<Link to="local-download" target="_blank" rel="noopener noreferrer">
-								<Button>Download Local</Button>
-							</Link>
-						)}
+							{translateComment.outputFilePath && (
+								<Link to="local-download" target="_blank" rel="noopener noreferrer">
+									<Button variant="outline">Download Local</Button>
+								</Link>
+							)}
+						</div>
 					</div>
 				</div>
-				<div className="w-[400px] h-full overflow-y-auto">
+
+				{/* Right Column - Comments */}
+				<div className="bg-card rounded-lg p-4 shadow-sm h-[calc(100vh-8rem)] overflow-y-auto">
 					{translateComment.comments?.length ? (
 						<Comments comments={translateComment.comments ?? []} />
 					) : (
-						<div className="flex flex-col gap-2">
-							<p> No comments</p>
+						<div className="flex flex-col gap-4 items-center justify-center h-full">
+							<p className="text-muted-foreground">No comments available</p>
 							<downloadCommentsFetcher.Form action="download-comments" method="post">
 								<LoadingButtonWithState state={downloadCommentsFetcher.state} idleText="Download comments" />
 							</downloadCommentsFetcher.Form>
