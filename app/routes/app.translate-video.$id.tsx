@@ -57,67 +57,72 @@ export default function TranslateVideoPage() {
 	const remoteRenderFetcher = useFetcher()
 
 	return (
-		<div className="flex justify-center">
-			<div className="flex gap-6">
-				<div className="flex flex-col gap-2">
-					<div>
+		<div className="container mx-auto py-8">
+			<div className="flex flex-col lg:flex-row gap-8">
+				<div className="flex-1 space-y-6">
+					<div className="bg-white rounded-lg shadow-md overflow-hidden">
 						<VideoPlayer playFile={playFile} transcripts={translateVideo.transcripts ?? []} />
 					</div>
 
-					<div>
-						<Link to="download-audio" target="_blank" rel="noopener noreferrer">
-							<Button>Download Audio</Button>
-						</Link>
-
-						{translateVideo.source === 'download' && !playFile && (
-							<downloadVideoFetcher.Form action="/app/downloads/download-video" method="post">
-								{/* biome-ignore lint/style/noNonNullAssertion: <explanation> */}
-								<input name="id" value={downloadId!} hidden readOnly />
-								<input name="highQuality" value="true" hidden readOnly />
-								<LoadingButtonWithState state={downloadVideoFetcher.state} idleText="Download video" />
-							</downloadVideoFetcher.Form>
-						)}
-					</div>
-					<div>
-						<uploadAsrFetcher.Form method="post" action="upload-asr" encType="multipart/form-data" className="flex flex-col gap-4">
-							<input
-								type="file"
-								name="file"
-								accept=".json"
-								className="file:mr-4 file:rounded-lg file:border-0 file:bg-blue-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-blue-700 hover:file:bg-blue-100"
-								required
-							/>
-
-							<Button type="submit">Upload ASR</Button>
-						</uploadAsrFetcher.Form>
-					</div>
-
-					<div className="flex gap-2">
-						<translateFetcher.Form method="post" action="translate">
-							<LoadingButtonWithState state={translateFetcher.state} idleText="Translate" />
-						</translateFetcher.Form>
-
-						<renderFetcher.Form method="post" action="render">
-							<LoadingButtonWithState state={renderFetcher.state} idleText="Render" />
-						</renderFetcher.Form>
-
-						<remoteRenderFetcher.Form method="post" action="remote-render">
-							<LoadingButtonWithState state={remoteRenderFetcher.state} idleText="Remote Render" />
-						</remoteRenderFetcher.Form>
-
-						{translateVideo.outputFilePath && (
-							<Link to="local-download" target="_blank" rel="noopener noreferrer">
-								<Button>Download Local</Button>
+					<div className="space-y-6">
+						<div className="flex flex-wrap gap-3">
+							<Link to="download-audio" target="_blank" rel="noopener noreferrer">
+								<Button variant="outline">Download Audio</Button>
 							</Link>
-						)}
 
-						<Form method="post" action="create-translate-comment">
-							<Button>Start Translate Comment</Button>
-						</Form>
+							{translateVideo.source === 'download' && !playFile && (
+								<downloadVideoFetcher.Form action="/app/downloads/download-video" method="post">
+									{/* biome-ignore lint/style/noNonNullAssertion: <explanation> */}
+									<input name="id" value={downloadId!} hidden readOnly />
+									<input name="highQuality" value="true" hidden readOnly />
+									<LoadingButtonWithState state={downloadVideoFetcher.state} idleText="Download video" />
+								</downloadVideoFetcher.Form>
+							)}
+						</div>
+
+						<div className="bg-gray-50 p-4 rounded-lg">
+							<uploadAsrFetcher.Form method="post" action="upload-asr" encType="multipart/form-data" className="space-y-4">
+								<input
+									type="file"
+									name="file"
+									accept=".json"
+									className="w-full file:mr-4 file:rounded-lg file:border-0 file:bg-blue-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-blue-700 hover:file:bg-blue-100"
+									required
+								/>
+								<Button type="submit" variant="secondary" className="w-full">
+									Upload ASR
+								</Button>
+							</uploadAsrFetcher.Form>
+						</div>
+
+						<div className="flex flex-wrap gap-3">
+							<translateFetcher.Form method="post" action="translate">
+								<LoadingButtonWithState state={translateFetcher.state} idleText="Translate" />
+							</translateFetcher.Form>
+
+							<renderFetcher.Form method="post" action="render">
+								<LoadingButtonWithState state={renderFetcher.state} idleText="Render" />
+							</renderFetcher.Form>
+
+							<remoteRenderFetcher.Form method="post" action="remote-render">
+								<LoadingButtonWithState state={remoteRenderFetcher.state} idleText="Remote Render" />
+							</remoteRenderFetcher.Form>
+
+							{translateVideo.outputFilePath && (
+								<Link to="local-download" target="_blank" rel="noopener noreferrer">
+									<Button variant="outline">Download Local</Button>
+								</Link>
+							)}
+
+							<Form method="post" action="create-translate-comment">
+								<Button variant="secondary">Start Translate Comment</Button>
+							</Form>
+						</div>
 					</div>
 				</div>
 
-				<div className="w-[500px]">
+				<div className="w-full lg:w-[500px] bg-white rounded-lg shadow-md p-4">
+					<h2 className="text-lg font-semibold mb-4">Transcripts</h2>
 					<Transcripts transcripts={translateVideo?.transcripts ?? []} />
 				</div>
 			</div>

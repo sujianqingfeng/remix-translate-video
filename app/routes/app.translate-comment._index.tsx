@@ -20,43 +20,45 @@ export default function TranslateCommentPage() {
 	const deleteFetcher = useFetcher()
 
 	return (
-		<div>
-			<Table>
-				<TableCaption>A list of your recent translate comments.</TableCaption>
-				<TableHeader>
-					<TableRow>
-						<TableHead className="w-[100px]">Id</TableHead>
-						<TableHead>DownloadId</TableHead>
-						<TableHead>Comments</TableHead>
-						<TableHead className="text-right">Actions</TableHead>
-					</TableRow>
-				</TableHeader>
-				<TableBody>
-					{translateComments.map((comment) => (
-						<TableRow key={comment.id}>
-							<TableCell className="font-medium">{comment.id}</TableCell>
-							<TableCell>{comment.downloadId}</TableCell>
-							<TableCell>{comment.comments?.length}</TableCell>
-
-							<TableCell className="text-right">
-								<div className="flex">
-									<deleteFetcher.Form method="post" action={`/app/translate-comment/${comment.id}/delete`}>
-										<Button variant="ghost" size="sm">
-											<Trash />
-										</Button>
-									</deleteFetcher.Form>
-
-									<Link to={`/app/translate-comment/${comment.id}`}>
-										<Button variant="ghost" size="sm">
-											<MessageSquare />
-										</Button>
-									</Link>
-								</div>
-							</TableCell>
+		<div className="w-full h-full p-6">
+			<div className="rounded-lg border bg-card text-card-foreground shadow-sm">
+				<Table>
+					<TableCaption>A list of your recent translate comments.</TableCaption>
+					<TableHeader>
+						<TableRow>
+							<TableHead className="w-[100px]">Id</TableHead>
+							<TableHead className="w-[200px]">DownloadId</TableHead>
+							<TableHead>Comments</TableHead>
+							<TableHead className="text-right w-[150px]">Actions</TableHead>
 						</TableRow>
-					))}
-				</TableBody>
-			</Table>
+					</TableHeader>
+					<TableBody>
+						{translateComments.map((comment) => (
+							<TableRow key={comment.id}>
+								<TableCell className="font-medium">{comment.id}</TableCell>
+								<TableCell className="truncate">{comment.downloadId}</TableCell>
+								<TableCell>{comment.comments?.length}</TableCell>
+
+								<TableCell className="text-right">
+									<div className="flex justify-end gap-2">
+										<deleteFetcher.Form method="post" action={`/app/translate-comment/${comment.id}/delete`}>
+											<Button variant="ghost" size="sm" className="hover:bg-destructive/10">
+												<Trash className="h-4 w-4" />
+											</Button>
+										</deleteFetcher.Form>
+
+										<Link to={`/app/translate-comment/${comment.id}`}>
+											<Button variant="ghost" size="sm" className="hover:bg-primary/10">
+												<MessageSquare className="h-4 w-4" />
+											</Button>
+										</Link>
+									</div>
+								</TableCell>
+							</TableRow>
+						))}
+					</TableBody>
+				</Table>
+			</div>
 		</div>
 	)
 }

@@ -18,48 +18,54 @@ export const loader = async () => {
 
 export default function AppFillInBlankIndexPage() {
 	const { fillInBlanks } = useLoaderData<typeof loader>()
-
 	const deleteFetcher = useFetcher()
 
 	return (
-		<div>
-			<Link to="/app/fill-in-blank/create">
-				<Button>Create</Button>
-			</Link>
+		<div className="p-8 space-y-8">
+			<div className="flex items-center justify-between">
+				<h1 className="text-3xl font-bold tracking-tight">Fill in Blanks</h1>
+				<Link to="/app/fill-in-blank/create">
+					<Button size="lg" className="gap-2">
+						<span>Create New Exercise</span>
+					</Button>
+				</Link>
+			</div>
 
-			<Table>
-				<TableCaption>A list of your recent fill in blanks.</TableCaption>
-				<TableHeader>
-					<TableRow>
-						<TableHead className="w-[100px]">Id</TableHead>
-						<TableHead>Created At</TableHead>
-						<TableHead className="text-right">Actions</TableHead>
-					</TableRow>
-				</TableHeader>
-				<TableBody>
-					{fillInBlanks.map((fillInBlank) => (
-						<TableRow key={fillInBlank.id}>
-							<TableCell className="font-medium">{fillInBlank.id}</TableCell>
-							<TableCell>{format(fillInBlank.createdAt, 'yyyy-MM-dd HH:mm')}</TableCell>
-							<TableCell className="text-right">
-								<div className="flex">
-									<deleteFetcher.Form method="post" action={`/app/fill-in-blank/${fillInBlank.id}/delete`}>
-										<Button variant="ghost" size="sm">
-											<Trash />
-										</Button>
-									</deleteFetcher.Form>
-
-									<Link to={`/app/fill-in-blank/${fillInBlank.id}`}>
-										<Button variant="ghost" size="sm">
-											<BookOpen />
-										</Button>
-									</Link>
-								</div>
-							</TableCell>
+			<div className="border rounded-lg">
+				<Table>
+					<TableHeader>
+						<TableRow>
+							<TableHead className="w-[45%]">Id</TableHead>
+							<TableHead className="w-[25%]">Created At</TableHead>
+							<TableHead className="text-right w-[30%]">Actions</TableHead>
 						</TableRow>
-					))}
-				</TableBody>
-			</Table>
+					</TableHeader>
+					<TableBody>
+						{fillInBlanks.map((fillInBlank) => (
+							<TableRow key={fillInBlank.id}>
+								<TableCell className="font-medium">{fillInBlank.id}</TableCell>
+								<TableCell>{format(fillInBlank.createdAt, 'yyyy-MM-dd HH:mm')}</TableCell>
+								<TableCell className="text-right">
+									<div className="flex justify-end gap-2">
+										<Link to={`/app/fill-in-blank/${fillInBlank.id}`}>
+											<Button variant="outline" size="sm" className="gap-2">
+												<BookOpen className="w-4 h-4" />
+												<span>View</span>
+											</Button>
+										</Link>
+										<deleteFetcher.Form method="post" action={`/app/fill-in-blank/${fillInBlank.id}/delete`}>
+											<Button variant="outline" size="sm" className="text-red-500 hover:text-red-600 gap-2">
+												<Trash className="w-4 h-4" />
+												<span>Delete</span>
+											</Button>
+										</deleteFetcher.Form>
+									</div>
+								</TableCell>
+							</TableRow>
+						))}
+					</TableBody>
+				</Table>
+			</div>
 		</div>
 	)
 }
