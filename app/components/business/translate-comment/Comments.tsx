@@ -30,53 +30,53 @@ export default function Comments({ comments }: { comments: Comment[] }) {
 	}
 
 	return (
-		<div className="flex flex-col gap-2">
+		<div className="flex flex-col divide-y">
 			{comments.map((comment, index) => (
 				// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-				<div key={index} className="border-b p-2 last:border-b-0">
-					<div className="flex justify-between items-center">
-						<p className="text-sm">
+				<div key={index} className="py-4 first:pt-0 last:pb-0">
+					<div className="flex justify-between items-center mb-2">
+						<p className="text-sm text-muted-foreground">
 							{comment.author.startsWith('@') ? '' : '@'}
-							{comment.author}({comment.publishedTime})
+							{comment.author} · {comment.publishedTime}
 						</p>
 
-						<div className="flex">
+						<div className="flex gap-1">
 							<translateFetcher.Form method="post" action="translate">
 								<input type="hidden" name="index" value={index} />
 								<input type="hidden" name="action" value="translate-single" />
-								<Button variant="ghost" size="icon">
+								<Button variant="ghost" size="icon" className="h-8 w-8">
 									<Languages size={16} />
 								</Button>
 							</translateFetcher.Form>
 
 							<splitFetcher.Form method="post" action="split-comment">
 								<input type="hidden" name="index" value={index} />
-								<Button variant="ghost" size="icon">
+								<Button variant="ghost" size="icon" className="h-8 w-8">
 									<Split size={16} />
 								</Button>
 							</splitFetcher.Form>
 
 							<deleteFetcher.Form method="post" action="delete-comment">
 								<input type="hidden" name="index" value={index} />
-								<Button variant="ghost" size="icon">
+								<Button variant="ghost" size="icon" className="h-8 w-8 text-destructive">
 									<Trash size={16} />
 								</Button>
 							</deleteFetcher.Form>
 						</div>
 					</div>
-					<p className="text-sm">{comment.content}</p>
+					<p className="text-sm mb-3">{comment.content}</p>
 					<div className="flex items-center gap-2">
 						{editingIndex === index ? (
 							<>
-								<Input value={editContent} onChange={(e) => setEditContent(e.target.value)} className="flex-1" />
-								<Button variant="ghost" size="icon" onClick={() => handleSave(index)}>
-									<Check size={16} />
+								<Input value={editContent} onChange={(e) => setEditContent(e.target.value)} className="flex-1" placeholder="Enter translation..." />
+								<Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleSave(index)}>
+									<Check size={16} className="text-green-600" />
 								</Button>
 							</>
 						) : (
 							<>
-								<p className="text-md flex-1">{comment.translatedContent}</p>
-								<Button variant="ghost" size="icon" onClick={() => handleEdit(index, comment.translatedContent || '')}>
+								<p className="text-md flex-1 text-primary">{comment.translatedContent}</p>
+								<Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleEdit(index, comment.translatedContent || '')}>
 									<Pencil size={16} />
 								</Button>
 							</>

@@ -62,47 +62,60 @@ export default function AppFillInBlankPage() {
 	const renderFetcher = useFetcher()
 
 	return (
-		<div className="h-full w-full">
-			<BackPrevious />
-			<div className="flex-auto flex gap-2">
-				<div className="flex-auto flex justify-center">
-					<div className="flex flex-col gap-2">
-						<Player
-							component={FillInBlank}
-							inputProps={{
-								sentences: remotionFillInBlankSentences,
-							}}
-							durationInFrames={totalDurationInFrames}
-							compositionWidth={compositionWidth}
-							compositionHeight={compositionHeight}
-							fps={fillInBlank.fps}
-							style={{
-								width: playWidth,
-								height: playHeight,
-							}}
-							controls
-						/>
+		<div className="min-h-screen bg-gray-50">
+			<div className="max-w-[1920px] mx-auto px-6 py-8">
+				<div className="mb-6">
+					<BackPrevious />
+				</div>
 
-						<div className="flex gap-2">
+				<div className="grid grid-cols-[1fr,400px] gap-8">
+					{/* Main Content - Video Player */}
+					<div className="space-y-6">
+						<div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+							<div className="aspect-video relative overflow-hidden rounded-xl">
+								<Player
+									component={FillInBlank}
+									inputProps={{
+										sentences: remotionFillInBlankSentences,
+									}}
+									durationInFrames={totalDurationInFrames}
+									compositionWidth={compositionWidth}
+									compositionHeight={compositionHeight}
+									fps={fillInBlank.fps}
+									style={{
+										width: '100%',
+										height: '100%',
+									}}
+									controls
+								/>
+							</div>
+						</div>
+
+						{/* Action Buttons */}
+						<div className="flex items-center gap-4">
 							<generateAudioFetcher.Form method="post" action="generate-audio">
-								<LoadingButtonWithState state={generateAudioFetcher.state} idleText="Generate Audio" />
+								<LoadingButtonWithState state={generateAudioFetcher.state} idleText="Generate Audio" className="bg-blue-600 hover:bg-blue-700 text-white" />
 							</generateAudioFetcher.Form>
 
 							<renderFetcher.Form method="post" action="render">
-								<LoadingButtonWithState state={renderFetcher.state} idleText="Render" />
+								<LoadingButtonWithState state={renderFetcher.state} idleText="Render Video" className="bg-indigo-600 hover:bg-indigo-700 text-white" />
 							</renderFetcher.Form>
 
 							{fillInBlank.outputFilePath && (
 								<Link to="download" target="_blank" rel="noopener noreferrer">
-									<Button>Download</Button>
+									<Button className="bg-green-600 hover:bg-green-700 text-white">Download Video</Button>
 								</Link>
 							)}
 						</div>
 					</div>
-				</div>
 
-				<div>
-					<Sentences sentences={remotionFillInBlankSentences} />
+					{/* Sidebar - Sentences */}
+					<div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+						<h2 className="text-lg font-semibold text-gray-900 mb-6">Sentences</h2>
+						<div className="overflow-y-auto max-h-[calc(100vh-200px)]">
+							<Sentences sentences={remotionFillInBlankSentences} />
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>

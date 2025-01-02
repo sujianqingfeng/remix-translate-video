@@ -11,38 +11,43 @@ export default function Sentences({ sentences }: SentencesProps) {
 	const deleteFetcher = useFetcher()
 
 	return (
-		<div className="grid gap-6">
+		<div className="space-y-6">
 			{sentences.map((sentence, index) => (
 				// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-				<div key={index} className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition hover:shadow-md">
-					<div className="relative p-6">
-						{/* Delete Button - Positioned at top right */}
-						<deleteFetcher.Form method="post" action="delete-sentence" className="absolute right-4 top-6">
-							<input type="hidden" name="index" value={index} />
-							<Button variant="ghost" type="submit" className="h-8 w-8 rounded-full p-0 hover:bg-red-50 hover:text-red-500">
-								<Trash2 className="h-4 w-4" />
-							</Button>
-						</deleteFetcher.Form>
+				<div key={index} className="group relative rounded-xl border border-gray-100 bg-white p-6 transition-all hover:border-gray-200 hover:shadow-md">
+					{/* Delete Button */}
+					<deleteFetcher.Form method="post" action="delete-sentence" className="absolute right-4 top-4 opacity-0 transition-opacity group-hover:opacity-100">
+						<input type="hidden" name="index" value={index} />
+						<Button variant="ghost" type="submit" size="icon" className="h-8 w-8 rounded-full hover:bg-red-50 hover:text-red-500">
+							<Trash2 className="h-4 w-4" />
+						</Button>
+					</deleteFetcher.Form>
 
-						{/* Main Content */}
-						<div className="mb-6 space-y-4">
-							{/* English Section */}
-							<div className="space-y-1">
-								<h3 className="text-xl font-semibold text-gray-900">{sentence.sentence}</h3>
-								<p className="text-base text-gray-600">{sentence.sentenceZh}</p>
-							</div>
+					{/* Content */}
+					<div className="space-y-4">
+						{/* English & Chinese Text */}
+						<div className="space-y-2">
+							<p className="text-lg font-medium text-gray-900">{sentence.sentence}</p>
+							<p className="text-base text-gray-600">{sentence.sentenceZh}</p>
+						</div>
 
-							{/* Word Section */}
-							<div className="rounded-lg bg-gray-50 p-3">
-								<p className="font-medium text-gray-900">{sentence.word}</p>
-								<p className="text-sm text-gray-600">{sentence.wordZh}</p>
+						{/* Word Info */}
+						<div className="flex flex-col gap-2">
+							<div className="flex items-center gap-3 rounded-xl bg-gradient-to-r from-blue-50 to-purple-50 p-4">
+								<div className="flex-1">
+									<div className="flex items-baseline gap-2">
+										<span className="text-lg font-medium text-blue-900">{sentence.word}</span>
+										{sentence.wordPronunciation && <span className="text-sm font-medium text-purple-700">{sentence.wordPronunciation}</span>}
+									</div>
+									<span className="text-sm text-blue-700">{sentence.wordZh}</span>
+								</div>
 							</div>
 						</div>
 
-						{/* Image Section */}
+						{/* Image Preview */}
 						{sentence.publicCoverPath && (
-							<div className="mb-6">
-								<img src={sentence.publicCoverPath} alt={sentence.word} className="h-56 w-full rounded-lg object-cover shadow-sm" />
+							<div className="relative aspect-video overflow-hidden rounded-lg">
+								<img src={sentence.publicCoverPath} alt={sentence.word} className="absolute inset-0 h-full w-full object-cover transition-transform hover:scale-105" />
 							</div>
 						)}
 
@@ -54,11 +59,14 @@ export default function Sentences({ sentences }: SentencesProps) {
 									type="file"
 									name="file"
 									accept=".png,.jpg,.jpeg"
-									className="w-full cursor-pointer rounded-lg border border-gray-200 bg-gray-50 px-4 py-2 text-sm text-gray-700 file:mr-4 file:rounded-lg file:border-0 file:bg-blue-50 file:px-4 file:py-2 file:text-sm file:font-medium file:text-blue-700 hover:border-blue-300 hover:file:bg-blue-100"
+									className="w-full cursor-pointer rounded-lg border border-gray-200 bg-gray-50 px-4 py-2 text-sm text-gray-700 
+										file:mr-4 file:rounded-lg file:border-0 file:bg-blue-50 file:px-4 file:py-2 file:text-sm 
+										file:font-medium file:text-blue-700 hover:border-blue-300 hover:file:bg-blue-100
+										focus:border-blue-500 focus:outline-none"
 									required
 								/>
 							</div>
-							<Button type="submit" variant="outline" className="h-10 w-10 rounded-lg p-0 hover:bg-blue-50 hover:text-blue-600">
+							<Button type="submit" variant="outline" size="icon" className="h-10 w-10 rounded-lg hover:bg-blue-50 hover:text-blue-600">
 								<Upload className="h-4 w-4" />
 							</Button>
 						</uploadCoverFetcher.Form>

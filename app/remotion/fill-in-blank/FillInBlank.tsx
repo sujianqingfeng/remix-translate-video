@@ -25,29 +25,19 @@ export default function FillInBlank({ sentences }: FillInBlankProps) {
 		return (
 			<div className="text-6xl text-center font-medium tracking-wide">
 				{parts[0]}
-				<div className="relative inline-block">
-					<div className="h-[8rem]">
-						<div className="relative">
+				<div className="relative inline-flex flex-col items-center">
+					<div className="relative">
+						<span className="invisible">{word}</span>
+						<div className="absolute inset-0 flex items-center justify-center border-b-[6px] border-black">
 							{showAnswer ? (
-								<>
-									<span className="text-red-500 font-semibold">{word}</span>
-									<div className="absolute w-full text-center top-14">
-										<span className="text-gray-600 text-3xl font-normal">{pronunciation}</span>
-									</div>
-								</>
+								<span className="text-red-500 font-semibold">{word}</span>
 							) : (
-								<>
-									<span className="invisible">{word}</span>
-									<div className="absolute inset-x-0 bottom-0 border-b-[6px] border-black" />
-									<div className="absolute inset-0 flex items-center justify-center -translate-y-4">
-										<span className="text-blue-600 font-bold text-7xl">{Math.ceil((QUESTION_DURATION - (frame % (QUESTION_DURATION + ANSWER_DURATION))) / fps)}</span>
-									</div>
-									<div className="absolute w-full text-center top-14">
-										<span className="text-gray-600 text-3xl opacity-0">{pronunciation}</span>
-									</div>
-								</>
+								<span className="text-blue-600 font-bold text-7xl">{Math.ceil((QUESTION_DURATION - (frame % (QUESTION_DURATION + ANSWER_DURATION))) / fps)}</span>
 							)}
 						</div>
+					</div>
+					<div className="h-12 flex items-center justify-center">
+						<span className={`text-gray-600 text-3xl ${showAnswer ? 'opacity-100' : 'opacity-0'}`}>{pronunciation}</span>
 					</div>
 				</div>
 				{parts[1]}
