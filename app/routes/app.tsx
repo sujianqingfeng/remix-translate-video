@@ -53,11 +53,38 @@ export default function LayoutPage() {
 
 	return (
 		<div className="flex h-screen bg-gray-50">
+			<style>{`
+				@keyframes fadeIn {
+					from {
+						opacity: 0;
+						transform: translateX(1rem);
+					}
+					to {
+						opacity: 1;
+						transform: translateX(0);
+					}
+				}
+
+				.animate-fadeIn {
+					animation: fadeIn ease;
+				}
+			`}</style>
 			{/* Sidebar */}
 			<div className={`${isSidebarCollapsed ? 'w-16' : 'w-64'} bg-white border-r shadow-sm flex flex-col transition-all duration-300 relative`}>
-				<div className={`p-4 border-b ${isSidebarCollapsed ? 'opacity-0' : ''}`}>
-					<h1 className="text-xl font-semibold text-gray-800">Workspace</h1>
-					<p className="text-sm text-gray-500 mt-1">Select a feature to use</p>
+				<div className="h-[85px] border-b relative">
+					<div
+						className={`absolute inset-0 p-4 transition-all duration-300 ${isSidebarCollapsed ? 'hidden' : 'block opacity-0 translate-x-4'} ${
+							!isSidebarCollapsed ? 'animate-fadeIn' : ''
+						}`}
+						style={{
+							animationDelay: '300ms',
+							animationDuration: '300ms',
+							animationFillMode: 'forwards',
+						}}
+					>
+						<h1 className="text-xl font-semibold text-gray-800">Workspace</h1>
+						<p className="text-sm text-gray-500 mt-1">Select a feature to use</p>
+					</div>
 				</div>
 
 				{/* Toggle Button */}
@@ -77,16 +104,23 @@ export default function LayoutPage() {
 								key={item.to}
 								className={({ isActive }) => `
 									flex items-center
-									px-2 py-2 rounded-lg min-h-[40px]
+									py-2 rounded-lg min-h-[40px] whitespace-nowrap
 									${isActive ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:bg-gray-100'}
+									${isSidebarCollapsed ? 'px-2' : 'px-3'}
 								`}
 								to={item.to}
 								title={item.title}
 							>
-								<div className={`flex items-center transition-transform duration-300 ${isSidebarCollapsed ? '-ml-2' : ''}`}>
+								<div className={`flex items-center justify-center ${isSidebarCollapsed ? 'w-full' : ''}`}>
 									<Icon size={20} />
 								</div>
-								<span className={`ml-3 transition-all duration-300 ${isSidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100'}`}>{item.text}</span>
+								<span
+									className={`ml-3 transition-all duration-300 whitespace-nowrap ${
+										isSidebarCollapsed ? 'opacity-0 translate-x-4 w-0 overflow-hidden' : 'opacity-100 translate-x-0 delay-150 w-auto'
+									}`}
+								>
+									{item.text}
+								</span>
 							</NavLink>
 						)
 					})}
