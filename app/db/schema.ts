@@ -133,7 +133,7 @@ export const dialogues = sqliteTable(
 			.$defaultFn(() => createId())
 			.unique(),
 		dialogues: text('dialogues', { mode: 'json' }).notNull().$type<Dialogue[]>().default([]),
-		fps: integer('fps').notNull().default(60),
+		fps: integer('fps').notNull().default(40),
 		outputFilePath: text('output_file_path'),
 		jobId: text('job_id'),
 		createdAt: integer('created_at', { mode: 'timestamp_ms' })

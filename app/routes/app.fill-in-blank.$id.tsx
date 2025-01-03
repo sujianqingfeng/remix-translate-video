@@ -102,7 +102,7 @@ export default function AppFillInBlankPage() {
 							</renderFetcher.Form>
 
 							{fillInBlank.outputFilePath && (
-								<Link to="download" target="_blank" rel="noopener noreferrer">
+								<Link to="local-download" target="_blank" rel="noopener noreferrer">
 									<Button className="bg-green-600 hover:bg-green-700 text-white">Download Video</Button>
 								</Link>
 							)}

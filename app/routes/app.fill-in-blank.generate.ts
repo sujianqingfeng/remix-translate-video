@@ -2,7 +2,7 @@ import { type ActionFunctionArgs, data } from '@remix-run/node'
 import invariant from 'tiny-invariant'
 import { z } from 'zod'
 import type { FillInBlankSentence } from '~/types'
-import { deepSeek } from '~/utils/ai'
+import { chatGPT } from '~/utils/ai'
 
 const GenerateSchema = z.object({
 	list: z.array(
@@ -22,7 +22,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 	invariant(prompt, 'prompt is required')
 
-	const result = await deepSeek.generateObject({
+	const result = await chatGPT.generateObject({
 		system: '',
 		prompt: prompt as string,
 		schema: GenerateSchema,

@@ -2,7 +2,7 @@ import { Link, useFetcher, useLoaderData } from '@remix-run/react'
 import { format } from 'date-fns'
 import { desc } from 'drizzle-orm'
 import { Trash } from 'lucide-react'
-import { BookOpen } from 'lucide-react'
+import { BookOpen, Plus } from 'lucide-react'
 import { Button } from '~/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '~/components/ui/table'
 import { db, schema } from '~/lib/drizzle'
@@ -22,18 +22,22 @@ export default function DialoguePage() {
 	const deleteFetcher = useFetcher()
 
 	return (
-		<div>
-			<div>
+		<div className="space-y-8 p-6">
+			<div className="flex items-center justify-between">
+				<h1 className="text-2xl font-bold tracking-tight">Dialogues</h1>
 				<Link to="/app/dialogue/new">
-					<Button>New</Button>
+					<Button className="gap-2">
+						<Plus className="h-4 w-4" />
+						New Dialogue
+					</Button>
 				</Link>
 			</div>
 
-			<div>
+			<div className="rounded-md border">
 				<Table>
 					<TableHeader>
 						<TableRow>
-							<TableHead className="w-[45%]">Id</TableHead>
+							<TableHead className="w-[45%]">ID</TableHead>
 							<TableHead className="w-[25%]">Created At</TableHead>
 							<TableHead className="text-right w-[30%]">Actions</TableHead>
 						</TableRow>

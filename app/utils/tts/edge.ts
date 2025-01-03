@@ -5,9 +5,10 @@ export async function generateTTS({
 	proxy,
 	saveSubtitles = true,
 	rate = '-20%',
-}: { text: string; outPath: string; proxy: string; saveSubtitles?: boolean; rate?: string }) {
+	voice = 'en-US-AnaNeural',
+}: { text: string; voice?: string; outPath: string; proxy: string; saveSubtitles?: boolean; rate?: string }) {
 	const tts = new EdgeTTS({
-		voice: 'en-US-AnaNeural',
+		voice,
 		lang: 'en-US',
 		outputFormat: 'audio-24khz-96kbitrate-mono-mp3',
 		saveSubtitles,

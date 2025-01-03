@@ -124,3 +124,12 @@ export type GenerateDialogue = z.infer<typeof GenerateDialogueSchema>
 export type Dialogue = GenerateDialogue['list'][number] & {
 	audioFilePath?: string
 }
+
+export type RemotionDialogue = Dialogue & {
+	durationInFrames: number
+	form: number
+	publicAudioPath?: string
+	roleLabel: number
+	content: string
+	contentZh: string
+}

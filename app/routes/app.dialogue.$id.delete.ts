@@ -3,7 +3,7 @@ import { type ActionFunctionArgs, redirect } from '@remix-run/node'
 import { eq } from 'drizzle-orm'
 import invariant from 'tiny-invariant'
 import { db, schema } from '~/lib/drizzle'
-import { createOperationDir } from '~/utils/file'
+import { createOperationDir, safeDeletePublicFile } from '~/utils/file'
 
 export const action = async ({ params }: ActionFunctionArgs) => {
 	const { id } = params
@@ -18,14 +18,11 @@ export const action = async ({ params }: ActionFunctionArgs) => {
 
 	invariant(dialogue, 'dialogue not found')
 
-	// const coverFilePaths = fillInBlank.sentences.map((s) => s.coverFilePath).filter(Boolean) as string[]
-	// const audioFilePaths = fillInBlank.sentences.map((s) => s.audioFilePath).filter(Boolean) as string[]
+	const audioFilePaths = dialogue.dialogues.map((d) => d.audioFilePath).filter(Boolean) as string[]
 
-	// const allPaths = [...coverFilePaths, ...audioFilePaths]
-
-	// for (const filePath of allPaths) {
-	// 	await safeDeletePublicFile(filePath)
-	// }
+	for (const filePath of audioFilePaths) {
+		await safeDeletePublicFile(filePath)
+	}
 
 	const operationDir = await createOperationDir(id)
 	await rm(operationDir, { recursive: true })
