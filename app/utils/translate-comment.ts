@@ -1,7 +1,10 @@
 import { commentModeOptions } from '~/config'
-import type { Comment, RemotionVideoComment, YoutubeComment, YoutubeInfo } from '~/types'
+import type { schema } from '~/lib/drizzle'
+import type { Comment, RemotionVideoComment } from '~/types'
 
-export function findModeOption(mode: YoutubeInfo['mode']) {
+type Mode = (typeof schema.translateComments.$inferSelect)['mode']
+
+export function findModeOption(mode: Mode) {
 	const currentModeOption = commentModeOptions.find((it) => it.value === mode)
 	if (!currentModeOption) {
 		throw new Error('currentModeOption is not found')
@@ -36,7 +39,7 @@ export async function buildTranslateCommentRemotionRenderData({
 	mode,
 	comments,
 }: {
-	mode: YoutubeInfo['mode']
+	mode: Mode
 	fps: number
 	secondsForEvery30Words: number
 	coverDurationInSeconds: number

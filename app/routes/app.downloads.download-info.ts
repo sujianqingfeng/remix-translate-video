@@ -5,6 +5,7 @@ import invariant from 'tiny-invariant'
 import { ProxyAgent } from 'undici'
 import { PROXY } from '~/constants'
 import { db, schema } from '~/lib/drizzle'
+import { getAmountText } from '~/utils'
 import { tiktokDownloadInfo } from '~/utils/tiktok'
 import { createProxyYoutubeInnertube } from '~/utils/youtube'
 
@@ -53,8 +54,8 @@ async function downloadYoutubeInfo({ id, link }: { id: string; link: string }) {
 		.set({
 			title: youtubeInfo.basic_info.title,
 			author: youtubeInfo.basic_info.author,
-			likeCountText: `${(youtubeInfo.basic_info?.like_count ?? 0) / 1000}k`,
-			viewCountText: `${((youtubeInfo.basic_info?.view_count ?? 0) / 1000).toFixed(2)}k`,
+			likeCountText: getAmountText(youtubeInfo.basic_info?.like_count),
+			viewCountText: getAmountText(youtubeInfo.basic_info?.view_count),
 		})
 		.where(eq(schema.downloads.id, id))
 }

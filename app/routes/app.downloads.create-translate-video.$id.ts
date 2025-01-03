@@ -27,6 +27,7 @@ export const action = async ({ params }: ActionFunctionArgs) => {
 			.values({
 				downloadId: id,
 				source: 'download',
+				title: download.title,
 			})
 			.returning({
 				id: schema.translateVideos.id,

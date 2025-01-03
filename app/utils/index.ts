@@ -21,3 +21,19 @@ export async function asyncPool<T, U>(poolLimit: number, items: T[], iteratorFn:
 	}
 	return Promise.all(ret)
 }
+
+export function getAmountText(amount?: number) {
+	if (!amount) {
+		return ''
+	}
+	if (amount >= 1000000000) {
+		return `${(amount / 1000000000).toFixed(1)}B`
+	}
+	if (amount >= 1000000) {
+		return `${(amount / 1000000).toFixed(1)}M`
+	}
+	if (amount >= 1000) {
+		return `${(amount / 1000).toFixed(1)}K`
+	}
+	return amount.toString()
+}

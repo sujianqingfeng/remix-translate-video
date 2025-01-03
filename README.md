@@ -1,15 +1,14 @@
-# Remix translate
-
-- translate comments
-- generate short text
+# remix-vid-genius-hub
 
 
 
 
-删除local.sqlite
-删除drizzle文件夹
-nr db:generate
-nr db:migrate
+## Usage
+
+- 删除local.sqlite
+- 删除drizzle文件夹
+- nr db:generate
+- nr db:migrate
 
 
 

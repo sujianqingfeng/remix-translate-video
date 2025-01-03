@@ -5,7 +5,7 @@ import { eq } from 'drizzle-orm'
 import invariant from 'tiny-invariant'
 import { PUBLIC_DIR } from '~/constants'
 import { db, schema } from '~/lib/drizzle'
-import { createOperationDir, fileExist } from '~/utils/file'
+import { createOperationDir, fileExist, safeDeletePublicFile } from '~/utils/file'
 
 export const action = async ({ params }: ActionFunctionArgs) => {
 	const id = params.id
@@ -30,16 +30,10 @@ export const action = async ({ params }: ActionFunctionArgs) => {
 
 	if (playFilePath) {
 		const fileName = path.basename(playFilePath)
-		const destPath = path.join(PUBLIC_DIR, fileName)
-
-		if (await fileExist(destPath)) {
-			await unlink(destPath)
-		}
+		await safeDeletePublicFile(playFilePath)
 
 		const newDestPath = path.join(PUBLIC_DIR, `new-${fileName}`)
-		if (await fileExist(newDestPath)) {
-			await unlink(newDestPath)
-		}
+		await safeDeletePublicFile(newDestPath)
 	}
 
 	await db.delete(schema.translateComments).where(where)

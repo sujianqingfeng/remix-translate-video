@@ -1,6 +1,6 @@
 import { createId } from '@paralleldrive/cuid2'
 import { index, integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
-import type { AsrWord, Comment, FillInBlankSentence, LittleDifficultWord, SentenceTranscript, Transcript, WordTranscript } from '~/types'
+import type { AsrWord, Comment, Dialogue, FillInBlankSentence, LittleDifficultWord, SentenceTranscript, Transcript, WordTranscript } from '~/types'
 
 export const downloads = sqliteTable(
 	'downloads',
@@ -59,6 +59,8 @@ export const translateVideos = sqliteTable(
 			.notNull()
 			.$defaultFn(() => createId())
 			.unique(),
+		title: text('title').default(''),
+		titleZh: text('title_zh').default(''),
 		source: text('source', { enum: ['download', 'upload'] }).notNull(),
 		downloadId: text('download_id'),
 		uploadFilePath: text('upload_file_path'),
@@ -121,6 +123,24 @@ export const fillInBlanks = sqliteTable(
 			.$defaultFn(() => new Date()),
 	},
 	(t) => [index('fill_in_blank_id_idx').on(t.id)],
+)
+
+export const dialogues = sqliteTable(
+	'dialogues',
+	{
+		id: text()
+			.notNull()
+			.$defaultFn(() => createId())
+			.unique(),
+		dialogues: text('dialogues', { mode: 'json' }).notNull().$type<Dialogue[]>().default([]),
+		fps: integer('fps').notNull().default(60),
+		outputFilePath: text('output_file_path'),
+		jobId: text('job_id'),
+		createdAt: integer('created_at', { mode: 'timestamp_ms' })
+			.notNull()
+			.$defaultFn(() => new Date()),
+	},
+	(t) => [index('dialogues_id_idx').on(t.id)],
 )
 
 export const tasks = sqliteTable(

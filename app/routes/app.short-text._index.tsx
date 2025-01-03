@@ -2,7 +2,7 @@ import { Link, useFetcher, useLoaderData } from '@remix-run/react'
 import { desc } from 'drizzle-orm'
 import { Headphones, Trash } from 'lucide-react'
 import { Button } from '~/components/ui/button'
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '~/components/ui/table'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '~/components/ui/table'
 import { db, schema } from '~/lib/drizzle'
 
 export const loader = async () => {

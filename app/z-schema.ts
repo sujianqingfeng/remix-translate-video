@@ -13,4 +13,12 @@ export const GenerateShortTextSchema = z.object({
 	),
 })
 
-export type GenerateShortText = z.infer<typeof GenerateShortTextSchema>
+export const GenerateDialogueSchema = z.object({
+	list: z.array(
+		z.object({
+			roleLabel: z.number(),
+			content: z.string(),
+			contentZh: z.string(),
+		}),
+	),
+})

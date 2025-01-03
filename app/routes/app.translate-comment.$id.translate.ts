@@ -3,12 +3,12 @@ import { type SQL, eq } from 'drizzle-orm'
 import invariant from 'tiny-invariant'
 import { db, schema } from '~/lib/drizzle'
 import { asyncPool } from '~/utils'
-import { translate } from '~/utils/ai'
+import { gptTranslate } from '~/utils/ai'
 
 async function startTranslatedTitle(title: string | null) {
 	let translatedTitle = ''
 	if (title) {
-		translatedTitle = await translate(title)
+		translatedTitle = await gptTranslate(title)
 	}
 	return translatedTitle
 }
@@ -28,7 +28,7 @@ async function translateSingleComment(translateComment: typeof schema.translateC
 		throw new Error('comment is not correct')
 	}
 
-	const result = await translate(comment.content)
+	const result = await gptTranslate(comment.content)
 	comment.translatedContent = result
 
 	await db
@@ -44,7 +44,7 @@ async function translateDefaultAction(translateComment: typeof schema.translateC
 
 	if (translateComment.comments?.length) {
 		await asyncPool(30, translateComment.comments, async (item) => {
-			const result = await translate(item.content)
+			const result = await gptTranslate(item.content)
 			item.translatedContent = result
 			return item
 		})

@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from '@remix-run/react'
-import { BookOpen, ChevronLeft, ChevronRight, Download, FileCheck, Languages, type LucideIcon, MessageSquare, Type } from 'lucide-react'
+import { BookOpen, ChevronLeft, ChevronRight, Download, FileCheck, Languages, type LucideIcon, MessageCircle, MessageSquare, Type } from 'lucide-react'
 import { useState } from 'react'
 
 interface MenuItem {
@@ -41,6 +41,12 @@ const menuItems: MenuItem[] = [
 		text: 'Fill in Blanks',
 	},
 	{
+		to: '/app/dialogue',
+		title: 'Dialogue',
+		icon: MessageCircle,
+		text: 'Dialogue',
+	},
+	{
 		to: '/app/tasks',
 		title: 'Task List',
 		icon: FileCheck,
@@ -49,7 +55,7 @@ const menuItems: MenuItem[] = [
 ]
 
 export default function LayoutPage() {
-	const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
+	const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true)
 
 	return (
 		<div className="flex h-screen bg-gray-50">

@@ -3,7 +3,7 @@ import { eq } from 'drizzle-orm'
 import invariant from 'tiny-invariant'
 import { db, schema } from '~/lib/drizzle'
 import { asyncPool } from '~/utils'
-import { deepSeek } from '~/utils/ai'
+import { chatGPT, gptTranslate } from '~/utils/ai'
 import { processTranslatedLongTranscripts } from '~/utils/transcript'
 
 const literalPrompt =
@@ -21,17 +21,17 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 	})
 	invariant(translateVideo, 'translateVideo not found')
 
-	const { transcripts } = translateVideo
+	const { transcripts, title, titleZh } = translateVideo
 
 	await asyncPool(
 		30,
 		(transcripts ?? []).filter((item) => !item.textLiteralTranslation),
 		async (item, index, array) => {
 			const prevText = index > 0 ? array[index - 1].text : ''
-			const result = await deepSeek.generateText({
+			const result = await chatGPT.generateText({
 				system: literalPrompt,
 				prompt: `上一句：${prevText}\n当前句：${item.text}`,
-				maxTokens: 200,
+				maxTokens: 300,
 			})
 			item.textLiteralTranslation = result
 			return item
@@ -40,10 +40,15 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
 	const processedTranscripts = processTranslatedLongTranscripts(transcripts ?? [])
 
+	if (title && !titleZh) {
+		translateVideo.titleZh = await gptTranslate(title)
+	}
+
 	await db
 		.update(schema.translateVideos)
 		.set({
 			transcripts: processedTranscripts,
+			titleZh: translateVideo.titleZh,
 		})
 		.where(where)
 

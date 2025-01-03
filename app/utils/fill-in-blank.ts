@@ -7,17 +7,19 @@ type BuildFillInBlankRenderDataOptions = {
 }
 
 export function buildFillInBlankRenderData({ sentences, fps }: BuildFillInBlankRenderDataOptions) {
+	const sentenceDurationInFrames = fps * 6
+
 	const remotionFillInBlankSentences = sentences.map((sentence, index) => {
 		return {
 			...sentence,
 			publicCoverPath: sentence.coverFilePath ? `/${path.basename(sentence.coverFilePath)}` : undefined,
 			publicAudioPath: sentence.audioFilePath ? `/${path.basename(sentence.audioFilePath)}` : undefined,
-			durationInFrames: fps * 6,
-			form: index * fps * 6,
+			durationInFrames: sentenceDurationInFrames,
+			form: index * sentenceDurationInFrames,
 		}
 	})
 
-	const totalDurationInFrames = remotionFillInBlankSentences.length * fps * 5
+	const totalDurationInFrames = remotionFillInBlankSentences.length * sentenceDurationInFrames
 
 	return {
 		remotionFillInBlankSentences,

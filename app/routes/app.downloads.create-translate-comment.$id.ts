@@ -27,7 +27,7 @@ export const action = async ({ params }: ActionFunctionArgs) => {
 			.values({
 				downloadId: id,
 				comments: [],
-				mode: download.type === 'tiktok' ? 'vertical' : 'landscape',
+				mode: 'landscape',
 			})
 			.returning({
 				id: schema.translateComments.id,

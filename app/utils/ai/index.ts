@@ -1,4 +1,5 @@
 import type { ShortText } from '~/types'
+import createChatGPT from './chatgpt'
 import createDeepSeek from './deep-seek'
 import createDouBao from './doubao'
 
@@ -66,4 +67,14 @@ export async function generateShortText(theme: string) {
 	return JSON.parse(`${PREFILL_PREFIX}${result}`) as ShortText
 }
 
-export { deepSeek }
+const chatGPT = createChatGPT({ apiKey: process.env.OPEN_AI_API_KEY || '' })
+
+export function gptTranslate(text: string) {
+	return chatGPT.generateText({
+		system: '你是一个精通多语言的翻译大师，将文本翻译成中文。如果是中文，就返回原文。不要去解释内容。',
+		prompt: text,
+		maxTokens: 500,
+	})
+}
+
+export { deepSeek, chatGPT }

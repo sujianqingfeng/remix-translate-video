@@ -1,4 +1,5 @@
-import type { GenerateShortText } from './z-schema'
+import type { z } from 'zod'
+import type { GenerateDialogueSchema, GenerateShortTextSchema } from './z-schema'
 
 export type YoutubeComment = {
 	content: string
@@ -20,19 +21,6 @@ export type RemotionVideoComment = {
 	publishedTime?: string
 	durationInFrames: number
 	form: number
-}
-
-export type YoutubeInfo = {
-	title: string
-	translatedTitle?: string
-	publishTitle?: string
-	youtubeUrl: string
-	viewCount: number
-	dateTime?: string
-	author: string
-	mode: 'landscape' | 'portrait' | 'vertical'
-	renderId?: string
-	jobId?: string
 }
 
 // translate video
@@ -62,6 +50,8 @@ export type SentenceTranscript = {
 	part: string
 	partZh?: string
 }
+
+export type GenerateShortText = z.infer<typeof GenerateShortTextSchema>
 
 export type GenerateShortTextActionData = {
 	success: boolean
@@ -128,4 +118,9 @@ export type RemotionFillInBlankSentence = FillInBlankSentence & {
 	form: number
 	publicCoverPath?: string
 	publicAudioPath?: string
+}
+
+export type GenerateDialogue = z.infer<typeof GenerateDialogueSchema>
+export type Dialogue = GenerateDialogue['list'][number] & {
+	audioFilePath?: string
 }

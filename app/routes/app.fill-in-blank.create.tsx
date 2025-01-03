@@ -29,12 +29,13 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 	return redirect(`/app/fill-in-blank/${result.id}`)
 }
 
-const defaultPrompt =
+const defaultPromptText =
 	'你是一个英语老师，需要给学生出填空题，需要出10道题，每道题需要包含一个全量的英文句子，一个对应的中文翻译的句子， 一个对应在英文句子中的单词，一个对应的单词发音，一个对应中文翻译句子中的中文词。请确保每次生成的内容都不一样，可以从以下主题中随机选择：日常生活、工作场景、学习经历、旅游经验、科技发展、环境保护、文化艺术、体育运动等。句子的难度也要有变化，从简单到中等难度都要覆盖。'
 
 export default function AppFillInBlankCreatePage() {
 	const generateFetcher = useFetcher<FillInBlankSentence[]>()
 	const [sentences, setSentences] = useState<FillInBlankSentence[]>([])
+	const [prompt, setPrompt] = useState(defaultPromptText)
 
 	const onDelete = (index: number) => {
 		setSentences((prev) => prev.filter((_, i) => i !== index))
@@ -71,7 +72,7 @@ export default function AppFillInBlankCreatePage() {
 						<h2 className="text-lg font-semibold">Generate Fill-in-blank Sentences</h2>
 						<p className="text-sm text-gray-500">Use AI to generate sentences for your fill-in-blank exercise.</p>
 					</div>
-					<Textarea name="prompt" value={defaultPrompt} className="min-h-[120px]" />
+					<Textarea name="prompt" value={prompt} onChange={(e) => setPrompt(e.target.value)} className="min-h-[120px]" />
 					<LoadingButtonWithState state={generateFetcher.state} idleText="Generate Sentences" loadingText="Generating Sentences..." className="w-full sm:w-auto" />
 				</div>
 			</generateFetcher.Form>

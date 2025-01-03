@@ -1,0 +1,1 @@
+ALTER TABLE `translate_videos` ADD `title_zh` text DEFAULT '';

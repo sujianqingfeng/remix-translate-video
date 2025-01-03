@@ -38,17 +38,27 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 export default function TranslateVideoCreatePage() {
 	return (
-		<div>
-			<Form method="post" encType="multipart/form-data" className="flex flex-col gap-4">
-				<input
-					type="file"
-					name="file"
-					accept=".mp4,.webm"
-					className="file:mr-4 file:rounded-lg file:border-0 file:bg-blue-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-blue-700 hover:file:bg-blue-100"
-					required
-				/>
+		<div className="mx-auto max-w-2xl py-8">
+			<div className="mb-8 text-center">
+				<h1 className="mb-3 text-2xl font-bold text-gray-900">Upload Video for Translation</h1>
+				<p className="text-gray-600">Upload your video file (MP4 or WebM) to get started with the translation process.</p>
+			</div>
 
-				<Button type="submit">Upload Video File</Button>
+			<Form method="post" encType="multipart/form-data" className="space-y-6">
+				<div className="rounded-lg border-2 border-dashed border-gray-300 bg-white p-6 text-center hover:border-blue-500 transition-colors">
+					<input
+						type="file"
+						name="file"
+						accept=".mp4,.webm"
+						className="w-full cursor-pointer file:mr-4 file:cursor-pointer file:rounded-full file:border-0 file:bg-blue-50 file:px-6 file:py-2 file:text-sm file:font-semibold file:text-blue-700 hover:file:bg-blue-100"
+						required
+					/>
+					<p className="mt-2 text-sm text-gray-500">Maximum file size: 500MB</p>
+				</div>
+
+				<Button type="submit" className="w-full py-6 text-lg font-semibold">
+					Upload and Start Translation
+				</Button>
 			</Form>
 		</div>
 	)
