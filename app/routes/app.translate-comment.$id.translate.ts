@@ -3,7 +3,7 @@ import { type SQL, eq } from 'drizzle-orm'
 import invariant from 'tiny-invariant'
 import { db, schema } from '~/lib/drizzle'
 import { asyncPool } from '~/utils'
-import { gptTranslate } from '~/utils/ai'
+import { gptTranslate, translate } from '~/utils/ai'
 
 async function startTranslatedTitle(title: string | null) {
 	let translatedTitle = ''
@@ -16,19 +16,13 @@ async function startTranslatedTitle(title: string | null) {
 async function translateSingleComment(translateComment: typeof schema.translateComments.$inferSelect, formData: FormData, translateCommentWhere: SQL) {
 	const index = formData.get('index')
 
-	if (!index) {
-		throw new Error('index is required')
-	}
-
+	invariant(index, 'index is required')
 	const indexNumber = Number(index)
 
 	const comment = translateComment.comments?.[indexNumber]
+	invariant(comment, 'comment is not correct')
 
-	if (!comment) {
-		throw new Error('comment is not correct')
-	}
-
-	const result = await gptTranslate(comment.content)
+	const result = await translate(comment.content)
 	comment.translatedContent = result
 
 	await db
@@ -44,7 +38,7 @@ async function translateDefaultAction(translateComment: typeof schema.translateC
 
 	if (translateComment.comments?.length) {
 		await asyncPool(30, translateComment.comments, async (item) => {
-			const result = await gptTranslate(item.content)
+			const result = await translate(item.content)
 			item.translatedContent = result
 			return item
 		})
@@ -66,18 +60,12 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
 	const translateComment = await db.query.translateComments.findFirst({
 		where: translateCommentWhere,
 	})
-
-	if (!translateComment) {
-		throw new Error('id is not correct')
-	}
+	invariant(translateComment, 'id is not correct')
 
 	const download = await db.query.downloads.findFirst({
 		where: eq(schema.downloads.id, translateComment.downloadId),
 	})
-
-	if (!download) {
-		throw new Error('download is not correct')
-	}
+	invariant(download, 'download is not correct')
 
 	const formData = await request.formData()
 

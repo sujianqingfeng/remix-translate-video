@@ -86,7 +86,7 @@ export default function TranslateCommentPage() {
 
 			<div className="grid grid-cols-[1fr,350px] gap-4 mt-4 h-[calc(100vh-6rem)]">
 				{/* Left Column */}
-				<div className="space-y-4 overflow-y-auto pr-2">
+				<div className="space-y-4 overflow-y-auto pr-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
 					{/* Video Player */}
 					<div className="bg-card rounded-lg p-3 shadow-sm">
 						<Player
