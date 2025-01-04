@@ -75,7 +75,6 @@ export const action = async ({ params }: ActionFunctionArgs) => {
 		serveUrl: bundled,
 		inputProps,
 		outputLocation: outputPath,
-		concurrency: 2,
 		onProgress: throttleRenderOnProgress,
 	})
 
