@@ -208,6 +208,12 @@ export default function TranslateCommentPage() {
 									</Button>
 								</Link>
 							)}
+
+							<Link to="cover">
+								<Button variant="outline" size="sm">
+									Cover
+								</Button>
+							</Link>
 						</div>
 					</div>
 				</div>

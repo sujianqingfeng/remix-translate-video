@@ -5,9 +5,10 @@ type CoverProps = {
 	title?: string
 	author?: string
 	isSplit?: boolean
+	coverOnly?: boolean
 }
 
-export default function Cover({ coverDurationInSeconds, title, author, isSplit = true }: CoverProps) {
+export default function Cover({ coverDurationInSeconds, title, author, isSplit = true, coverOnly = false }: CoverProps) {
 	const { fps } = useVideoConfig()
 	const splitTitle = (title?: string) => {
 		if (!title) return []
@@ -33,22 +34,30 @@ export default function Cover({ coverDurationInSeconds, title, author, isSplit =
 
 	const titleLines = splitTitle(title)
 
+	const CoverContent = () => (
+		<AbsoluteFill>
+			<div className="w-full h-full flex justify-center items-center">
+				<div className="text-left leading-[1.2] w-[50%]">
+					<div className="text-5xl">外网评论</div>
+					<div className="text-4xl mt-2">@{author}</div>
+
+					{titleLines?.map((line) => (
+						<div className="text-[6rem] text-[#ee3f4d]" key={line}>
+							{line}
+						</div>
+					))}
+				</div>
+			</div>
+		</AbsoluteFill>
+	)
+
+	if (coverOnly) {
+		return <CoverContent />
+	}
+
 	return (
 		<Sequence from={0} durationInFrames={coverDurationInSeconds * fps}>
-			<AbsoluteFill>
-				<div className="w-full h-full flex justify-center items-center">
-					<div className="text-left leading-[1.2] w-[50%]">
-						<div className="text-5xl">外网评论</div>
-						<div className="text-4xl mt-2">@{author}</div>
-
-						{titleLines?.map((line) => (
-							<div className="text-[6rem] text-[#ee3f4d]" key={line}>
-								{line}
-							</div>
-						))}
-					</div>
-				</div>
-			</AbsoluteFill>
+			<CoverContent />
 		</Sequence>
 	)
 }
