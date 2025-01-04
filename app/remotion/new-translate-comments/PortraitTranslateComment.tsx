@@ -22,40 +22,41 @@ export default function PortraitTranslateComment({ comments, title, playFile, vi
 
 			<Sequence from={coverDurationInSeconds * fps}>
 				<AbsoluteFill>
-					<div className="flex justify-center items-center w-[40%] h-full p-4">
-						<Video loop className="object-contain h-full" startFrom={0} crossOrigin="anonymous" src={playSrc} />
+					<div className="flex justify-center items-center w-[45%] h-full p-8">
+						<Video loop className="object-contain h-full rounded-2xl shadow-lg" startFrom={0} crossOrigin="anonymous" src={playSrc} />
 					</div>
 				</AbsoluteFill>
 
 				<AbsoluteFill>
-					<div className="absolute top-0 left-[40%] w-[60%] flex flex-col p-4">
-						<div className="text-[#ee3f4d] flex flex-col justify-center">
-							<div>
-								<div className="flex items-center gap-2 text-3xl">
+					<div className="absolute top-0 left-[45%] w-[55%] flex flex-col p-8">
+						<div className="text-[#ee3f4d]">
+							<div className="space-y-4">
+								<div className="flex items-center gap-3 text-3xl font-medium bg-red-50 px-4 py-2 rounded-lg w-fit">
 									<span>播放量：{viewCountText}</span>
 								</div>
-								<p className="text-5xl mt-2 leading-[1.5]"> {title}</p>
+
+								<h1 className="text-5xl font-bold leading-[1.4] tracking-tight">{title}</h1>
 							</div>
 						</div>
 
-						<div className="text-2xl leading-[20px] flex items-center gap-2 mt-2">
-							<div>
-								{currentComment?.author} ({currentComment?.publishedTime})
-							</div>
+						<div className="flex items-center gap-4 text-2xl text-gray-700 border-b border-gray-100 pb-3 mt-4">
+							<div className="font-medium">{currentComment?.author}</div>
+
+							<div className="text-gray-500">{currentComment?.publishedTime}</div>
 
 							{currentComment?.likes && +currentComment.likes > 0 && (
-								<div className="flex items-center gap-2">
-									<ThumbsUp size={24} />
-									<span>{currentComment?.likes}</span>
+								<div className="flex items-center gap-1.5 bg-red-50 px-3 py-1 rounded-full">
+									<ThumbsUp className="text-[#ee3f4d]" size={24} />
+									<span className="text-[#ee3f4d]">{currentComment?.likes}</span>
 								</div>
 							)}
 						</div>
 
 						<div className="flex flex-col">
-							<p className="leading-1.6 text-3xl text-ellipsis line-clamp-4">{currentComment?.content}</p>
+							<p className="leading-[1.6] text-3xl text-ellipsis line-clamp-4 text-gray-800">{currentComment?.content}</p>
 
 							<p
-								className="text-[#ee3f4d] leading-[1.2] mt-1"
+								className="text-[#ee3f4d] leading-[1.4] font-semibold mt-2"
 								style={{
 									fontSize: `${fontSize}px`,
 								}}
