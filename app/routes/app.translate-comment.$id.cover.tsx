@@ -18,15 +18,18 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 	return { translateComment, download }
 }
 
-function splitTitle(title: string, isLandscape: boolean) {
+function splitTitle(title: string, isLandscape: boolean, ctx: CanvasRenderingContext2D, maxWidth: number) {
 	const segments: string[] = []
 	let currentSegment = ''
 
 	for (const char of title) {
-		currentSegment += char
-		if (currentSegment.length >= (isLandscape ? 20 : 12)) {
+		const testSegment = currentSegment + char
+		const width = ctx.measureText(testSegment).width
+		if (width > maxWidth) {
 			segments.push(currentSegment)
-			currentSegment = ''
+			currentSegment = char
+		} else {
+			currentSegment = testSegment
 		}
 	}
 
@@ -98,15 +101,18 @@ export default function TranslateCommentPage() {
 		const viewCount = download.viewCountText || '0'
 
 		// Set maximum width for text based on orientation
-		const maxTextWidth = isLandscape ? canvas.width * 0.7 : canvas.width * 0.85
+		const maxTextWidth = isLandscape ? canvas.width * 0.5 : canvas.width * 0.85
 
 		// Calculate font sizes
 		const headerFontSize = isLandscape ? 64 : 56
 		const authorFontSize = isLandscape ? 48 : 48
 		const titleFontSize = calculateFontSize(ctx, titleText, maxTextWidth, isLandscape ? 160 : 180)
 
+		// Set font for title splitting
+		ctx.font = `bold ${titleFontSize}px "PingFang SC"`
+
 		// Calculate text heights
-		const titleLines = splitTitle(titleText, isLandscape)
+		const titleLines = splitTitle(titleText, isLandscape, ctx, maxTextWidth * 0.95)
 		const lineHeight = titleFontSize * (isLandscape ? 1.1 : 1.2)
 		const totalTitleHeight = titleLines.length * lineHeight
 
