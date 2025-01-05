@@ -1,16 +1,19 @@
-import { useMemo } from 'react'
-import { staticFile, useCurrentFrame, useVideoConfig } from 'remotion'
+import { useMemo, useRef } from 'react'
+import { interpolate, spring, staticFile, useCurrentFrame, useVideoConfig } from 'remotion'
 import type { RemotionVideoComment } from '~/types'
 import { calculateOptimalFontSize } from './utils'
 
-// 添加帧率控制函数
-const FRAME_SKIP = 10 // 每5帧更新一次
-export function useThrottledFrame(coverDuration: number) {
+export function useVideoFrame(coverDuration: number) {
 	const frame = useCurrentFrame()
 	const { fps } = useVideoConfig()
+	const coverFrames = coverDuration * fps
 
-	const restFrame = frame - coverDuration * fps
-	return Math.floor(restFrame / FRAME_SKIP) * FRAME_SKIP
+	return useMemo(() => {
+		const frameSkip = 4
+		const normalizedFrame = Math.floor(frame / frameSkip) * frameSkip
+		const restFrame = normalizedFrame - coverFrames
+		return restFrame
+	}, [frame, coverFrames])
 }
 
 export function useTranslateComment({
@@ -21,23 +24,73 @@ export function useTranslateComment({
 	isRemoteRender,
 	playFile,
 }: { coverDurationInSeconds: number; comments: RemotionVideoComment[]; availableWidth: number; availableHeight: number; isRemoteRender: boolean; playFile: string }) {
-	// 使用节流后的帧
-	const throttledFrame = useThrottledFrame(coverDurationInSeconds)
+	const videoFrame = useVideoFrame(coverDurationInSeconds)
+	const frame = useCurrentFrame()
+	const { fps } = useVideoConfig()
+	const fontSizeCache = useRef<Record<string, number>>({})
+	const lastCommentRef = useRef<RemotionVideoComment | null>(null)
+	const lastFrameRef = useRef<number>(0)
 
 	const currentComment = useMemo(() => {
-		return comments.find((item) => {
-			return throttledFrame >= item.form && throttledFrame <= item.form + item.durationInFrames
+		const comment = comments.find((item) => {
+			const startFrame = item.form
+			const endFrame = item.form + item.durationInFrames
+			return videoFrame >= startFrame && videoFrame <= endFrame
 		})
-	}, [comments, throttledFrame]) // 使用节流后的帧作为依赖
+
+		// 检测评论变化
+		if (comment?.content !== lastCommentRef.current?.content) {
+			lastCommentRef.current = comment || null
+			lastFrameRef.current = videoFrame
+		}
+
+		return comment
+	}, [comments, videoFrame])
+
+	// 计算相对于评论切换时的帧数差
+	const relativeFrame = videoFrame - lastFrameRef.current
+
+	// 简化动画逻辑，使用淡入淡出效果
+	const animationDuration = 6 // 约0.2秒@30fps
+	const progress = Math.min(relativeFrame / animationDuration, 1)
+
+	// 使用余弦函数创建平滑的过渡效果
+	const opacity = currentComment
+		? interpolate(progress, [0, 1], [0.3, 1], {
+				extrapolateRight: 'clamp',
+				extrapolateLeft: 'clamp',
+			})
+		: 0
+
+	// 添加轻微的位移效果
+	const translateY = currentComment
+		? interpolate(
+				progress,
+				[0, 1],
+				[5, 0], // 只移动5个像素，保持轻微
+				{
+					extrapolateRight: 'clamp',
+					extrapolateLeft: 'clamp',
+				},
+			)
+		: 0
 
 	const fontSize = useMemo(() => {
 		if (!currentComment?.translatedContent) return 20
 
-		return calculateOptimalFontSize({
+		const cacheKey = `${currentComment.translatedContent}-${availableWidth}-${availableHeight}`
+		if (fontSizeCache.current[cacheKey]) {
+			return fontSizeCache.current[cacheKey]
+		}
+
+		const size = calculateOptimalFontSize({
 			text: currentComment.translatedContent,
 			availableWidth,
 			availableHeight,
 		})
+
+		fontSizeCache.current[cacheKey] = size
+		return size
 	}, [currentComment?.translatedContent, availableWidth, availableHeight])
 
 	const playSrc = isRemoteRender ? playFile : staticFile(playFile)
@@ -46,5 +99,7 @@ export function useTranslateComment({
 		currentComment,
 		fontSize,
 		playSrc,
+		opacity,
+		translateY,
 	}
 }

@@ -36,7 +36,16 @@ export const action = async ({ params }: ActionFunctionArgs) => {
 	const newPlayFile = `new-${playFile}`
 	const newPlayFilePath = path.join(PUBLIC_DIR, newPlayFile)
 	const end = render.commentsEndFrame / translateComment.fps
-	const command = `ffmpeg -y -ss 0 -i ${filePath} -t ${end} -threads 3 -preset medium -crf 30 -vf "scale=trunc(oh*a/2)*2:720" ${newPlayFilePath} -progress pipe:1`
+	const command = `ffmpeg -y -ss 0 -i ${filePath} -t ${end} \
+		-c:v libx264 \
+		-preset fast \
+		-crf 23 \
+		-vf "scale=trunc(oh*a/2)*2:720" \
+		-movflags +faststart \
+		-pix_fmt yuv420p \
+		-c:a aac \
+		-b:a 128k \
+		${newPlayFilePath} -progress pipe:1`
 	await execCommand(command)
 	playFile = newPlayFile
 

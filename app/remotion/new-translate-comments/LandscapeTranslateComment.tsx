@@ -1,5 +1,5 @@
 import { ThumbsUp } from 'lucide-react'
-import { AbsoluteFill, Sequence, Video, useVideoConfig } from 'remotion'
+import { AbsoluteFill, OffthreadVideo, Sequence, useVideoConfig } from 'remotion'
 import Cover from './Cover'
 import { useTranslateComment } from './hooks'
 import type { TranslateCommentProps } from './types'
@@ -7,13 +7,13 @@ import type { TranslateCommentProps } from './types'
 export default function LandscapeTranslateComment({ comments, title, playFile, viewCountText, coverDurationInSeconds, author, isRemoteRender = false }: TranslateCommentProps) {
 	const { fps } = useVideoConfig()
 
-	const { currentComment, fontSize, playSrc } = useTranslateComment({
+	const { currentComment, fontSize, playSrc, opacity, translateY } = useTranslateComment({
 		isRemoteRender,
 		playFile,
 		coverDurationInSeconds,
 		comments,
-		availableWidth: 1920 - 32,
-		availableHeight: 370,
+		availableWidth: 1920 - 48,
+		availableHeight: 360,
 	})
 
 	return (
@@ -30,14 +30,20 @@ export default function LandscapeTranslateComment({ comments, title, playFile, v
 							<p className="text-5xl mt-5 leading-[1.4] font-semibold">{title}</p>
 						</div>
 						<div className="bg-black/5 rounded-2xl p-1 h-full">
-							<Video loop className="object-contain h-full rounded-xl" startFrom={0} crossOrigin="anonymous" src={playSrc} />
+							<OffthreadVideo loopVolumeCurveBehavior="repeat" className="object-contain h-full rounded-xl" startFrom={0} crossOrigin="anonymous" src={playSrc} />
 						</div>
 					</div>
 				</AbsoluteFill>
 
 				<AbsoluteFill>
 					<div className="absolute bottom-0 left-0 px-6 pb-6 h-[40%] w-full flex flex-col bg-gradient-to-t from-white/95 to-white/80 backdrop-blur-sm">
-						<div className="text-xl leading-[20px] flex items-center gap-3 mb-3 text-gray-700">
+						<div
+							style={{
+								opacity,
+								transform: `translateY(${translateY}px)`,
+							}}
+							className="text-xl leading-[20px] flex items-center gap-3 mb-3 text-gray-700"
+						>
 							<div className="font-medium">
 								{currentComment?.author} ({currentComment?.publishedTime})
 							</div>
@@ -51,12 +57,22 @@ export default function LandscapeTranslateComment({ comments, title, playFile, v
 						</div>
 
 						<div className="flex flex-col gap-4">
-							<p className="leading-1.3 text-3xl text-ellipsis line-clamp-1 text-gray-800">{currentComment?.content}</p>
+							<p
+								style={{
+									opacity,
+									transform: `translateY(${translateY}px)`,
+								}}
+								className="leading-1.3 text-3xl text-ellipsis line-clamp-1 text-gray-800"
+							>
+								{currentComment?.content}
+							</p>
 
 							<p
-								className="text-[#ee3f4d] leading-[1.2]"
+								className="text-[#ee3f4d] leading-[1.1]"
 								style={{
 									fontSize: `${fontSize}px`,
+									opacity,
+									transform: `translateY(${translateY}px)`,
 								}}
 							>
 								{currentComment?.translatedContent}

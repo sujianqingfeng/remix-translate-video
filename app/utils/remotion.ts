@@ -14,11 +14,22 @@ export const bundleOnProgress = throttle(
 	{ trailing: true },
 )
 
-export const renderOnProgress: RenderMediaOnProgress = ({ progress }) => {
-	console.log(`Rendering is ${progress * 100}% complete`)
-}
+export const renderOnProgress = (() => {
+	let renderStartTime: number | null = null
+	const progress: RenderMediaOnProgress = ({ progress }) => {
+		if (renderStartTime === null) {
+			renderStartTime = Date.now()
+		}
+		const elapsedSeconds = Math.floor((Date.now() - renderStartTime) / 1000)
+		const minutes = Math.floor(elapsedSeconds / 60)
+		const seconds = elapsedSeconds % 60
+		const timeStr = `${minutes}:${seconds.toString().padStart(2, '0')}`
+		console.log(`Rendering is ${(progress * 100).toFixed(2)}% complete (${timeStr})`)
+	}
+	return progress
+})()
 
-export const throttleRenderOnProgress = throttle(renderOnProgress, 2000, {
+export const throttleRenderOnProgress = throttle(renderOnProgress, 4000, {
 	trailing: true,
 })
 
