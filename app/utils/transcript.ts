@@ -247,32 +247,41 @@ export function trimPunctuation(sentence: string): string {
 	return sentence.replace(punctuationRegex, '')
 }
 
-// 生成 SRT 格式字幕，为英文和中文添加不同的样式标签
+// 生成 ASS 格式字幕
 export function generateSRT(transcripts: Transcript[]): string {
-	return transcripts
-		.map((transcript, index) => {
-			const startTime = formatSRTTime(transcript.start)
-			const endTime = formatSRTTime(transcript.end)
+	const header = `[Script Info]
+ScriptType: v4.00+
+PlayResX: 1920
+PlayResY: 1080
+ScaledBorderAndShadow: yes
 
-			return `${index + 1}
-${startTime} --> ${endTime}
-${transcript.text}
-${transcript.textLiteralTranslation || ''}
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,Microsoft YaHei,60,&HFFFFFF,&HFFFFFF,&H000000,&H40000000,1,0,0,0,100,100,0,0,4,1,0,2,0,0,100,1
 
-`
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text`
+
+	const events = transcripts
+		.map((transcript) => {
+			const start = formatASSTime(transcript.start)
+			const end = formatASSTime(transcript.end)
+			const text = transcript.text
+			const translation = transcript.textLiteralTranslation || ''
+
+			return `Dialogue: 0,${start},${end},Default,,0,0,0,,{\\1a&H00&\\2a&H00&\\3a&H00&\\4a&H40&}${text}\\N${translation}`
 		})
-		.join('')
+		.join('\n')
+
+	return `${header}\n\n${events}`
 }
 
-// 格式化时间为 SRT 格式 (00:00:00,000)
-function formatSRTTime(seconds: number): string {
-	const date = new Date(seconds * 1000)
-	const hh = String(Math.floor(seconds / 3600)).padStart(2, '0')
-	const mm = String(date.getMinutes()).padStart(2, '0')
-	const ss = String(date.getSeconds()).padStart(2, '0')
-	const ms = String(date.getMilliseconds()).padStart(3, '0')
-
-	return `${hh}:${mm}:${ss},${ms}`
+// 格式化时间为 ASS 格式 (0:00:00.00)
+function formatASSTime(seconds: number): string {
+	const hours = Math.floor(seconds / 3600)
+	const minutes = Math.floor((seconds % 3600) / 60)
+	const secs = seconds % 60
+	return `${hours}:${String(minutes).padStart(2, '0')}:${String(Math.floor(secs)).padStart(2, '0')}.${String(Math.floor((secs % 1) * 100)).padStart(2, '0')}`
 }
 
 export function generateFFmpegCommand(videoPath: string, escapedSrtPath: string) {
@@ -290,14 +299,14 @@ export function generateFFmpegCommand(videoPath: string, escapedSrtPath: string)
 		// Input file
 		'-i',
 		videoPath,
-		// Subtitle filter
+		// Subtitle filter (for ASS format, we don't need force_style as styles are defined in the ASS file)
 		'-vf',
-		`subtitles='${escapedSrtPath}':force_style='FontName=Microsoft YaHei,FontSize=17,Alignment=2,BorderStyle=0,Outline=0.4,Shadow=0,MarginV=20,PrimaryColour=&H00FFFF,BackColour=&H80000000,BorderColour=&H80000000'`,
+		`ass='${escapedSrtPath}'`,
 		// Video encoding settings with CPU optimization
 		'-c:v',
 		'libx264',
 		'-preset',
-		'faster', // Using faster preset to reduce CPU usage (options: ultrafast, superfast, veryfast, faster, fast, medium)
+		'faster',
 		'-crf',
 		'30',
 		// Additional CPU optimization for x264

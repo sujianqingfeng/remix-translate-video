@@ -13,7 +13,7 @@ export default function LandscapeTranslateComment({ comments, title, playFile, v
 		coverDurationInSeconds,
 		comments,
 		availableWidth: 1920 - 48,
-		availableHeight: 360,
+		availableHeight: 440,
 	})
 
 	return (

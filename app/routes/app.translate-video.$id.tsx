@@ -153,13 +153,17 @@ export default function TranslateVideoPage() {
 										<LoadingButtonWithState state={translateFetcher.state} idleText="Translate" />
 									</translateFetcher.Form>
 
-									<renderFetcher.Form method="post" action="render">
-										<LoadingButtonWithState state={renderFetcher.state} idleText="Render" />
-									</renderFetcher.Form>
+									{playFile && (
+										<renderFetcher.Form method="post" action="render">
+											<LoadingButtonWithState state={renderFetcher.state} idleText="Render" />
+										</renderFetcher.Form>
+									)}
 
-									<remoteRenderFetcher.Form method="post" action="remote-render">
-										<LoadingButtonWithState state={remoteRenderFetcher.state} idleText="Remote Render" />
-									</remoteRenderFetcher.Form>
+									{playFile && (
+										<remoteRenderFetcher.Form method="post" action="remote-render">
+											<LoadingButtonWithState state={remoteRenderFetcher.state} idleText="Remote Render" />
+										</remoteRenderFetcher.Form>
+									)}
 
 									{translateVideo.outputFilePath && (
 										<Link to="local-download" target="_blank" rel="noopener noreferrer">
