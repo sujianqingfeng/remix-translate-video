@@ -61,6 +61,7 @@ export default function TranslateVideoPage() {
 	const uploadAsrFetcher = useFetcher()
 	const renderFetcher = useFetcher()
 	const remoteRenderFetcher = useFetcher()
+	const splitFetcher = useFetcher()
 
 	const onCopy = async (text?: string | null) => {
 		if (!text) {
@@ -152,6 +153,10 @@ export default function TranslateVideoPage() {
 									<translateFetcher.Form method="post" action="translate">
 										<LoadingButtonWithState state={translateFetcher.state} idleText="Translate" />
 									</translateFetcher.Form>
+
+									<splitFetcher.Form method="post" action="split">
+										<LoadingButtonWithState state={splitFetcher.state} idleText="Split" />
+									</splitFetcher.Form>
 
 									{playFile && (
 										<renderFetcher.Form method="post" action="render">

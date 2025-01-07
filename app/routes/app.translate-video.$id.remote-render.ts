@@ -8,7 +8,7 @@ import { RENDER_INFO_FILE, RENDER_ZIP_OUTPUT_FILE_NAME, TRANSLATE_VIDEO_COMBINED
 import { db, schema } from '~/lib/drizzle'
 import { createFfmpegZipArchive, createOperationDir } from '~/utils/file'
 import { addRenderTask, uploadRenderZipFile } from '~/utils/remote-render'
-import { generateFFmpegCommand, generateSRT } from '~/utils/transcript'
+import { generateASS, generateFFmpegCommand } from '~/utils/transcript'
 
 export const action = async ({ params }: ActionFunctionArgs) => {
 	const { id } = params
@@ -40,7 +40,7 @@ export const action = async ({ params }: ActionFunctionArgs) => {
 	const renderZipFilePath = path.join(operationDir, RENDER_ZIP_OUTPUT_FILE_NAME)
 
 	// 生成合并的 SRT 字幕文件
-	const combined = generateSRT(transcripts ?? [])
+	const combined = generateASS(transcripts ?? [])
 	await fsp.writeFile(combinedSrtFile, combined)
 
 	const videoFileName = path.basename(filePath)

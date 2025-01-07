@@ -248,7 +248,7 @@ export function trimPunctuation(sentence: string): string {
 }
 
 // 生成 ASS 格式字幕
-export function generateSRT(transcripts: Transcript[]): string {
+export function generateASS(transcripts: Transcript[]): string {
 	const header = `[Script Info]
 ScriptType: v4.00+
 PlayResX: 1920
@@ -257,7 +257,7 @@ ScaledBorderAndShadow: yes
 
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
-Style: Default,Microsoft YaHei,60,&HFFFFFF,&HFFFFFF,&H000000,&H40000000,1,0,0,0,100,100,0,0,4,1,0,2,0,0,100,1
+Style: Default,Microsoft YaHei,60,&HFFFFFF,&HFFFFFF,&H000000,&H40000000,0,0,0,0,100,100,0,0,4,1,0,2,0,0,100,1
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text`

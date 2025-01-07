@@ -7,7 +7,7 @@ import invariant from 'tiny-invariant'
 import { TRANSLATE_VIDEO_COMBINED_SRT_FILE } from '~/constants'
 import { db, schema } from '~/lib/drizzle'
 import { createOperationDir } from '~/utils/file'
-import { generateFFmpegCommand, generateSRT } from '~/utils/transcript'
+import { generateASS, generateFFmpegCommand } from '~/utils/transcript'
 
 export const action = async ({ params }: ActionFunctionArgs) => {
 	const { id } = params
@@ -35,7 +35,7 @@ export const action = async ({ params }: ActionFunctionArgs) => {
 	const outputPath = path.join(operationDir, `${id}-output.mp4`)
 
 	// 生成合并的 SRT 字幕文件
-	const combined = generateSRT(transcripts ?? [])
+	const combined = generateASS(transcripts ?? [])
 	const combinedSrtFile = path.join(operationDir, TRANSLATE_VIDEO_COMBINED_SRT_FILE)
 	await fsp.writeFile(combinedSrtFile, combined)
 
