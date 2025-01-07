@@ -13,7 +13,7 @@ import { bundleOnProgress, throttleRenderOnProgress } from '~/utils/remotion'
 import { buildTranslateCommentRemotionRenderData } from '~/utils/translate-comment'
 import { getTranslateCommentAndDownloadInfo } from '~/utils/translate-comment.server'
 
-const entryPoint = path.join(process.cwd(), 'app', 'remotion', 'new-translate-comments', 'index.ts')
+const entryPoint = path.join(process.cwd(), 'app', 'remotion', 'translate-comments', 'index.ts')
 
 export const action = async ({ params }: ActionFunctionArgs) => {
 	const id = params.id
@@ -86,6 +86,8 @@ export const action = async ({ params }: ActionFunctionArgs) => {
 		outputLocation: outputPath,
 		onProgress: throttleRenderOnProgress,
 		concurrency: 4,
+		crf: 28,
+		hardwareAcceleration: 'if-possible',
 	})
 
 	await db
