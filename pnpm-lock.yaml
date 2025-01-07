@@ -47,6 +47,9 @@ importers:
       '@radix-ui/react-switch':
         specifier: ^1.1.2
         version: 1.1.2(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@radix-ui/react-tabs':
+        specifier: ^1.1.2
+        version: 1.1.2(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@radix-ui/react-toast':
         specifier: ^1.2.2
         version: 1.2.2(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -60,17 +63,17 @@ importers:
         specifier: ^2.15.0
         version: 2.15.0(typescript@5.6.3)
       '@remotion/bundler':
-        specifier: ^4.0.244
-        version: 4.0.244(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^4.0.245
+        version: 4.0.245(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@remotion/cli':
-        specifier: 4.0.244
-        version: 4.0.244(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: 4.0.245
+        version: 4.0.245(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@remotion/google-fonts':
-        specifier: ^4.0.244
-        version: 4.0.244(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^4.0.245
+        version: 4.0.245(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@remotion/media-parser':
-        specifier: ^4.0.244
-        version: 4.0.244
+        specifier: ^4.0.245
+        version: 4.0.245
       '@tobyg74/tiktok-api-dl':
         specifier: ^1.2.2
         version: 1.2.2
@@ -117,8 +120,8 @@ importers:
         specifier: ^18.2.0
         version: 18.3.1(react@18.3.1)
       remotion:
-        specifier: 4.0.244
-        version: 4.0.244(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: 4.0.245
+        version: 4.0.245(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       tailwind-merge:
         specifier: ^2.5.5
         version: 2.5.5
@@ -142,11 +145,11 @@ importers:
         specifier: ^2.15.0
         version: 2.15.0(@remix-run/react@2.15.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3))(@remix-run/serve@2.15.0(typescript@5.6.3))(@types/node@22.7.5)(bufferutil@4.0.8)(terser@5.34.1)(typescript@5.6.3)(vite@5.4.10(@types/node@22.7.5)(terser@5.34.1))
       '@remotion/studio':
-        specifier: ^4.0.244
-        version: 4.0.244(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^4.0.245
+        version: 4.0.245(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@remotion/tailwind':
-        specifier: ^4.0.244
-        version: 4.0.244(@remotion/bundler@4.0.244(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.6.3)(webpack@5.96.1(esbuild@0.19.12))
+        specifier: ^4.0.245
+        version: 4.0.245(@remotion/bundler@4.0.245(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.6.3)(webpack@5.96.1(esbuild@0.19.12))
       '@types/archiver':
         specifier: ^6.0.3
         version: 6.0.3
@@ -1855,6 +1858,19 @@ packages:
       '@types/react-dom':
         optional: true
 
+  '@radix-ui/react-collection@1.1.1':
+    resolution: {integrity: sha512-LwT3pSho9Dljg+wY2KN2mrrh6y3qELfftINERIzBUO9e0N+t0oMTyn3k9iv+ZqgrwGkRnLpNJrsMv9BZlt2yuA==}
+    peerDependencies:
+      '@types/react': '*'
+      '@types/react-dom': '*'
+      react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+      react-dom: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      '@types/react-dom':
+        optional: true
+
   '@radix-ui/react-compose-refs@1.1.0':
     resolution: {integrity: sha512-b4inOtiaOnYf9KWyO3jAeeCG6FeyfY6ldiEPanbUjWd+xIk5wZeHa8yVwmrJ2vderhu/BQvzCrJI0lHd+wIiqw==}
     peerDependencies:
@@ -2014,6 +2030,19 @@ packages:
       '@types/react-dom':
         optional: true
 
+  '@radix-ui/react-presence@1.1.2':
+    resolution: {integrity: sha512-18TFr80t5EVgL9x1SwF/YGtfG+l0BS0PRAlCWBDoBEiDQjeKgnNZRVJp/oVBl24sr3Gbfwc/Qpj4OcWTQMsAEg==}
+    peerDependencies:
+      '@types/react': '*'
+      '@types/react-dom': '*'
+      react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+      react-dom: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      '@types/react-dom':
+        optional: true
+
   '@radix-ui/react-primitive@2.0.0':
     resolution: {integrity: sha512-ZSpFm0/uHa8zTvKBDjLFWLo8dkr4MBsiDLz0g3gMUwqgLHz9rTaRRGYDgvZPtBJgYCBKXkS9fzmoySgr8CO6Cw==}
     peerDependencies:
@@ -2029,6 +2058,19 @@ packages:
 
   '@radix-ui/react-primitive@2.0.1':
     resolution: {integrity: sha512-sHCWTtxwNn3L3fH8qAfnF3WbUZycW93SM1j3NFDzXBiz8D6F5UTTy8G1+WFEaiCdvCVRJWj6N2R4Xq6HdiHmDg==}
+    peerDependencies:
+      '@types/react': '*'
+      '@types/react-dom': '*'
+      react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+      react-dom: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      '@types/react-dom':
+        optional: true
+
+  '@radix-ui/react-roving-focus@1.1.1':
+    resolution: {integrity: sha512-QE1RoxPGJ/Nm8Qmk0PxP8ojmoaS67i0s7hVssS7KuI2FQoc/uzVlZsqKfQvxPE6D8hICCPHJ4D88zNhT3OOmkw==}
     peerDependencies:
       '@types/react': '*'
       '@types/react-dom': '*'
@@ -2086,6 +2128,19 @@ packages:
 
   '@radix-ui/react-switch@1.1.2':
     resolution: {integrity: sha512-zGukiWHjEdBCRyXvKR6iXAQG6qXm2esuAD6kDOi9Cn+1X6ev3ASo4+CsYaD6Fov9r/AQFekqnD/7+V0Cs6/98g==}
+    peerDependencies:
+      '@types/react': '*'
+      '@types/react-dom': '*'
+      react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+      react-dom: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      '@types/react-dom':
+        optional: true
+
+  '@radix-ui/react-tabs@1.1.2':
+    resolution: {integrity: sha512-9u/tQJMcC2aGq7KXpGivMm1mgq7oRJKXphDwdypPd/j21j/2znamPU8WkXgnhUaTrSFNIt8XhOyCAupg8/GbwQ==}
     peerDependencies:
       '@types/react': '*'
       '@types/react-dom': '*'
@@ -2273,98 +2328,98 @@ packages:
   '@remix-run/web-stream@1.1.0':
     resolution: {integrity: sha512-KRJtwrjRV5Bb+pM7zxcTJkhIqWWSy+MYsIxHK+0m5atcznsf15YwUBWHWulZerV2+vvHH1Lp1DD7pw6qKW8SgA==}
 
-  '@remotion/bundler@4.0.244':
-    resolution: {integrity: sha512-gwf8lfqSzCEQ8wgORMaNTp3T+2EvRpXLMAvG6EOsIEYFyk4A8MDdR3iAShgqH2LWef5UtAIXMpxTGbgpWnFdnw==}
+  '@remotion/bundler@4.0.245':
+    resolution: {integrity: sha512-q3K29bk9n4GxO/JMGdBQK6VRZUPVzi2AEQ2dAAYZ1NxuITvwBpGimUwMKOr4DmtXHkLMBsxcsFG+IQvqKqZBQg==}
     peerDependencies:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
 
-  '@remotion/cli@4.0.244':
-    resolution: {integrity: sha512-838Tp5MdT8zUL7v2dMr26Nz6WVyHVcvruLiLQkBZ5OVglwsnL8KQFo5eh0ierxpK1afsWQAY5l9EJayX30ckoQ==}
+  '@remotion/cli@4.0.245':
+    resolution: {integrity: sha512-IvHi4+vAkZrZUgPO45fVjicLi52xWWnaqzEcUDCqsi9MnJ9vjWv60FMcb9lDPdcktqvg7xCc+SSCAOthos/7kg==}
     hasBin: true
     peerDependencies:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
 
-  '@remotion/compositor-darwin-arm64@4.0.244':
-    resolution: {integrity: sha512-hD1Ao/2Cha43tS9d0MoLAFWFnvv+xzcNJEf+1BYDoPyK4rWxZthJcfP/ykwArmMPesOItFDyJz/pLm93JPYCKg==}
+  '@remotion/compositor-darwin-arm64@4.0.245':
+    resolution: {integrity: sha512-sO/xVeCl/tKD55C5mUTRwL7iMCvYKRLq+MFKlg/P/03yZ0NzaVgjxhIKN1DWgJT3py739FtEyGyvNjV8rJj6pg==}
     cpu: [arm64]
     os: [darwin]
 
-  '@remotion/compositor-darwin-x64@4.0.244':
-    resolution: {integrity: sha512-vbobrUadiv4ck4tUg+asVEBttdCab/Q9xOJwdsuZIN8Po3fXauWwbZ0cRDhFz9lZT0CPKJWZKXtR5zV7+E/uDQ==}
+  '@remotion/compositor-darwin-x64@4.0.245':
+    resolution: {integrity: sha512-tIDM9qpbKEVYmRN0IBqMDyHuyAAMFgVN3+XVjBGY+X4HDHRZ1ZPwy7k/2b0TAtagsaRCc+xzPa2QR8kEXxQrxQ==}
     cpu: [x64]
     os: [darwin]
 
-  '@remotion/compositor-linux-arm64-gnu@4.0.244':
-    resolution: {integrity: sha512-OzllB6pRmJnZ8KvkOyOmrMLssXOsEbeOv/SCAMWCr2Bn/96r0B8xccwDEZE8+RxYVNioZZzheWAgQ0yBvSy6gw==}
+  '@remotion/compositor-linux-arm64-gnu@4.0.245':
+    resolution: {integrity: sha512-WwjTaCGo6Aem1N147rS3XrJwMYpTmYiu5WG6sLTg8fODax3Qh3KyCGOKowr9U+2g0kKa18BNYeqNJS1ycDuk0A==}
     cpu: [arm64]
     os: [linux]
     libc: [glibc]
 
-  '@remotion/compositor-linux-arm64-musl@4.0.244':
-    resolution: {integrity: sha512-LKhgsLk/3Uo86rAXGXaW5ex5A9TylH/lOi4CXMBTH66VZL8xDAUycwTIByamRYG25FcQyTw+iro+LAakSgDGnA==}
+  '@remotion/compositor-linux-arm64-musl@4.0.245':
+    resolution: {integrity: sha512-VFfBJm4viwR4hOCC1nHgGMc7FWxrbp1v6G+4DW5H3RN71RHy2FFvif5lrEGe61XykVVGrcOPmzD5M9EY4ftfaQ==}
     cpu: [arm64]
     os: [linux]
     libc: [musl]
 
-  '@remotion/compositor-linux-x64-gnu@4.0.244':
-    resolution: {integrity: sha512-bRwmZL1XpMdE8zG9/etkaRlAbD56cQMJ1AGWZwVHIVMSiBtZEfIe1SOoC2LQCxP5INl/VDej8teETxX7IoqOBg==}
+  '@remotion/compositor-linux-x64-gnu@4.0.245':
+    resolution: {integrity: sha512-ahnxuH/0d8CtM9E6lXoECtzyU3hakgQ8rrqifhIGm2mpga7GZiO2aHrBPH7sfyvv6wuEIEBzSGJFbEDra9JKuw==}
     cpu: [x64]
     os: [linux]
     libc: [glibc]
 
-  '@remotion/compositor-linux-x64-musl@4.0.244':
-    resolution: {integrity: sha512-ultwbVGzoeMEBkp1Bp16AvwLFOZ/vQIWNC8jkJ1dO0BVH44mUAqzsACdTFv4tI+NTg4WkW4wMIni5lfsckV1dw==}
+  '@remotion/compositor-linux-x64-musl@4.0.245':
+    resolution: {integrity: sha512-JYYtZtoIgePCQX+H3JWbigIWpd/pu32aLo333Y2xdoKgIH4N9SqxKPgpPUEL/VQwzNQknJHwIC+JOOHe9o8BHA==}
     cpu: [x64]
     os: [linux]
     libc: [musl]
 
-  '@remotion/compositor-win32-x64-msvc@4.0.244':
-    resolution: {integrity: sha512-yKW3AMEN+z3WD1SeQCBVrbGdhkfnnecqiDWyskhIlk4gmmsy+slPo8ZiZlLEKFH2lz1r2y5dFDwC01nIv5Uk/Q==}
+  '@remotion/compositor-win32-x64-msvc@4.0.245':
+    resolution: {integrity: sha512-9AJPioxcRtYhoKlSK0MyXb0Xj/APfdKJbsSRO9xCaOSYmWcIDZVIGwS9+9b+202Zgli1RUlI1aW91L5SPrtyhQ==}
     cpu: [x64]
     os: [win32]
 
-  '@remotion/google-fonts@4.0.244':
-    resolution: {integrity: sha512-lRD6DzsC/J/ZbVrxO0YyXSfI9nwDihwT35gsN/Zb07+4OEYLMvZN8XGAxCRWKeqTGwIhWRWppi80EL8EqE1VJA==}
+  '@remotion/google-fonts@4.0.245':
+    resolution: {integrity: sha512-lObamgzeZXwiV7eR5KrN2Q96b59dKphKrqJ498ScpqXq6J3uml6d49ZYDy0lTncYH/MxU+I9CA4mXaZhoTOjeQ==}
 
-  '@remotion/media-parser@4.0.244':
-    resolution: {integrity: sha512-ft71FuKEhttQeTR49FZKK4HWPUW4NLPDjfAj1w7HpLI2JhZBuJvm0aowT80cg5aOmeLZb8IOL+zmFzs7CEkDaw==}
+  '@remotion/media-parser@4.0.245':
+    resolution: {integrity: sha512-CRRjnO7C9HsN4jrTkZyKji7W++EYp20o2lbbloLLU817Y/nVhTDQdelVtTwjcOKFgiIvf4KG8i3YWutCSOkTEA==}
 
-  '@remotion/media-utils@4.0.244':
-    resolution: {integrity: sha512-rOOsYzYVi9L7+PpcP4Mb/yMPkjnFvfEDfUsiCZ7NxicsCknhyhdltTRVOhxKWkGzqVsHJ/CsyUiDPd1Vfdq6Rg==}
+  '@remotion/media-utils@4.0.245':
+    resolution: {integrity: sha512-DLYOqipanzK/j6/mpnBukLF9nS8khFwkUfUS1hkl5tG9dGSKU2CAwYV37K8ToTnFS1IHaEUZj2fb0+m69pLz9g==}
     peerDependencies:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
 
-  '@remotion/player@4.0.244':
-    resolution: {integrity: sha512-m5jzpwYqw/UdXEYesNkmHEFwbllyxVFDF76fZ84OsYhOKcahyt2dZ54NENBTbieTvFtN/pDbCcuYeb01WLEySw==}
+  '@remotion/player@4.0.245':
+    resolution: {integrity: sha512-vx/9SIjlhFKVUFKqjWxfAUjplpH0C+HNeUQ4ZGJyDFiuepZRhjodnzioJcu7Gl95Kk+Hm8CqM0jthP7s4cf7gA==}
     peerDependencies:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
 
-  '@remotion/renderer@4.0.244':
-    resolution: {integrity: sha512-sqpqshfjjb2ReusWC/eKP/3LgRtQiFMZraQ6lhyXYaOvnolSzhJ7JhhNjVXqrvI+ZyjlEQAyGS5HZeQGAkoN0w==}
+  '@remotion/renderer@4.0.245':
+    resolution: {integrity: sha512-AdTCfb9cSAT1eCV4WpEcl9Zpjpz/ZLqiE6VSrJYem6eIKtZvGk7xPscg20msXX4X+ThOB9HvExHQoGK61D2KnA==}
     peerDependencies:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
 
-  '@remotion/streaming@4.0.244':
-    resolution: {integrity: sha512-mHgTzFh2yypjF2k+t1tXxqp/q6naq3RgHqxgKNvgLeu1UJ5GY6d1h69mz3MvcCP2jIVSFYNpRY+TBsbPrmuE7Q==}
+  '@remotion/streaming@4.0.245':
+    resolution: {integrity: sha512-Fzj/jdG9joG2Zq3scnVOy1p1TBEPPUbg83deeoKtgHTaoRBe3Y/yrKm5jnqqsSkiD0eCYpuBo4BJ4tES6GE2TA==}
 
-  '@remotion/studio-server@4.0.244':
-    resolution: {integrity: sha512-B6mGqEfhxO0QhXcIUDkosD5EjJsgp37WDVh/XhPqKJgNZS0VM3iRT9Ekz27IYQc4t7ryfpMyAY7g2uBoZTJfNg==}
+  '@remotion/studio-server@4.0.245':
+    resolution: {integrity: sha512-pxf17kETKs6k//b6zx3T7sJoMdluaCEpPrvv5vbZJFr/RT8S0Z3jpCp4ish6i5QfwxbnfDDIkpNnc3JThe5GdA==}
 
-  '@remotion/studio-shared@4.0.244':
-    resolution: {integrity: sha512-Ci0TMn+ucDPBMI0ag4N9n9ZzBJuPWJ1qAhJAkUhwEr3ZAnb2n3ZLM7OxcWuPswI+kOUekG9fQHA6tv9Q5Uum9Q==}
+  '@remotion/studio-shared@4.0.245':
+    resolution: {integrity: sha512-P902NLKwXlSI2RpSymxEgotTPiuryqeNXg/08uRUCqxOz6qTAtGu+zHH3OPp5QKVHeIBeYqlmmJG3ZjNcdclWA==}
 
-  '@remotion/studio@4.0.244':
-    resolution: {integrity: sha512-cJI3oPAomlKvaBwTPjK6O/xEH7zwoAFX9hwpwLOxbKcaFATh18cSKkRAYgMxFSDdPIWM9JPajkHkhItEkBOOPw==}
+  '@remotion/studio@4.0.245':
+    resolution: {integrity: sha512-Capyeqfnd52IM887rHUIFPEorZ/oRTsA8Y8oYx/Aini0cmsPFZdnWbg0e7S7xy2HCpQUe/RyUG6DT+Q2mBkNrg==}
 
-  '@remotion/tailwind@4.0.244':
-    resolution: {integrity: sha512-w6Va0pWyAtgnM/5shyoYghoJkP+snLI/dboWcIiJpWH36iEWNAXIiGizwn0h5v6QDxAW6U5cojzRyiKOuFgAeg==}
+  '@remotion/tailwind@4.0.245':
+    resolution: {integrity: sha512-LJF4RivYv8ExCJa9T2OpRbBzQ5BSOu9Za+qCGbAKtKqP2Gy6X86oDuZrv9Wg6SGUWUloo1SozZnQcE78oTvxBA==}
     peerDependencies:
-      '@remotion/bundler': 4.0.244
+      '@remotion/bundler': 4.0.245
 
   '@rollup/rollup-android-arm-eabi@4.24.0':
     resolution: {integrity: sha512-Q6HJd7Y6xdB48x8ZNVDOqsbh2uByBhgK8PiQgPhwkIw/HC/YX5Ghq2mQY5sRMZWHb3VsFkWooUVOZHKr7DmDIA==}
@@ -5014,8 +5069,8 @@ packages:
   remark-rehype@10.1.0:
     resolution: {integrity: sha512-EFmR5zppdBp0WQeDVZ/b66CWJipB2q2VLNFMabzDSGR66Z2fQii83G5gTBbgGEnEEA0QRussvrFHxk1HWGJskw==}
 
-  remotion@4.0.244:
-    resolution: {integrity: sha512-U3bXTA+/UyHWXhWz848cs5CgvTWAvkhOYyH9WWWzmB549ErCrNzigvjISeRi/9MGnO+/X2bT7T/edgEYlM08WA==}
+  remotion@4.0.245:
+    resolution: {integrity: sha512-8Sdcv+uRu8jCLnxqDrgtI+DKTlyH9IAggcreUIJL/W0bXL5VzvtkBacxQXZwL49eb2eauCzKxU8a6GTvSVz90A==}
     peerDependencies:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
@@ -7129,6 +7184,18 @@ snapshots:
       '@types/react': 18.3.12
       '@types/react-dom': 18.3.1
 
+  '@radix-ui/react-collection@1.1.1(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@radix-ui/react-compose-refs': 1.1.1(@types/react@18.3.12)(react@18.3.1)
+      '@radix-ui/react-context': 1.1.1(@types/react@18.3.12)(react@18.3.1)
+      '@radix-ui/react-primitive': 2.0.1(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@radix-ui/react-slot': 1.1.1(@types/react@18.3.12)(react@18.3.1)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+    optionalDependencies:
+      '@types/react': 18.3.12
+      '@types/react-dom': 18.3.1
+
   '@radix-ui/react-compose-refs@1.1.0(@types/react@18.3.12)(react@18.3.1)':
     dependencies:
       react: 18.3.1
@@ -7269,6 +7336,16 @@ snapshots:
       '@types/react': 18.3.12
       '@types/react-dom': 18.3.1
 
+  '@radix-ui/react-presence@1.1.2(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@radix-ui/react-compose-refs': 1.1.1(@types/react@18.3.12)(react@18.3.1)
+      '@radix-ui/react-use-layout-effect': 1.1.0(@types/react@18.3.12)(react@18.3.1)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+    optionalDependencies:
+      '@types/react': 18.3.12
+      '@types/react-dom': 18.3.1
+
   '@radix-ui/react-primitive@2.0.0(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@radix-ui/react-slot': 1.1.0(@types/react@18.3.12)(react@18.3.1)
@@ -7281,6 +7358,23 @@ snapshots:
   '@radix-ui/react-primitive@2.0.1(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@radix-ui/react-slot': 1.1.1(@types/react@18.3.12)(react@18.3.1)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+    optionalDependencies:
+      '@types/react': 18.3.12
+      '@types/react-dom': 18.3.1
+
+  '@radix-ui/react-roving-focus@1.1.1(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@radix-ui/primitive': 1.1.1
+      '@radix-ui/react-collection': 1.1.1(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@radix-ui/react-compose-refs': 1.1.1(@types/react@18.3.12)(react@18.3.1)
+      '@radix-ui/react-context': 1.1.1(@types/react@18.3.12)(react@18.3.1)
+      '@radix-ui/react-direction': 1.1.0(@types/react@18.3.12)(react@18.3.1)
+      '@radix-ui/react-id': 1.1.0(@types/react@18.3.12)(react@18.3.1)
+      '@radix-ui/react-primitive': 2.0.1(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@radix-ui/react-use-callback-ref': 1.1.0(@types/react@18.3.12)(react@18.3.1)
+      '@radix-ui/react-use-controllable-state': 1.1.0(@types/react@18.3.12)(react@18.3.1)
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
     optionalDependencies:
@@ -7348,6 +7442,22 @@ snapshots:
       '@radix-ui/react-use-controllable-state': 1.1.0(@types/react@18.3.12)(react@18.3.1)
       '@radix-ui/react-use-previous': 1.1.0(@types/react@18.3.12)(react@18.3.1)
       '@radix-ui/react-use-size': 1.1.0(@types/react@18.3.12)(react@18.3.1)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+    optionalDependencies:
+      '@types/react': 18.3.12
+      '@types/react-dom': 18.3.1
+
+  '@radix-ui/react-tabs@1.1.2(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@radix-ui/primitive': 1.1.1
+      '@radix-ui/react-context': 1.1.1(@types/react@18.3.12)(react@18.3.1)
+      '@radix-ui/react-direction': 1.1.0(@types/react@18.3.12)(react@18.3.1)
+      '@radix-ui/react-id': 1.1.0(@types/react@18.3.12)(react@18.3.1)
+      '@radix-ui/react-presence': 1.1.2(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@radix-ui/react-primitive': 2.0.1(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@radix-ui/react-roving-focus': 1.1.1(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@radix-ui/react-use-controllable-state': 1.1.0(@types/react@18.3.12)(react@18.3.1)
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
     optionalDependencies:
@@ -7596,16 +7706,16 @@ snapshots:
     dependencies:
       web-streams-polyfill: 3.3.3
 
-  '@remotion/bundler@4.0.244(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@remotion/bundler@4.0.245(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      '@remotion/studio': 4.0.244(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@remotion/studio-shared': 4.0.244(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@remotion/studio': 4.0.245(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@remotion/studio-shared': 4.0.245(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       css-loader: 5.2.7(webpack@5.96.1(esbuild@0.24.0))
       esbuild: 0.24.0
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
       react-refresh: 0.9.0
-      remotion: 4.0.244(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      remotion: 4.0.245(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       source-map: 0.7.3
       style-loader: 2.0.0(webpack@5.96.1(esbuild@0.24.0))
       webpack: 5.96.1(esbuild@0.19.12)
@@ -7617,21 +7727,21 @@ snapshots:
       - utf-8-validate
       - webpack-cli
 
-  '@remotion/cli@4.0.244(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@remotion/cli@4.0.245(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      '@remotion/bundler': 4.0.244(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@remotion/media-utils': 4.0.244(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@remotion/player': 4.0.244(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@remotion/renderer': 4.0.244(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@remotion/studio': 4.0.244(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@remotion/studio-server': 4.0.244(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@remotion/studio-shared': 4.0.244(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@remotion/bundler': 4.0.245(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@remotion/media-utils': 4.0.245(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@remotion/player': 4.0.245(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@remotion/renderer': 4.0.245(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@remotion/studio': 4.0.245(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@remotion/studio-server': 4.0.245(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@remotion/studio-shared': 4.0.245(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       dotenv: 9.0.2
       minimist: 1.2.6
       prompts: 2.4.2
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
-      remotion: 4.0.244(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      remotion: 4.0.245(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
     transitivePeerDependencies:
       - '@swc/core'
       - bufferutil
@@ -7640,83 +7750,83 @@ snapshots:
       - utf-8-validate
       - webpack-cli
 
-  '@remotion/compositor-darwin-arm64@4.0.244':
+  '@remotion/compositor-darwin-arm64@4.0.245':
     optional: true
 
-  '@remotion/compositor-darwin-x64@4.0.244':
+  '@remotion/compositor-darwin-x64@4.0.245':
     optional: true
 
-  '@remotion/compositor-linux-arm64-gnu@4.0.244':
+  '@remotion/compositor-linux-arm64-gnu@4.0.245':
     optional: true
 
-  '@remotion/compositor-linux-arm64-musl@4.0.244':
+  '@remotion/compositor-linux-arm64-musl@4.0.245':
     optional: true
 
-  '@remotion/compositor-linux-x64-gnu@4.0.244':
+  '@remotion/compositor-linux-x64-gnu@4.0.245':
     optional: true
 
-  '@remotion/compositor-linux-x64-musl@4.0.244':
+  '@remotion/compositor-linux-x64-musl@4.0.245':
     optional: true
 
-  '@remotion/compositor-win32-x64-msvc@4.0.244':
+  '@remotion/compositor-win32-x64-msvc@4.0.245':
     optional: true
 
-  '@remotion/google-fonts@4.0.244(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@remotion/google-fonts@4.0.245(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      remotion: 4.0.244(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      remotion: 4.0.245(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
     transitivePeerDependencies:
       - react
       - react-dom
 
-  '@remotion/media-parser@4.0.244': {}
+  '@remotion/media-parser@4.0.245': {}
 
-  '@remotion/media-utils@4.0.244(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@remotion/media-utils@4.0.245(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
-      remotion: 4.0.244(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      remotion: 4.0.245(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
 
-  '@remotion/player@4.0.244(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@remotion/player@4.0.245(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
-      remotion: 4.0.244(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      remotion: 4.0.245(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
 
-  '@remotion/renderer@4.0.244(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@remotion/renderer@4.0.245(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      '@remotion/streaming': 4.0.244
+      '@remotion/streaming': 4.0.245
       execa: 5.1.1
       extract-zip: 2.0.1
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
-      remotion: 4.0.244(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      remotion: 4.0.245(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       source-map: 0.8.0-beta.0
       ws: 8.17.1(bufferutil@4.0.8)
     optionalDependencies:
-      '@remotion/compositor-darwin-arm64': 4.0.244
-      '@remotion/compositor-darwin-x64': 4.0.244
-      '@remotion/compositor-linux-arm64-gnu': 4.0.244
-      '@remotion/compositor-linux-arm64-musl': 4.0.244
-      '@remotion/compositor-linux-x64-gnu': 4.0.244
-      '@remotion/compositor-linux-x64-musl': 4.0.244
-      '@remotion/compositor-win32-x64-msvc': 4.0.244
+      '@remotion/compositor-darwin-arm64': 4.0.245
+      '@remotion/compositor-darwin-x64': 4.0.245
+      '@remotion/compositor-linux-arm64-gnu': 4.0.245
+      '@remotion/compositor-linux-arm64-musl': 4.0.245
+      '@remotion/compositor-linux-x64-gnu': 4.0.245
+      '@remotion/compositor-linux-x64-musl': 4.0.245
+      '@remotion/compositor-win32-x64-msvc': 4.0.245
     transitivePeerDependencies:
       - bufferutil
       - supports-color
       - utf-8-validate
 
-  '@remotion/streaming@4.0.244': {}
+  '@remotion/streaming@4.0.245': {}
 
-  '@remotion/studio-server@4.0.244(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@remotion/studio-server@4.0.245(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@babel/parser': 7.24.1
-      '@remotion/bundler': 4.0.244(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@remotion/renderer': 4.0.244(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@remotion/studio-shared': 4.0.244(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@remotion/bundler': 4.0.245(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@remotion/renderer': 4.0.245(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@remotion/studio-shared': 4.0.245(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       memfs: 3.4.3
       open: 8.4.2
       recast: 0.23.9
-      remotion: 4.0.244(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      remotion: 4.0.245(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       semver: 7.5.3
       source-map: 0.7.3
     transitivePeerDependencies:
@@ -7729,23 +7839,23 @@ snapshots:
       - utf-8-validate
       - webpack-cli
 
-  '@remotion/studio-shared@4.0.244(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@remotion/studio-shared@4.0.245(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      remotion: 4.0.244(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      remotion: 4.0.245(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
     transitivePeerDependencies:
       - react
       - react-dom
 
-  '@remotion/studio@4.0.244(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@remotion/studio@4.0.245(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      '@remotion/media-parser': 4.0.244
-      '@remotion/media-utils': 4.0.244(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@remotion/player': 4.0.244(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@remotion/renderer': 4.0.244(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@remotion/studio-shared': 4.0.244(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@remotion/media-parser': 4.0.245
+      '@remotion/media-utils': 4.0.245(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@remotion/player': 4.0.245(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@remotion/renderer': 4.0.245(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@remotion/studio-shared': 4.0.245(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       memfs: 3.4.3
       open: 8.4.2
-      remotion: 4.0.244(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      remotion: 4.0.245(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       semver: 7.5.3
       source-map: 0.7.3
     transitivePeerDependencies:
@@ -7755,9 +7865,9 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@remotion/tailwind@4.0.244(@remotion/bundler@4.0.244(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.6.3)(webpack@5.96.1(esbuild@0.19.12))':
+  '@remotion/tailwind@4.0.245(@remotion/bundler@4.0.245(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.6.3)(webpack@5.96.1(esbuild@0.19.12))':
     dependencies:
-      '@remotion/bundler': 4.0.244(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@remotion/bundler': 4.0.245(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       autoprefixer: 10.4.20(postcss@8.4.47)
       css-loader: 5.2.7(webpack@5.96.1(esbuild@0.24.0))
       postcss: 8.4.47
@@ -10798,7 +10908,7 @@ snapshots:
       mdast-util-to-hast: 12.3.0
       unified: 10.1.2
 
-  remotion@4.0.244(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  remotion@4.0.245(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)

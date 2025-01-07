@@ -14,7 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~
 import { commentModeOptions } from '~/config'
 import { toast } from '~/hooks/use-toast'
 import type { schema } from '~/lib/drizzle'
-import { NewLandscapeTranslateComment, NewPortraitTranslateComment, NewVerticalTranslateComment } from '~/remotion'
+import { LandscapeTranslateComment, PortraitTranslateComment, VerticalTranslateComment } from '~/remotion'
 import { safeCopyFileToPublic } from '~/utils/file'
 import { buildTranslateCommentRemotionRenderData } from '~/utils/translate-comment'
 import { getTranslateCommentAndDownloadInfo } from '~/utils/translate-comment.server'
@@ -22,9 +22,9 @@ import { getTranslateCommentAndDownloadInfo } from '~/utils/translate-comment.se
 type Mode = (typeof schema.translateComments.$inferSelect)['mode']
 function getRemotionTemplateComponent(mode: Mode) {
 	const componentMap = {
-		landscape: NewLandscapeTranslateComment,
-		portrait: NewPortraitTranslateComment,
-		vertical: NewVerticalTranslateComment,
+		landscape: LandscapeTranslateComment,
+		portrait: PortraitTranslateComment,
+		vertical: VerticalTranslateComment,
 	}
 	return componentMap[mode]
 }
