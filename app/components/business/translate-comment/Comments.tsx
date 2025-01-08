@@ -1,8 +1,8 @@
 import { useFetcher } from '@remix-run/react'
-import { Check, Languages, Pencil, Split, Trash } from 'lucide-react'
+import { Check, Languages, Pencil, Split, Trash, X } from 'lucide-react'
 import { useState } from 'react'
 import { Button } from '~/components/ui/button'
-import { Input } from '~/components/ui/input'
+import { Textarea } from '~/components/ui/textarea'
 import type { Comment } from '~/types'
 
 export default function Comments({ comments }: { comments: Comment[] }) {
@@ -18,6 +18,11 @@ export default function Comments({ comments }: { comments: Comment[] }) {
 		setEditContent(content)
 	}
 
+	const handleCancel = () => {
+		setEditingIndex(null)
+		setEditContent('')
+	}
+
 	const handleSave = (index: number) => {
 		updateContentFetcher.submit(
 			{
@@ -30,57 +35,80 @@ export default function Comments({ comments }: { comments: Comment[] }) {
 	}
 
 	return (
-		<div className="flex flex-col divide-y">
+		<div className="flex flex-col gap-4">
 			{comments.map((comment, index) => (
 				// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-				<div key={index} className="py-4 first:pt-0 last:pb-0">
-					<div className="flex justify-between items-center mb-2">
-						<p className="text-sm text-muted-foreground">
-							{comment.author.startsWith('@') ? '' : '@'}
-							{comment.author} · {comment.publishedTime}
-						</p>
+				<div key={index} className="rounded-lg bg-card p-4 shadow-sm transition-all hover:shadow-md">
+					<div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-3">
+						<div className="flex items-center gap-2 min-w-0 flex-shrink">
+							<span className="font-medium text-primary truncate">
+								{comment.author.startsWith('@') ? '' : '@'}
+								{comment.author}
+							</span>
+							<span className="text-sm text-muted-foreground flex-shrink-0">·</span>
+							<span className="text-sm text-muted-foreground flex-shrink-0">{comment.publishedTime}</span>
+						</div>
 
-						<div className="flex gap-1">
+						<div className="flex gap-1 ml-auto flex-shrink-0">
 							<translateFetcher.Form method="post" action="translate">
 								<input type="hidden" name="index" value={index} />
 								<input type="hidden" name="action" value="translate-single" />
-								<Button variant="ghost" size="icon" className="h-8 w-8">
-									<Languages size={16} />
+								<Button variant="ghost" size="icon" className="h-7 w-7 hover:bg-primary/10 hover:text-primary">
+									<Languages size={14} />
 								</Button>
 							</translateFetcher.Form>
 
 							<splitFetcher.Form method="post" action="split-comment">
 								<input type="hidden" name="index" value={index} />
-								<Button variant="ghost" size="icon" className="h-8 w-8">
-									<Split size={16} />
+								<Button variant="ghost" size="icon" className="h-7 w-7 hover:bg-primary/10 hover:text-primary">
+									<Split size={14} />
 								</Button>
 							</splitFetcher.Form>
 
 							<deleteFetcher.Form method="post" action="delete-comment">
 								<input type="hidden" name="index" value={index} />
-								<Button variant="ghost" size="icon" className="h-8 w-8 text-destructive">
-									<Trash size={16} />
+								<Button variant="ghost" size="icon" className="h-7 w-7 hover:bg-destructive/10 hover:text-destructive">
+									<Trash size={14} />
 								</Button>
 							</deleteFetcher.Form>
 						</div>
 					</div>
-					<p className="text-sm mb-3">{comment.content}</p>
-					<div className="flex items-center gap-2">
-						{editingIndex === index ? (
-							<>
-								<Input value={editContent} onChange={(e) => setEditContent(e.target.value)} className="flex-1" placeholder="Enter translation..." />
-								<Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleSave(index)}>
-									<Check size={16} className="text-green-600" />
-								</Button>
-							</>
-						) : (
-							<>
-								<p className="text-md flex-1 text-primary">{comment.translatedContent}</p>
-								<Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleEdit(index, comment.translatedContent || '')}>
-									<Pencil size={16} />
-								</Button>
-							</>
-						)}
+					<div className="space-y-3">
+						<p className="text-sm text-foreground/90 leading-relaxed break-words">{comment.content}</p>
+						<div className="bg-muted/50 p-3 rounded-md">
+							{editingIndex === index ? (
+								<div className="flex flex-col gap-2">
+									<Textarea
+										value={editContent}
+										onChange={(e) => setEditContent(e.target.value)}
+										className="flex-1 bg-background text-sm min-h-[80px] resize-y"
+										placeholder="Enter translation..."
+									/>
+									<div className="flex justify-end gap-2">
+										<Button variant="ghost" size="sm" className="hover:bg-destructive/10 hover:text-destructive text-destructive" onClick={handleCancel}>
+											<X size={14} className="mr-1" />
+											Cancel
+										</Button>
+										<Button variant="ghost" size="sm" className="hover:bg-green-100 hover:text-green-600 text-green-600" onClick={() => handleSave(index)}>
+											<Check size={14} className="mr-1" />
+											Save
+										</Button>
+									</div>
+								</div>
+							) : (
+								<div className="flex items-start gap-2">
+									<p className="text-sm flex-1 text-primary font-medium break-words whitespace-pre-wrap">{comment.translatedContent}</p>
+									<Button
+										variant="ghost"
+										size="icon"
+										className="h-7 w-7 flex-shrink-0 hover:bg-primary/10 hover:text-primary"
+										onClick={() => handleEdit(index, comment.translatedContent || '')}
+									>
+										<Pencil size={14} />
+									</Button>
+								</div>
+							)}
+						</div>
 					</div>
 				</div>
 			))}
