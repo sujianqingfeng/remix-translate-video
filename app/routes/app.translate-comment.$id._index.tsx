@@ -66,7 +66,7 @@ export default function TranslateCommentPage() {
 	const checkSensitiveWordsFetcher = useFetcher()
 
 	const currentTime = format(translateComment.commentPullAt ?? new Date(), 'yyyy-MM-dd HH:mm')
-	const desc = `原链接：${download.link}\n视频仅供娱乐，请勿过度解读\n评论权重受点赞等影响，在不同的时间，评论的内容可能不同，当前视频评论拉取时间${currentTime}`
+	const desc = `原链接：${download.link}\n视频仅供娱乐，请勿过度解读\n评论权重受点赞等影响，在不同的时间，评论的内容可能不同，当前视频评论拉取时间${currentTime}\n虽然评论是真实的，但是内容不一定是真的，大家注意分辨。`
 
 	const publishTitle = `外网真实评论：${translateComment.translatedTitle}`
 

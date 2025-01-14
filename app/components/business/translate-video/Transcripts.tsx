@@ -18,6 +18,7 @@ export default function Transcripts({ transcripts }: { transcripts: Transcript[]
 	const updateFetcher = useFetcher()
 	const len = transcripts.length
 	const [editingIndex, setEditingIndex] = useState<number | null>(null)
+	const [editingField, setEditingField] = useState<'text' | 'literal' | 'interpretation' | null>(null)
 
 	return (
 		<div className="flex flex-col gap-4">
@@ -50,16 +51,79 @@ export default function Transcripts({ transcripts }: { transcripts: Transcript[]
 								</deleteFetcher.Form>
 							</div>
 						</div>
-						<p className="text-sm leading-relaxed text-foreground/90 mb-3 px-0.5">{transcript.text}</p>
 
-						{isEditing ? (
-							<updateFetcher.Form method="post" action="update-translation" className="flex gap-2" onSubmit={() => setEditingIndex(null)}>
+						{isEditing && editingField === 'text' ? (
+							<updateFetcher.Form
+								method="post"
+								action="update-translation"
+								className="flex gap-2"
+								onSubmit={() => {
+									setEditingIndex(null)
+									setEditingField(null)
+								}}
+							>
 								<input type="hidden" name="index" value={index} />
+								<input type="hidden" name="field" value="text" />
+								<Input name="text" defaultValue={transcript.text} className="text-sm flex-1 bg-background/50" />
+								<Button type="submit" variant="ghost" size="icon" className="h-8 w-8 hover:bg-primary/10 hover:text-primary">
+									<Save size={16} />
+								</Button>
+								<Button
+									type="button"
+									variant="ghost"
+									size="icon"
+									className="h-8 w-8 hover:bg-destructive/10 hover:text-destructive"
+									onClick={() => {
+										setEditingIndex(null)
+										setEditingField(null)
+									}}
+								>
+									<X size={16} />
+								</Button>
+							</updateFetcher.Form>
+						) : (
+							<div className="flex justify-between items-start gap-2 px-0.5 mb-3">
+								<p className="text-sm leading-relaxed text-foreground/90">{transcript.text}</p>
+								<Button
+									variant="ghost"
+									size="icon"
+									className="h-7 w-7 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-primary/10 hover:text-primary"
+									onClick={() => {
+										setEditingIndex(index)
+										setEditingField('text')
+									}}
+								>
+									<Pencil size={14} />
+								</Button>
+							</div>
+						)}
+
+						{isEditing && editingField === 'literal' ? (
+							<updateFetcher.Form
+								method="post"
+								action="update-translation"
+								className="flex gap-2"
+								onSubmit={() => {
+									setEditingIndex(null)
+									setEditingField(null)
+								}}
+							>
+								<input type="hidden" name="index" value={index} />
+								<input type="hidden" name="field" value="literal" />
 								<Input name="textLiteralTranslation" defaultValue={transcript.textLiteralTranslation} className="text-sm flex-1 bg-background/50" />
 								<Button type="submit" variant="ghost" size="icon" className="h-8 w-8 hover:bg-primary/10 hover:text-primary">
 									<Save size={16} />
 								</Button>
-								<Button type="button" variant="ghost" size="icon" className="h-8 w-8 hover:bg-destructive/10 hover:text-destructive" onClick={() => setEditingIndex(null)}>
+								<Button
+									type="button"
+									variant="ghost"
+									size="icon"
+									className="h-8 w-8 hover:bg-destructive/10 hover:text-destructive"
+									onClick={() => {
+										setEditingIndex(null)
+										setEditingField(null)
+									}}
+								>
 									<X size={16} />
 								</Button>
 							</updateFetcher.Form>
@@ -70,14 +134,61 @@ export default function Transcripts({ transcripts }: { transcripts: Transcript[]
 									variant="ghost"
 									size="icon"
 									className="h-7 w-7 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-primary/10 hover:text-primary"
-									onClick={() => setEditingIndex(index)}
+									onClick={() => {
+										setEditingIndex(index)
+										setEditingField('literal')
+									}}
 								>
 									<Pencil size={14} />
 								</Button>
 							</div>
 						)}
 
-						<p className="text-sm leading-relaxed text-primary/90 mt-2">{transcript.textInterpretation}</p>
+						{isEditing && editingField === 'interpretation' ? (
+							<updateFetcher.Form
+								method="post"
+								action="update-translation"
+								className="flex gap-2 mt-2"
+								onSubmit={() => {
+									setEditingIndex(null)
+									setEditingField(null)
+								}}
+							>
+								<input type="hidden" name="index" value={index} />
+								<input type="hidden" name="field" value="interpretation" />
+								<Input name="textInterpretation" defaultValue={transcript.textInterpretation} className="text-sm flex-1 bg-background/50" />
+								<Button type="submit" variant="ghost" size="icon" className="h-8 w-8 hover:bg-primary/10 hover:text-primary">
+									<Save size={16} />
+								</Button>
+								<Button
+									type="button"
+									variant="ghost"
+									size="icon"
+									className="h-8 w-8 hover:bg-destructive/10 hover:text-destructive"
+									onClick={() => {
+										setEditingIndex(null)
+										setEditingField(null)
+									}}
+								>
+									<X size={16} />
+								</Button>
+							</updateFetcher.Form>
+						) : (
+							<div className="flex justify-between items-start gap-2 px-0.5 mt-2">
+								<p className="text-sm leading-relaxed text-primary/90 flex-1">{transcript.textInterpretation}</p>
+								<Button
+									variant="ghost"
+									size="icon"
+									className="h-7 w-7 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-primary/10 hover:text-primary"
+									onClick={() => {
+										setEditingIndex(index)
+										setEditingField('interpretation')
+									}}
+								>
+									<Pencil size={14} />
+								</Button>
+							</div>
+						)}
 					</div>
 				)
 			})}

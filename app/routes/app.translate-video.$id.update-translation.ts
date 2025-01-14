@@ -9,10 +9,13 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
 
 	const formData = await request.formData()
 	const index = formData.get('index')
+	const field = formData.get('field')
+	const text = formData.get('text')
 	const textLiteralTranslation = formData.get('textLiteralTranslation')
+	const textInterpretation = formData.get('textInterpretation')
 
 	invariant(index, 'index is required')
-	invariant(textLiteralTranslation, 'textLiteralTranslation is required')
+	invariant(field, 'field is required')
 
 	const indexNumber = Number(index)
 	const where = eq(schema.translateVideos.id, id)
@@ -25,7 +28,22 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
 	invariant(translateVideo.transcripts, 'transcripts is required')
 	invariant(translateVideo.transcripts[indexNumber], 'index is not correct')
 
-	translateVideo.transcripts[indexNumber].textLiteralTranslation = textLiteralTranslation.toString()
+	switch (field) {
+		case 'text':
+			invariant(text, 'text is required')
+			translateVideo.transcripts[indexNumber].text = text.toString()
+			break
+		case 'literal':
+			invariant(textLiteralTranslation, 'textLiteralTranslation is required')
+			translateVideo.transcripts[indexNumber].textLiteralTranslation = textLiteralTranslation.toString()
+			break
+		case 'interpretation':
+			invariant(textInterpretation, 'textInterpretation is required')
+			translateVideo.transcripts[indexNumber].textInterpretation = textInterpretation.toString()
+			break
+		default:
+			throw new Error('Invalid field')
+	}
 
 	await db
 		.update(schema.translateVideos)

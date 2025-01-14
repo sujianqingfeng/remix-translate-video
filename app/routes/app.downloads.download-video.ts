@@ -31,7 +31,12 @@ async function downloadYoutubeInfo({ id, link, highQuality }: { id: string; link
 
 	const qualityFilter = highQuality ? 'bv*[height<=1080][ext=webm]+ba[ext=webm]/b[ext=webm]' : 'bv*[height<=720][ext=webm]+ba[ext=webm]/b[ext=webm]'
 
-	const command = `cd ${dir} && yt-dlp "${link}" -f "${qualityFilter} / bv*+ba/b" --merge-output-format mp4 -o "${fileName}"`
+	let command = `cd ${dir} && yt-dlp "${link}" -f "${qualityFilter} / bv*+ba/b" --merge-output-format mp4 -o "${fileName}"`
+
+	const isExistCookiePath = process.env.YOUTUBE_COOKIE_FILE_PATH
+	if (isExistCookiePath) {
+		command += ` --cookies ${isExistCookiePath}`
+	}
 
 	await execCommand(command)
 

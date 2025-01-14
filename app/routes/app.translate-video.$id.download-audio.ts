@@ -11,7 +11,15 @@ async function downloadYoutubeAudio({ link, id }: { link: string; id: string }) 
 	const dir = await createOperationDir(id)
 	const fileName = `${id}.wav`
 	const audioFilePath = path.join(dir, fileName)
-	await execCommand(`cd ${dir} && yt-dlp -f 'ba' --extract-audio --audio-format wav --postprocessor-args 'ffmpeg:-ar 16000' '${link}' -o '${id}.%(ext)s'`)
+
+	let command = `cd ${dir} && yt-dlp -f "ba" --extract-audio --audio-format wav --postprocessor-args "ffmpeg:-ar 16000" "${link}" -o "${id}.%(ext)s"`
+
+	const isExistCookiePath = process.env.YOUTUBE_COOKIE_FILE_PATH
+	if (isExistCookiePath) {
+		command += ` --cookies "${isExistCookiePath}"`
+	}
+
+	await execCommand(command)
 
 	await db
 		.update(schema.translateVideos)
