@@ -37,30 +37,7 @@ export default function Cover({ coverDurationInSeconds, title, author, isSplit =
 		},
 	})
 
-	const splitTitle = (title?: string) => {
-		if (!title) return []
-		const processedTitle = title.endsWith('。') ? title.slice(0, -1) : title
-		if (!isSplit) return [processedTitle]
-
-		const segments: string[] = []
-		let currentSegment = ''
-
-		for (const char of processedTitle) {
-			currentSegment += char
-			if (currentSegment.length >= 10) {
-				segments.push(currentSegment)
-				currentSegment = ''
-			}
-		}
-
-		if (currentSegment) {
-			segments.push(currentSegment)
-		}
-
-		return segments
-	}
-
-	const titleLines = splitTitle(title)
+	const processedTitle = title?.endsWith('。') ? title.slice(0, -1) : title
 
 	const CoverContent = () => (
 		<AbsoluteFill className="bg-gradient-to-br from-[#fdfbfb] to-[#fff1f1]">
@@ -85,18 +62,15 @@ export default function Cover({ coverDurationInSeconds, title, author, isSplit =
 						@{author}
 					</div>
 					<div className="mt-16">
-						{titleLines?.map((line, index) => (
-							<div
-								style={{
-									transform: `translateX(${(1 - contentSpring) * 100}px)`,
-									opacity: contentSpring,
-								}}
-								className="text-[6.5rem] font-bold leading-[1.15] bg-gradient-to-r from-[#ee3f4d] to-[#ff6b6b] bg-clip-text text-transparent drop-shadow-sm"
-								key={line}
-							>
-								{line}
-							</div>
-						))}
+						<div
+							style={{
+								transform: `translateX(${(1 - contentSpring) * 100}px)`,
+								opacity: contentSpring,
+							}}
+							className="text-[6.5rem] font-bold leading-[1.15] bg-gradient-to-r from-[#ee3f4d] to-[#ff6b6b] bg-clip-text text-transparent drop-shadow-sm"
+						>
+							{processedTitle}
+						</div>
 					</div>
 				</div>
 			</div>

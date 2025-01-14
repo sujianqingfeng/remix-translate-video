@@ -30,7 +30,7 @@ export default function LandscapeTranslateComment({ comments, title, playFile, v
 							<p className="text-5xl mt-5 leading-[1.4] font-semibold">{title}</p>
 						</div>
 						<div className="bg-black/5 rounded-2xl p-1 h-full">
-							<Video loop loopVolumeCurveBehavior="repeat" className="object-contain h-full rounded-xl" startFrom={0} crossOrigin="anonymous" src={playSrc} />
+							<OffthreadVideo loop loopVolumeCurveBehavior="repeat" className="object-contain h-full rounded-xl" startFrom={0} crossOrigin="anonymous" src={playSrc} />
 						</div>
 					</div>
 				</AbsoluteFill>

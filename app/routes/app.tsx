@@ -23,11 +23,18 @@ const menuItems: MenuItem[] = [
 		text: 'Comment Translation',
 	},
 	{
+		to: '/app/general-comment',
+		title: 'General Comment',
+		icon: MessageSquare,
+		text: 'General Comment',
+	},
+	{
 		to: '/app/translate-video',
 		title: 'Video Translation',
 		icon: Languages,
 		text: 'Video Translation',
 	},
+
 	{
 		to: '/app/short-text',
 		title: 'Short Text',

@@ -133,3 +133,11 @@ export type RemotionDialogue = Dialogue & {
 	content: string
 	contentZh: string
 }
+
+// general comment
+export type GeneralCommentTypeTextInfo = {
+	title?: string
+	content?: string
+	contentZh?: string
+	images?: string[]
+}

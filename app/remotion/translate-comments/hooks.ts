@@ -1,5 +1,5 @@
 import { useMemo, useRef } from 'react'
-import { interpolate, spring, staticFile, useCurrentFrame, useVideoConfig } from 'remotion'
+import { interpolate, staticFile, useCurrentFrame, useVideoConfig } from 'remotion'
 import type { RemotionVideoComment } from '~/types'
 import { calculateOptimalFontSize } from './utils'
 
@@ -9,7 +9,7 @@ export function useVideoFrame(coverDuration: number) {
 	const coverFrames = coverDuration * fps
 
 	return useMemo(() => {
-		const frameSkip = 4
+		const frameSkip = 10
 		const normalizedFrame = Math.floor(frame / frameSkip) * frameSkip
 		const restFrame = normalizedFrame - coverFrames
 		return restFrame
@@ -25,8 +25,6 @@ export function useTranslateComment({
 	playFile,
 }: { coverDurationInSeconds: number; comments: RemotionVideoComment[]; availableWidth: number; availableHeight: number; isRemoteRender: boolean; playFile: string }) {
 	const videoFrame = useVideoFrame(coverDurationInSeconds)
-	const frame = useCurrentFrame()
-	const { fps } = useVideoConfig()
 	const fontSizeCache = useRef<Record<string, number>>({})
 	const lastCommentRef = useRef<RemotionVideoComment | null>(null)
 	const lastFrameRef = useRef<number>(0)

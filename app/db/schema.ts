@@ -1,6 +1,6 @@
 import { createId } from '@paralleldrive/cuid2'
 import { index, integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
-import type { AsrWord, Comment, Dialogue, FillInBlankSentence, LittleDifficultWord, SentenceTranscript, Transcript, WordTranscript } from '~/types'
+import type { AsrWord, Comment, Dialogue, FillInBlankSentence, GeneralCommentTypeTextInfo, LittleDifficultWord, SentenceTranscript, Transcript, WordTranscript } from '~/types'
 
 export const downloads = sqliteTable(
 	'downloads',
@@ -50,6 +50,34 @@ export const translateComments = sqliteTable(
 			.$defaultFn(() => new Date()),
 	},
 	(t) => [index('translate_comments_id_idx').on(t.id)],
+)
+
+export const generalComments = sqliteTable(
+	'general_comments',
+	{
+		id: text()
+			.notNull()
+			.$defaultFn(() => createId())
+			.unique(),
+
+		type: text('type', { enum: ['text'] }).notNull(),
+		author: text('author').notNull(),
+		typeInfo: text('type_info', { mode: 'json' }).$type<GeneralCommentTypeTextInfo>().notNull(),
+
+		comments: text({ mode: 'json' }).$type<Comment[]>().default([]),
+		commentPullAt: integer('comment_pull_at', { mode: 'timestamp_ms' }),
+		jobId: text('job_id'),
+
+		coverDurationInSeconds: integer('cover_duration_in_seconds').notNull().default(3),
+		secondsForEvery30Words: integer('seconds_for_every_30_words').notNull().default(3),
+		fps: integer('fps').notNull().default(30),
+		outputFilePath: text('output_file_path'),
+		sourceFilePath: text('source_file_path'),
+		createdAt: integer('created_at', { mode: 'timestamp_ms' })
+			.notNull()
+			.$defaultFn(() => new Date()),
+	},
+	(t) => [index('general_comments_id_idx').on(t.id)],
 )
 
 export const translateVideos = sqliteTable(
