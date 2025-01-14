@@ -3,10 +3,10 @@ import { eq } from 'drizzle-orm'
 import invariant from 'tiny-invariant'
 import { db, schema } from '~/lib/drizzle'
 import { asyncPool } from '~/utils'
-import { chatGPT, deepSeek, gptTranslate } from '~/utils/ai'
+import { deepSeek, gptTranslate } from '~/utils/ai'
 
 const literalPrompt =
-	'你是一个精通多语言的字幕翻译大师，给你两句话，一个是上一句，一个是当前需要翻译的句子，根据上一句的语境将当前句子的内容翻译成中文，不要带上一句的内容，符合中文表达习惯，保留原文特定的术语或媒体名称（如有），只返回当前句的翻译，不要去解释内容，末尾不需要加任何标点符号。'
+	'你是一个精通多语言的字幕翻译大师，给你两句话，一个是上一句，一个是当前需要翻译的句子，根据上一句的语境将当前句子的内容翻译成中文，不要带上一句的内容，保留原文特定的术语或媒体名称（如有），只返回当前句的翻译，不要去解释内容，末尾不需要加任何标点符号。'
 const interpretationPrompt = '你是一个精通中文的字幕大师，根据内容重新意译，遵守原意的前提下让内容更通俗易懂，符合中文表达习惯。不要去解释内容，末尾不需要加任何标点符号。'
 
 export const action = async ({ params }: ActionFunctionArgs) => {
@@ -32,6 +32,20 @@ export const action = async ({ params }: ActionFunctionArgs) => {
 				maxTokens: 300,
 			})
 			item.textLiteralTranslation = result
+			return item
+		},
+	)
+
+	await asyncPool(
+		30,
+		(transcripts ?? []).filter((item) => !item.textInterpretation),
+		async (item) => {
+			const result = await deepSeek.generateText({
+				system: interpretationPrompt,
+				prompt: item.textLiteralTranslation ?? '',
+				maxTokens: 300,
+			})
+			item.textInterpretation = result
 			return item
 		},
 	)

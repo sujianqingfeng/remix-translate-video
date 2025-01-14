@@ -39,7 +39,7 @@ export default function VideoPlayer({ playFile, transcripts }: { playFile: strin
 				<div className="absolute bottom-16 left-0 right-0 text-center">
 					<div className="inline-block bg-black/70 text-white px-4 py-2 rounded-lg">
 						<p>{currentTranscript.text}</p>
-						<p>{currentTranscript.textLiteralTranslation}</p>
+						<p>{currentTranscript.textInterpretation}</p>
 					</div>
 				</div>
 			)}

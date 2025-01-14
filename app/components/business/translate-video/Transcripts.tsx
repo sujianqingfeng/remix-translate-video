@@ -76,6 +76,8 @@ export default function Transcripts({ transcripts }: { transcripts: Transcript[]
 								</Button>
 							</div>
 						)}
+
+						<p className="text-sm leading-relaxed text-primary/90 mt-2">{transcript.textInterpretation}</p>
 					</div>
 				)
 			})}

@@ -147,7 +147,7 @@ export function processTranslatedLongTranscripts(transcripts: Transcript[], maxS
 	for (const transcript of transcripts) {
 		// 分别处理英文和中文文本
 		const englishText = transcript.text
-		const chineseText = transcript.textLiteralTranslation || ''
+		const chineseText = transcript.textInterpretation || ''
 
 		// 如果英文和中文都不超长，直接添加
 		if (englishText.length <= maxSentenceLength && (!chineseText || chineseText.length <= maxSentenceLength)) {
@@ -181,19 +181,19 @@ export function processTranslatedLongTranscripts(transcripts: Transcript[], maxS
 			// 分割成两个 Transcript
 			const firstPart: Transcript = {
 				text: englishText,
-				textLiteralTranslation: chineseText.slice(0, splitIndex + 1).trim(),
+				textInterpretation: chineseText.slice(0, splitIndex + 1).trim(),
 				start: transcript.start,
 				end: transcript.end,
-				textInterpretation: transcript.textInterpretation,
+				textLiteralTranslation: transcript.textLiteralTranslation,
 				words: transcript.words,
 			}
 
 			const secondPart: Transcript = {
 				text: englishText,
-				textLiteralTranslation: chineseText.slice(splitIndex + 1).trim(),
+				textInterpretation: chineseText.slice(splitIndex + 1).trim(),
 				start: transcript.start,
 				end: transcript.end,
-				textInterpretation: transcript.textInterpretation,
+				textLiteralTranslation: transcript.textLiteralTranslation,
 				words: transcript.words,
 			}
 
@@ -218,19 +218,19 @@ export function processTranslatedLongTranscripts(transcripts: Transcript[], maxS
 		// 分割成两个 Transcript
 		const firstPart: Transcript = {
 			text: englishText.slice(0, splitIndex).trim(),
-			textLiteralTranslation: chineseText.slice(0, chineseSplitIndex).trim(),
+			textInterpretation: chineseText.slice(0, chineseSplitIndex).trim(),
 			start: transcript.start,
 			end: splitTime,
-			textInterpretation: transcript.textInterpretation,
+			textLiteralTranslation: transcript.textLiteralTranslation,
 			words: words.slice(0, wordCount),
 		}
 
 		const secondPart: Transcript = {
 			text: englishText.slice(splitIndex + 1).trim(),
-			textLiteralTranslation: chineseText.slice(chineseSplitIndex).trim(),
+			textInterpretation: chineseText.slice(chineseSplitIndex).trim(),
 			start: splitTime,
 			end: transcript.end,
-			textInterpretation: transcript.textInterpretation,
+			textLiteralTranslation: transcript.textLiteralTranslation,
 			words: words.slice(wordCount),
 		}
 
@@ -267,7 +267,7 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text`
 			const start = formatASSTime(transcript.start)
 			const end = formatASSTime(transcript.end)
 			const text = transcript.text
-			const translation = transcript.textLiteralTranslation || ''
+			const translation = transcript.textInterpretation || ''
 
 			return `Dialogue: 0,${start},${end},Default,,0,0,0,,{\\1a&H00&\\2a&H00&\\3a&H00&\\4a&H40&}${text}\\N${translation}`
 		})

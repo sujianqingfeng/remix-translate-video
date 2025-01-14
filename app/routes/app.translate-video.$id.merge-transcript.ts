@@ -28,6 +28,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
 	transcripts[indexNum].text = transcripts[indexNum].text + nextTranscript.text
 	transcripts[indexNum].textLiteralTranslation = `${transcripts[indexNum].textLiteralTranslation} ${nextTranscript.textLiteralTranslation}`
+	transcripts[indexNum].textInterpretation = `${transcripts[indexNum].textInterpretation} ${nextTranscript.textInterpretation}`
 
 	transcripts[indexNum].words = [...transcripts[indexNum].words, ...nextTranscript.words]
 	transcripts[indexNum].end = nextTranscript.end
