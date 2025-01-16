@@ -84,8 +84,8 @@ export const action = async ({ params }: ActionFunctionArgs) => {
 		inputProps,
 		outputLocation: outputPath,
 		onProgress: throttleRenderOnProgress,
-		// concurrency: 4,
-		// hardwareAcceleration: 'if-possible',
+		concurrency: 4,
+		hardwareAcceleration: 'if-possible',
 	})
 
 	await db

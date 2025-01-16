@@ -7,7 +7,7 @@ import type { TranslateCommentProps } from './types'
 export default function LandscapeTranslateComment({ comments, title, playFile, viewCountText, coverDurationInSeconds, author, isRemoteRender = false }: TranslateCommentProps) {
 	const { fps } = useVideoConfig()
 
-	const { currentComment, fontSize, playSrc, opacity, translateY } = useTranslateComment({
+	const { currentComment, fontSize, playSrc } = useTranslateComment({
 		isRemoteRender,
 		playFile,
 		coverDurationInSeconds,
@@ -37,13 +37,7 @@ export default function LandscapeTranslateComment({ comments, title, playFile, v
 
 				<AbsoluteFill>
 					<div className="absolute bottom-0 left-0 px-6 pb-6 h-[40%] w-full flex flex-col bg-gradient-to-t from-white/95 to-white/80 backdrop-blur-sm">
-						<div
-							style={{
-								opacity,
-								transform: `translateY(${translateY}px)`,
-							}}
-							className="text-xl leading-[20px] flex items-center gap-3 mb-3 text-gray-700"
-						>
+						<div className="text-xl leading-[20px] flex items-center gap-3 mb-3 text-gray-700">
 							<div className="font-medium">
 								{currentComment?.author} ({currentComment?.publishedTime})
 							</div>
@@ -57,22 +51,12 @@ export default function LandscapeTranslateComment({ comments, title, playFile, v
 						</div>
 
 						<div className="flex flex-col gap-4">
-							<p
-								style={{
-									opacity,
-									transform: `translateY(${translateY}px)`,
-								}}
-								className="leading-1.3 text-3xl text-ellipsis line-clamp-1 text-gray-800"
-							>
-								{currentComment?.content}
-							</p>
+							<p className="leading-1.3 text-3xl text-ellipsis line-clamp-1 text-gray-800">{currentComment?.content}</p>
 
 							<p
 								className="text-[#ee3f4d] leading-[1.1]"
 								style={{
 									fontSize: `${fontSize}px`,
-									opacity,
-									transform: `translateY(${translateY}px)`,
 								}}
 							>
 								{currentComment?.translatedContent}
