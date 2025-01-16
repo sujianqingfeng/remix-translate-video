@@ -37,7 +37,7 @@ const commentListHeaders = {
 	'Accept-Language': 'en-US,en;q=0.9',
 }
 
-export async function getCommentList(reqUrl: string, proxyUrl: string): Promise<Comments[]> {
+export async function getCommentList(reqUrl: string, proxyUrl: string, cursor = 0): Promise<Comments[]> {
 	// 从URL中提取aweme_id
 	const awemeId = new URL(reqUrl).pathname.split('/').pop()
 	const msToken = await getMsToken()
@@ -56,7 +56,7 @@ export async function getCommentList(reqUrl: string, proxyUrl: string): Promise<
 		channel: 'tiktok_web',
 		cookie_enabled: true,
 		count: 20,
-		cursor: 0,
+		cursor,
 		device_id: '7436735084885050896',
 		os: 'mac',
 		region: 'US',

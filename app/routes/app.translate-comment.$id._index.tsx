@@ -165,12 +165,10 @@ export default function TranslateCommentPage() {
 							{/* Action Buttons */}
 							<div className="p-5">
 								<div className="flex flex-wrap gap-2">
-									{!download.author && (
-										<downloadInfoFetcher.Form action="/app/downloads/download-info" method="post">
-											<input name="id" value={dId} hidden readOnly />
-											<LoadingButtonWithState variant="secondary" size="sm" state={downloadInfoFetcher.state} idleText="Download info" />
-										</downloadInfoFetcher.Form>
-									)}
+									<downloadInfoFetcher.Form action="/app/downloads/download-info" method="post">
+										<input name="id" value={dId} hidden readOnly />
+										<LoadingButtonWithState variant="secondary" size="sm" state={downloadInfoFetcher.state} idleText="Download info" />
+									</downloadInfoFetcher.Form>
 
 									{download.author && !download.filePath && (
 										<downloadVideoFetcher.Form action="/app/downloads/download-video" method="post">
@@ -233,7 +231,19 @@ export default function TranslateCommentPage() {
 						) : (
 							<div className="flex flex-col gap-4 items-center justify-center h-full">
 								<p className="text-muted-foreground/90">No comments available</p>
-								<downloadCommentsFetcher.Form action="download-comments" method="post">
+								<downloadCommentsFetcher.Form action="download-comments" method="post" className="flex gap-2">
+									<Select name="pageCount" defaultValue="3">
+										<SelectTrigger className="w-24">
+											<SelectValue placeholder="Pages" />
+										</SelectTrigger>
+										<SelectContent>
+											{Array.from({ length: 10 }, (_, i) => i + 1).map((num) => (
+												<SelectItem key={num} value={num.toString()}>
+													{num} {num === 1 ? 'page' : 'pages'}
+												</SelectItem>
+											))}
+										</SelectContent>
+									</Select>
 									<LoadingButtonWithState variant="secondary" state={downloadCommentsFetcher.state} idleText="Download comments" />
 								</downloadCommentsFetcher.Form>
 							</div>

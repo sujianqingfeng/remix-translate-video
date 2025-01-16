@@ -10,8 +10,8 @@ export async function tiktokDownloadInfo(url: string) {
 	})
 }
 
-export async function tiktokGetComments({ url, proxy }: { url: string; proxy: string }) {
-	return getCommentList(url, proxy)
+export async function tiktokGetComments({ url, proxy, cursor = 0 }: { url: string; proxy: string; cursor?: number }) {
+	return getCommentList(url, proxy, cursor)
 }
 
 export type { Comments } from './comment'

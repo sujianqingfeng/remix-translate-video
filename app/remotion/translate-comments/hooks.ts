@@ -9,7 +9,7 @@ export function useVideoFrame(coverDuration: number) {
 	const coverFrames = coverDuration * fps
 
 	return useMemo(() => {
-		const frameSkip = 10
+		const frameSkip = 2
 		const normalizedFrame = Math.floor(frame / frameSkip) * frameSkip
 		const restFrame = normalizedFrame - coverFrames
 		return restFrame

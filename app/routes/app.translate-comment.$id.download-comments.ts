@@ -23,14 +23,20 @@ const mapTiktokComment = (comment: Comments) => {
 	}
 }
 
-async function downloadTiktokComments({ link, id }: { link: string; id: string }) {
-	const result = await tiktokGetComments({ url: link, proxy: PROXY })
+async function downloadTiktokComments({ link, id, pageCount }: { link: string; id: string; pageCount: number }) {
+	const allComments: Comments[] = []
+	for (let i = 0; i < pageCount; i++) {
+		const result = await tiktokGetComments({ url: link, proxy: PROXY, cursor: i * 20 })
+		if (!result || result.length === 0) break
+		allComments.push(...result)
+		if (i < pageCount - 1) await sleep(1000)
+	}
 
-	if (!result) {
+	if (!allComments.length) {
 		throw new Error('No comments found')
 	}
 
-	const comments = result.map(mapTiktokComment)
+	const comments = allComments.map(mapTiktokComment)
 
 	await db
 		.update(schema.translateComments)
@@ -52,7 +58,7 @@ const mapYoutubeComment = (item: any) => {
 	}
 }
 
-async function downloadYoutubeComments({ id, link }: { id: string; link: string }) {
+async function downloadYoutubeComments({ id, link, pageCount }: { id: string; link: string; pageCount: number }) {
 	const proxyAgent = new ProxyAgent({
 		uri: PROXY,
 	})
@@ -64,18 +70,20 @@ async function downloadYoutubeComments({ id, link }: { id: string; link: string 
 	}
 
 	const youtubeComments = await innertube.getComments(result.id)
-
 	let comments = youtubeComments.contents.map(mapYoutubeComment)
+	let currentPage = 1
 
-	if (youtubeComments.has_continuation) {
+	if (youtubeComments.has_continuation && currentPage < pageCount) {
 		await sleep(1000)
-		const continuation = await youtubeComments.getContinuation()
+		let continuation = await youtubeComments.getContinuation()
 		comments = comments.concat(continuation.contents.map(mapYoutubeComment))
+		currentPage++
 
-		await sleep(1000)
-		if (continuation.has_continuation) {
-			const nextContinuation = await continuation.getContinuation()
-			comments = comments.concat(nextContinuation.contents.map(mapYoutubeComment))
+		while (continuation.has_continuation && currentPage < pageCount) {
+			await sleep(1000)
+			continuation = await continuation.getContinuation()
+			comments = comments.concat(continuation.contents.map(mapYoutubeComment))
+			currentPage++
 		}
 	}
 
@@ -88,9 +96,12 @@ async function downloadYoutubeComments({ id, link }: { id: string; link: string 
 		.where(eq(schema.translateComments.id, id))
 }
 
-export const action = async ({ params }: ActionFunctionArgs) => {
+export const action = async ({ params, request }: ActionFunctionArgs) => {
 	const id = params.id
 	invariant(id, 'id is required')
+
+	const formData = await request.formData()
+	const pageCount = Number(formData.get('pageCount')) || 3
 
 	const translateComment = await db.query.translateComments.findFirst({
 		where: eq(schema.translateComments.id, id),
@@ -112,11 +123,11 @@ export const action = async ({ params }: ActionFunctionArgs) => {
 
 	switch (type) {
 		case 'tiktok':
-			await downloadTiktokComments({ id, link })
+			await downloadTiktokComments({ id, link, pageCount })
 			break
 
 		case 'youtube':
-			await downloadYoutubeComments({ id, link })
+			await downloadYoutubeComments({ id, link, pageCount })
 			break
 
 		default:

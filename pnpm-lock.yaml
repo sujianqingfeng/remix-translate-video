@@ -63,17 +63,17 @@ importers:
         specifier: ^2.15.0
         version: 2.15.0(typescript@5.6.3)
       '@remotion/bundler':
-        specifier: ^4.0.248
-        version: 4.0.248(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: 4.0.249
+        version: 4.0.249(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@remotion/cli':
-        specifier: 4.0.248
-        version: 4.0.248(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: 4.0.249
+        version: 4.0.249(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@remotion/google-fonts':
-        specifier: ^4.0.248
-        version: 4.0.248(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: 4.0.249
+        version: 4.0.249(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@remotion/media-parser':
-        specifier: ^4.0.248
-        version: 4.0.248
+        specifier: 4.0.249
+        version: 4.0.249
       '@tobyg74/tiktok-api-dl':
         specifier: ^1.2.2
         version: 1.2.2
@@ -120,8 +120,8 @@ importers:
         specifier: ^18.2.0
         version: 18.3.1(react@18.3.1)
       remotion:
-        specifier: 4.0.248
-        version: 4.0.248(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: 4.0.249
+        version: 4.0.249(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       tailwind-merge:
         specifier: ^2.5.5
         version: 2.5.5
@@ -145,11 +145,11 @@ importers:
         specifier: ^2.15.0
         version: 2.15.0(@remix-run/react@2.15.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3))(@remix-run/serve@2.15.0(typescript@5.6.3))(@types/node@22.7.5)(bufferutil@4.0.8)(terser@5.34.1)(typescript@5.6.3)(vite@5.4.10(@types/node@22.7.5)(terser@5.34.1))
       '@remotion/studio':
-        specifier: ^4.0.248
-        version: 4.0.248(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: 4.0.249
+        version: 4.0.249(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@remotion/tailwind':
-        specifier: ^4.0.248
-        version: 4.0.248(@remotion/bundler@4.0.248(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.6.3)(webpack@5.96.1(esbuild@0.19.12))
+        specifier: 4.0.249
+        version: 4.0.249(@remotion/bundler@4.0.249(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.6.3)(webpack@5.96.1(esbuild@0.19.12))
       '@types/archiver':
         specifier: ^6.0.3
         version: 6.0.3
@@ -714,12 +714,6 @@ packages:
     cpu: [arm64]
     os: [android]
 
-  '@esbuild/android-arm64@0.18.6':
-    resolution: {integrity: sha512-pL0Ci8P9q1sWbtPx8CXbc8JvPvvYdJJQ+LO09PLFsbz3aYNdFBGWJjiHU+CaObO4Ames+GOFpXRAJZS2L3ZK/A==}
-    engines: {node: '>=12'}
-    cpu: [arm64]
-    os: [android]
-
   '@esbuild/android-arm64@0.19.12':
     resolution: {integrity: sha512-P0UVNGIienjZv3f5zq0DP3Nt2IE/3plFzuaS96vihvD0Hd6H/q4WXUGpCxD/E8YrSXfNyRPbpTq+T8ZQioSuPA==}
     engines: {node: '>=12'}
@@ -752,12 +746,6 @@ packages:
 
   '@esbuild/android-arm@0.18.20':
     resolution: {integrity: sha512-fyi7TDI/ijKKNZTUJAQqiG5T7YjJXgnzkURqmGj13C6dCqckZBLdl4h7bkhHt/t0WP+zO9/zwroDvANaOqO5Sw==}
-    engines: {node: '>=12'}
-    cpu: [arm]
-    os: [android]
-
-  '@esbuild/android-arm@0.18.6':
-    resolution: {integrity: sha512-J3lwhDSXBBppSzm/LC1uZ8yKSIpExc+5T8MxrYD9KNVZG81FOAu2VF2gXi/6A/LwDDQQ+b6DpQbYlo3VwxFepQ==}
     engines: {node: '>=12'}
     cpu: [arm]
     os: [android]
@@ -798,12 +786,6 @@ packages:
     cpu: [x64]
     os: [android]
 
-  '@esbuild/android-x64@0.18.6':
-    resolution: {integrity: sha512-hE2vZxOlJ05aY28lUpB0y0RokngtZtcUB+TVl9vnLEnY0z/8BicSvrkThg5/iI1rbf8TwXrbr2heEjl9fLf+EA==}
-    engines: {node: '>=12'}
-    cpu: [x64]
-    os: [android]
-
   '@esbuild/android-x64@0.19.12':
     resolution: {integrity: sha512-3k7ZoUW6Q6YqhdhIaq/WZ7HwBpnFBlW905Fa4s4qWJyiNOgT1dOqDiVAQFwBH7gBRZr17gLrlFCRzF6jFh7Kew==}
     engines: {node: '>=12'}
@@ -836,12 +818,6 @@ packages:
 
   '@esbuild/darwin-arm64@0.18.20':
     resolution: {integrity: sha512-bxRHW5kHU38zS2lPTPOyuyTm+S+eobPUnTNkdJEfAddYgEcll4xkT8DB9d2008DtTbl7uJag2HuE5NZAZgnNEA==}
-    engines: {node: '>=12'}
-    cpu: [arm64]
-    os: [darwin]
-
-  '@esbuild/darwin-arm64@0.18.6':
-    resolution: {integrity: sha512-/tuyl4R+QhhoROQtuQj9E/yfJtZNdv2HKaHwYhhHGQDN1Teziem2Kh7BWQMumfiY7Lu9g5rO7scWdGE4OsQ6MQ==}
     engines: {node: '>=12'}
     cpu: [arm64]
     os: [darwin]
@@ -882,12 +858,6 @@ packages:
     cpu: [x64]
     os: [darwin]
 
-  '@esbuild/darwin-x64@0.18.6':
-    resolution: {integrity: sha512-L7IQga2pDT+14Ti8HZwsVfbCjuKP4U213T3tuPggOzyK/p4KaUJxQFXJgfUFHKzU0zOXx8QcYRYZf0hSQtppkw==}
-    engines: {node: '>=12'}
-    cpu: [x64]
-    os: [darwin]
-
   '@esbuild/darwin-x64@0.19.12':
     resolution: {integrity: sha512-hKoVkKzFiToTgn+41qGhsUJXFlIjxI/jSYeZf3ugemDYZldIXIxhvwN6erJGlX4t5h417iFuheZ7l+YVn05N3A==}
     engines: {node: '>=12'}
@@ -920,12 +890,6 @@ packages:
 
   '@esbuild/freebsd-arm64@0.18.20':
     resolution: {integrity: sha512-yqDQHy4QHevpMAaxhhIwYPMv1NECwOvIpGCZkECn8w2WFHXjEwrBn3CeNIYsibZ/iZEUemj++M26W3cNR5h+Tw==}
-    engines: {node: '>=12'}
-    cpu: [arm64]
-    os: [freebsd]
-
-  '@esbuild/freebsd-arm64@0.18.6':
-    resolution: {integrity: sha512-bq10jFv42V20Kk77NvmO+WEZaLHBKuXcvEowixnBOMkaBgS7kQaqTc77ZJDbsUpXU3KKNLQFZctfaeINmeTsZA==}
     engines: {node: '>=12'}
     cpu: [arm64]
     os: [freebsd]
@@ -966,12 +930,6 @@ packages:
     cpu: [x64]
     os: [freebsd]
 
-  '@esbuild/freebsd-x64@0.18.6':
-    resolution: {integrity: sha512-HbDLlkDZqUMBQaiday0pJzB6/8Xx/10dI3xRebJBReOEeDSeS+7GzTtW9h8ZnfB7/wBCqvtAjGtWQLTNPbR2+g==}
-    engines: {node: '>=12'}
-    cpu: [x64]
-    os: [freebsd]
-
   '@esbuild/freebsd-x64@0.19.12':
     resolution: {integrity: sha512-EYoXZ4d8xtBoVN7CEwWY2IN4ho76xjYXqSXMNccFSx2lgqOG/1TBPW0yPx1bJZk94qu3tX0fycJeeQsKovA8gg==}
     engines: {node: '>=12'}
@@ -1004,12 +962,6 @@ packages:
 
   '@esbuild/linux-arm64@0.18.20':
     resolution: {integrity: sha512-2YbscF+UL7SQAVIpnWvYwM+3LskyDmPhe31pE7/aoTMFKKzIc9lLbyGUpmmb8a8AixOL61sQ/mFh3jEjHYFvdA==}
-    engines: {node: '>=12'}
-    cpu: [arm64]
-    os: [linux]
-
-  '@esbuild/linux-arm64@0.18.6':
-    resolution: {integrity: sha512-NMY9yg/88MskEZH2s4i6biz/3av+M8xY5ua4HE7CCz5DBz542cr7REe317+v7oKjnYBCijHpkzo5vU85bkXQmQ==}
     engines: {node: '>=12'}
     cpu: [arm64]
     os: [linux]
@@ -1050,12 +1002,6 @@ packages:
     cpu: [arm]
     os: [linux]
 
-  '@esbuild/linux-arm@0.18.6':
-    resolution: {integrity: sha512-C+5kb6rgsGMmvIdUI7v1PPgC98A6BMv233e97aXZ5AE03iMdlILFD/20HlHrOi0x2CzbspXn9HOnlE4/Ijn5Kw==}
-    engines: {node: '>=12'}
-    cpu: [arm]
-    os: [linux]
-
   '@esbuild/linux-arm@0.19.12':
     resolution: {integrity: sha512-J5jPms//KhSNv+LO1S1TX1UWp1ucM6N6XuL6ITdKWElCu8wXP72l9MM0zDTzzeikVyqFE6U8YAV9/tFyj0ti+w==}
     engines: {node: '>=12'}
@@ -1088,12 +1034,6 @@ packages:
 
   '@esbuild/linux-ia32@0.18.20':
     resolution: {integrity: sha512-P4etWwq6IsReT0E1KHU40bOnzMHoH73aXp96Fs8TIT6z9Hu8G6+0SHSw9i2isWrD2nbx2qo5yUqACgdfVGx7TA==}
-    engines: {node: '>=12'}
-    cpu: [ia32]
-    os: [linux]
-
-  '@esbuild/linux-ia32@0.18.6':
-    resolution: {integrity: sha512-AXazA0ljvQEp7cA9jscABNXsjodKbEcqPcAE3rDzKN82Vb3lYOq6INd+HOCA7hk8IegEyHW4T72Z7QGIhyCQEA==}
     engines: {node: '>=12'}
     cpu: [ia32]
     os: [linux]
@@ -1134,12 +1074,6 @@ packages:
     cpu: [loong64]
     os: [linux]
 
-  '@esbuild/linux-loong64@0.18.6':
-    resolution: {integrity: sha512-JjBf7TwY7ldcPgHYt9UcrjZB03+WZqg/jSwMAfzOzM5ZG+tu5umUqzy5ugH/crGI4eoDIhSOTDp1NL3Uo/05Fw==}
-    engines: {node: '>=12'}
-    cpu: [loong64]
-    os: [linux]
-
   '@esbuild/linux-loong64@0.19.12':
     resolution: {integrity: sha512-LiXdXA0s3IqRRjm6rV6XaWATScKAXjI4R4LoDlvO7+yQqFdlr1Bax62sRwkVvRIrwXxvtYEHHI4dm50jAXkuAA==}
     engines: {node: '>=12'}
@@ -1172,12 +1106,6 @@ packages:
 
   '@esbuild/linux-mips64el@0.18.20':
     resolution: {integrity: sha512-d5NeaXZcHp8PzYy5VnXV3VSd2D328Zb+9dEq5HE6bw6+N86JVPExrA6O68OPwobntbNJ0pzCpUFZTo3w0GyetQ==}
-    engines: {node: '>=12'}
-    cpu: [mips64el]
-    os: [linux]
-
-  '@esbuild/linux-mips64el@0.18.6':
-    resolution: {integrity: sha512-kATNsslryVxcH1sO3KP2nnyUWtZZVkgyhAUnyTVVa0OQQ9pmDRjTpHaE+2EQHoCM5wt/uav2edrAUqbwn3tkKQ==}
     engines: {node: '>=12'}
     cpu: [mips64el]
     os: [linux]
@@ -1218,12 +1146,6 @@ packages:
     cpu: [ppc64]
     os: [linux]
 
-  '@esbuild/linux-ppc64@0.18.6':
-    resolution: {integrity: sha512-B+wTKz+8pi7mcWXFQV0LA79dJ+qhiut5uK9q0omoKnq8yRIwQJwfg3/vclXoqqcX89Ri5Y5538V0Se2v5qlcLA==}
-    engines: {node: '>=12'}
-    cpu: [ppc64]
-    os: [linux]
-
   '@esbuild/linux-ppc64@0.19.12':
     resolution: {integrity: sha512-nYJA2/QPimDQOh1rKWedNOe3Gfc8PabU7HT3iXWtNUbRzXS9+vgB0Fjaqr//XNbd82mCxHzik2qotuI89cfixg==}
     engines: {node: '>=12'}
@@ -1256,12 +1178,6 @@ packages:
 
   '@esbuild/linux-riscv64@0.18.20':
     resolution: {integrity: sha512-WSxo6h5ecI5XH34KC7w5veNnKkju3zBRLEQNY7mv5mtBmrP/MjNBCAlsM2u5hDBlS3NGcTQpoBvRzqBcRtpq1A==}
-    engines: {node: '>=12'}
-    cpu: [riscv64]
-    os: [linux]
-
-  '@esbuild/linux-riscv64@0.18.6':
-    resolution: {integrity: sha512-h44RBLVXFUSjvhOfseE+5UxQ/r9LVeqK2S8JziJKOm9W7SePYRPDyn7MhzhNCCFPkcjIy+soCxfhlJXHXXCR0A==}
     engines: {node: '>=12'}
     cpu: [riscv64]
     os: [linux]
@@ -1302,12 +1218,6 @@ packages:
     cpu: [s390x]
     os: [linux]
 
-  '@esbuild/linux-s390x@0.18.6':
-    resolution: {integrity: sha512-FlYpyr2Xc2AUePoAbc84NRV+mj7xpsISeQ36HGf9etrY5rTBEA+IU9HzWVmw5mDFtC62EQxzkLRj8h5Hq85yOQ==}
-    engines: {node: '>=12'}
-    cpu: [s390x]
-    os: [linux]
-
   '@esbuild/linux-s390x@0.19.12':
     resolution: {integrity: sha512-+Pil1Nv3Umes4m3AZKqA2anfhJiVmNCYkPchwFJNEJN5QxmTs1uzyy4TvmDrCRNT2ApwSari7ZIgrPeUx4UZDg==}
     engines: {node: '>=12'}
@@ -1344,12 +1254,6 @@ packages:
     cpu: [x64]
     os: [linux]
 
-  '@esbuild/linux-x64@0.18.6':
-    resolution: {integrity: sha512-Mc4EUSYwzLci77u0Kao6ajB2WbTe5fNc7+lHwS3a+vJISC/oprwURezUYu1SdWAYoczbsyOvKAJwuNftoAdjjg==}
-    engines: {node: '>=12'}
-    cpu: [x64]
-    os: [linux]
-
   '@esbuild/linux-x64@0.19.12':
     resolution: {integrity: sha512-B71g1QpxfwBvNrfyJdVDexenDIt1CiDN1TIXLbhOw0KhJzE78KIFGX6OJ9MrtC0oOqMWf+0xop4qEU8JrJTwCg==}
     engines: {node: '>=12'}
@@ -1382,12 +1286,6 @@ packages:
 
   '@esbuild/netbsd-x64@0.18.20':
     resolution: {integrity: sha512-iO1c++VP6xUBUmltHZoMtCUdPlnPGdBom6IrO4gyKPFFVBKioIImVooR5I83nTew5UOYrk3gIJhbZh8X44y06A==}
-    engines: {node: '>=12'}
-    cpu: [x64]
-    os: [netbsd]
-
-  '@esbuild/netbsd-x64@0.18.6':
-    resolution: {integrity: sha512-3hgZlp7NqIM5lNG3fpdhBI5rUnPmdahraSmwAi+YX/bp7iZ7mpTv2NkypGs/XngdMtpzljICxnUG3uPfqLFd3w==}
     engines: {node: '>=12'}
     cpu: [x64]
     os: [netbsd]
@@ -1440,12 +1338,6 @@ packages:
     cpu: [x64]
     os: [openbsd]
 
-  '@esbuild/openbsd-x64@0.18.6':
-    resolution: {integrity: sha512-aEWTdZQHtSRROlDYn7ygB8yAqtnall/UnmoVIJVqccKitkAWVVSYocQUWrBOxLEFk8XdlRouVrLZe6WXszyviA==}
-    engines: {node: '>=12'}
-    cpu: [x64]
-    os: [openbsd]
-
   '@esbuild/openbsd-x64@0.19.12':
     resolution: {integrity: sha512-RbrfTB9SWsr0kWmb9srfF+L933uMDdu9BIzdA7os2t0TXhCRjrQyCeOt6wVxr79CKD4c+p+YhCj31HBkYcXebw==}
     engines: {node: '>=12'}
@@ -1478,12 +1370,6 @@ packages:
 
   '@esbuild/sunos-x64@0.18.20':
     resolution: {integrity: sha512-kDbFRFp0YpTQVVrqUd5FTYmWo45zGaXe0X8E1G/LKFC0v8x0vWrhOWSLITcCn63lmZIxfOMXtCfti/RxN/0wnQ==}
-    engines: {node: '>=12'}
-    cpu: [x64]
-    os: [sunos]
-
-  '@esbuild/sunos-x64@0.18.6':
-    resolution: {integrity: sha512-uxk/5yAGpjKZUHOECtI9W+9IcLjKj+2m0qf+RG7f7eRBHr8wP6wsr3XbNbgtOD1qSpPapd6R2ZfSeXTkCcAo5g==}
     engines: {node: '>=12'}
     cpu: [x64]
     os: [sunos]
@@ -1524,12 +1410,6 @@ packages:
     cpu: [arm64]
     os: [win32]
 
-  '@esbuild/win32-arm64@0.18.6':
-    resolution: {integrity: sha512-oXlXGS9zvNCGoAT/tLHAsFKrIKye1JaIIP0anCdpaI+Dc10ftaNZcqfLzEwyhdzFAYInXYH4V7kEdH4hPyo9GA==}
-    engines: {node: '>=12'}
-    cpu: [arm64]
-    os: [win32]
-
   '@esbuild/win32-arm64@0.19.12':
     resolution: {integrity: sha512-URgtR1dJnmGvX864pn1B2YUYNzjmXkuJOIqG2HdU62MVS4EHpU2946OZoTMnRUHklGtJdJZ33QfzdjGACXhn1A==}
     engines: {node: '>=12'}
@@ -1566,12 +1446,6 @@ packages:
     cpu: [ia32]
     os: [win32]
 
-  '@esbuild/win32-ia32@0.18.6':
-    resolution: {integrity: sha512-qh7IcAHUvvmMBmoIG+V+BbE9ZWSR0ohF51e5g8JZvU08kZF58uDFL5tHs0eoYz31H6Finv17te3W3QB042GqVA==}
-    engines: {node: '>=12'}
-    cpu: [ia32]
-    os: [win32]
-
   '@esbuild/win32-ia32@0.19.12':
     resolution: {integrity: sha512-+ZOE6pUkMOJfmxmBZElNOx72NKpIa/HFOMGzu8fqzQJ5kgf6aTGrcJaFsNiVMH4JKpMipyK+7k0n2UXN7a8YKQ==}
     engines: {node: '>=12'}
@@ -1604,12 +1478,6 @@ packages:
 
   '@esbuild/win32-x64@0.18.20':
     resolution: {integrity: sha512-kTdfRcSiDfQca/y9QIkng02avJ+NCaQvrMejlsB3RRv5sE9rRoeBPISaZpKxHELzRxZyLvNts1P27W3wV+8geQ==}
-    engines: {node: '>=12'}
-    cpu: [x64]
-    os: [win32]
-
-  '@esbuild/win32-x64@0.18.6':
-    resolution: {integrity: sha512-9UDwkz7Wlm4N9jnv+4NL7F8vxLhSZfEkRArz2gD33HesAFfMLGIGNVXRoIHtWNw8feKsnGly9Hq1EUuRkWl0zA==}
     engines: {node: '>=12'}
     cpu: [x64]
     os: [win32]
@@ -2328,98 +2196,98 @@ packages:
   '@remix-run/web-stream@1.1.0':
     resolution: {integrity: sha512-KRJtwrjRV5Bb+pM7zxcTJkhIqWWSy+MYsIxHK+0m5atcznsf15YwUBWHWulZerV2+vvHH1Lp1DD7pw6qKW8SgA==}
 
-  '@remotion/bundler@4.0.248':
-    resolution: {integrity: sha512-WB5evK5K4bQJaHIp+KeL+L3mELf1dn0tZuXPEyZfyTHpD5KgqoArx6w61LYKEm2M4xNXDQl+q53GiyYS5FHbhA==}
+  '@remotion/bundler@4.0.249':
+    resolution: {integrity: sha512-fJDu5wOtfynaJyi/Xl7Hpt644mkLUZnSh/sVjFpvMU/uH6cb+PtuQ2sP1aS7cdWV1kz/u8aVN1ijp/cE3PdY0A==}
     peerDependencies:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
 
-  '@remotion/cli@4.0.248':
-    resolution: {integrity: sha512-l9a+8+3bLJJUAIzCcXahjC4o5V3dqkb22np9CD3+qrwdbHvAsaAKYtzLNffAm/GK5eqQecOQ46kuMaQkSeij4g==}
+  '@remotion/cli@4.0.249':
+    resolution: {integrity: sha512-+RWFmKxOZlVi/oaoxFs0BuvgmUsUzKT/m5PzNtscArs+p/boSEJ/hhYmQAeDdRFwBxTSIJqaJ35YI/U4lbJxLQ==}
     hasBin: true
     peerDependencies:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
 
-  '@remotion/compositor-darwin-arm64@4.0.248':
-    resolution: {integrity: sha512-I5/sGReTAwIVc5ch2+I2xRMs+F9I9MbMsocGHGzvaOHROomLJpoR7lcHHyYfMHtaVREbnW8NBly2ckUNB4PdxA==}
+  '@remotion/compositor-darwin-arm64@4.0.249':
+    resolution: {integrity: sha512-pEf/6CnCizH20ecEJZTH2VsJkKTVje84SYKV6knI7Dg0DUJvyrsuqO+nf6o02KOerqrNIT1Ir2Ny6MfhxrnHcA==}
     cpu: [arm64]
     os: [darwin]
 
-  '@remotion/compositor-darwin-x64@4.0.248':
-    resolution: {integrity: sha512-7l9H7IIxbP28eMl9Ea+hLqLutENrB4mLbNbaBspat0HvxrRxXIwpXs7q2ZuZsqVwF6oof0ZTP/lLwKJ8LrI1Eg==}
+  '@remotion/compositor-darwin-x64@4.0.249':
+    resolution: {integrity: sha512-Lx1gha4nEY9ZOrif63A5V6ZtT/d18+eX39klBtOG2omTfPOx2hgFHqfDd/1I9tghDFAv3gwbKyo0Cl4/XIoy6A==}
     cpu: [x64]
     os: [darwin]
 
-  '@remotion/compositor-linux-arm64-gnu@4.0.248':
-    resolution: {integrity: sha512-BRHe0MIkBpazXfzsK+T7M+l/6KAbDEnY/GmlhQpEMHRCBc0tbAMt/y0ZE1GPR3THuW4dZbQ9P9kWnCoQ4lB9Rg==}
+  '@remotion/compositor-linux-arm64-gnu@4.0.249':
+    resolution: {integrity: sha512-n1dlNmRxkN7W1IaKmrj6gmxXOaKW65+Xrj7RcIGs18g0UohPuAqdH4WfL2o5TkRssklfVQJSGj7yOk36aFX7Fw==}
     cpu: [arm64]
     os: [linux]
     libc: [glibc]
 
-  '@remotion/compositor-linux-arm64-musl@4.0.248':
-    resolution: {integrity: sha512-MVHGPPht9hNaLAn7uPYyhHhUjzCDaMfpMxkMt+csGH1UG8tEO1z/VFH3ri+SGZ7ZpRH5o+Qnwefz6Ev5ff/8FA==}
+  '@remotion/compositor-linux-arm64-musl@4.0.249':
+    resolution: {integrity: sha512-k+kJxPtuEJcqLwbJbsUv5AnTYdpJv8fSuV18NLzayfAhPPorLj6hzjqZr44jlljbaxhvL9Jk/3E7Ou/KgO1a8g==}
     cpu: [arm64]
     os: [linux]
     libc: [musl]
 
-  '@remotion/compositor-linux-x64-gnu@4.0.248':
-    resolution: {integrity: sha512-AumoAKTZQUdaB4CY95L8GBzDNfu+T0IFRY+qm/h9dGAfHi2uHgqzwKU21/FUgYAHa7+PVHUgX/H1++FQuaY8/w==}
+  '@remotion/compositor-linux-x64-gnu@4.0.249':
+    resolution: {integrity: sha512-rbLZzYOouUdQ90tjV1m8Yczz0yzjR4QliMv/8d5HKI17eOZByMcI2IHy5NoE/VdaNPaukAFjbmxRak2f8SAK9g==}
     cpu: [x64]
     os: [linux]
     libc: [glibc]
 
-  '@remotion/compositor-linux-x64-musl@4.0.248':
-    resolution: {integrity: sha512-DG/9N4DFxQm9QP2osAS9tzjczNvgt4jKk2RVLUwzm9bMjZ4gA4JmBIBbatYrdMkPKQeAlJzynGHWkKR+LX8wNA==}
+  '@remotion/compositor-linux-x64-musl@4.0.249':
+    resolution: {integrity: sha512-BelTpn7p7gbCI8JDfiR1EzYfqtSjggjy3H4B7HA/PYTZdq9CyoeyW6yZjWSCK/LzD/nRWwlYgvV+wTXKeeE87A==}
     cpu: [x64]
     os: [linux]
     libc: [musl]
 
-  '@remotion/compositor-win32-x64-msvc@4.0.248':
-    resolution: {integrity: sha512-KOJXd1vaxIX0uaBust5FTY9K9lT8hccPFfCBjz2ZGkO/EnTg/+LGra7kVyXSAJPeAu5bxRs1iMU2/LwONl/bxA==}
+  '@remotion/compositor-win32-x64-msvc@4.0.249':
+    resolution: {integrity: sha512-l/7sOtouaITZvIXVc+I0rQAaP3o6U+JtUJNnaW/EFHjWg5r3XhpjiCF3rsVfoQorQfNqM3EQenonTNT0xyMkrA==}
     cpu: [x64]
     os: [win32]
 
-  '@remotion/google-fonts@4.0.248':
-    resolution: {integrity: sha512-2sWLaF65+WWNrW4/ikHPCkgwGryJQSoZcq2Qc8P7Oun2FVOXVz2zyUqcsyr/fxPOPskAwmebsCpqII476L0JbQ==}
+  '@remotion/google-fonts@4.0.249':
+    resolution: {integrity: sha512-FnP+dN5q+mlqP5Cz4aJtbMfvx+iJIpzOc8ral8zOImXmH5deHrwnb8YgOjwjZk9HRRhXDy72rDxcFVoUtJfvGw==}
 
-  '@remotion/media-parser@4.0.248':
-    resolution: {integrity: sha512-zNsMfaxIUhnJEp19AwWDlXRCpq6cOeCGrEemZ1kJW3p6Oxld2f1QMBpqg05cHkguBPSm4lc49TpadDlyn9la1g==}
+  '@remotion/media-parser@4.0.249':
+    resolution: {integrity: sha512-bv2vtcNY4Wjq336AQCtRtMlBB/iyqs2POBsXKub7arksNloat21QSI0ysNk1Y7eLqFR501uzesG9GczJ2YveTQ==}
 
-  '@remotion/media-utils@4.0.248':
-    resolution: {integrity: sha512-Ukh4LiFvxoObaozhS32jHC9USfwdVZGLMVWwTyKeaDE/HHpr/wIe6LM4LoPoDHymQuFSrCDV0Ao/PF3TUVFsjA==}
+  '@remotion/media-utils@4.0.249':
+    resolution: {integrity: sha512-490NaZe8nikBvCVNx/i+V0E5SY2qgc1aeQnlJIW8pQB7ZIJcQnUm6yQOzu678yo4rzzVBAAyQkzU5ch5DneJ7w==}
     peerDependencies:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
 
-  '@remotion/player@4.0.248':
-    resolution: {integrity: sha512-zgN395KCbdjrVH6eoWaxsrY7nD599sKRKOKo8aWJnZ251LgC4M5vGxARIqqrkxKBd/2WQp4/FS35ViwWiw9tAA==}
+  '@remotion/player@4.0.249':
+    resolution: {integrity: sha512-SCM1L1STkxFU+6PyR2KEsX4nld4MOPX99lsRELpP3NP5vGsMSjwBSk48x/VXEmDGpV1iJYoTBMcdT9B3B+8Ueg==}
     peerDependencies:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
 
-  '@remotion/renderer@4.0.248':
-    resolution: {integrity: sha512-OoG5lMfnDySfLfRACT1N5UVzUyQo1R6aVFEdMwm6H6aXRqmagvp1eOxSdXGr3ZHP8t+nVZRGF1HQk/EsK9HKQA==}
+  '@remotion/renderer@4.0.249':
+    resolution: {integrity: sha512-zv13SmrG7IEW/ehLfZ0oW6kVEmE7pRbXjWm+H9C1TPq4Vajqk8HzvP4WBhF5iPySDit0/lOwEJ4seE9GGKN4+w==}
     peerDependencies:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
 
-  '@remotion/streaming@4.0.248':
-    resolution: {integrity: sha512-soNqsWI2WxMuzZVUVFDTeOfd0SR+8VI2Ag/9w4SBe03ZjGZdI7o4vG3x4xbAhEPFaKhpSLTeb7Rm8oX4cxtEdA==}
+  '@remotion/streaming@4.0.249':
+    resolution: {integrity: sha512-IYf538bOTNA6ZImHNwiC6VRcCGkP//F2fRkm1G1gbqflDoZys9N2ymO2l7ncXvBmzxXsh+KJ5jy/SRgXL1wZdg==}
 
-  '@remotion/studio-server@4.0.248':
-    resolution: {integrity: sha512-JNI6jazK3OOkQPD7JfCGzH/TZ9r0INOelVNyMigiGQynYj/XXQFnZPPtBIe9lM6MsuWLvRY8bxtBFNhcFkRgMA==}
+  '@remotion/studio-server@4.0.249':
+    resolution: {integrity: sha512-DVvwNny+04tq2Duj4zd32LvkjbVCBSywl+R4QSA63iodh7TBKXuqM4JTruRkCzjzRSRwth7Y4DxMBH6iYwNaPQ==}
 
-  '@remotion/studio-shared@4.0.248':
-    resolution: {integrity: sha512-7lv6H+53n/0dhKvHcr1OlkWrGo0MIPlpBR8SA/gigVoQDQIIYeXFUAl8xgwC4idAuqDe69PGiMmW6aN1hfPtzw==}
+  '@remotion/studio-shared@4.0.249':
+    resolution: {integrity: sha512-4ny2UUBVj4VG/4W6D1qDWFw/HU78mHxM+q8luj0ZHhsFm0HNM5EwjNVBdxfw/yqpVt52KurjyLB8de068DHYww==}
 
-  '@remotion/studio@4.0.248':
-    resolution: {integrity: sha512-EpCnx0+yT10z30/fJ3a/itwmU6doXywFND/BoBHE+1ljEk+QqOUEDGRqCDu8f9uN8khTqYkU96QnKJFtP09lxg==}
+  '@remotion/studio@4.0.249':
+    resolution: {integrity: sha512-DDOsuKW5/ZYUnHN4lyJgSinwXBGzdkYudwWLI652GEdxqHgeEofTFtTqeELUvOzbUNHVNyKbD8sS9522G9qtkg==}
 
-  '@remotion/tailwind@4.0.248':
-    resolution: {integrity: sha512-VR/pgFJnJpBn7+OxWo49MHw4epFTafEZF3fpdtMER5D6hwuUMK39pY8yNmX4MfXyC4uSZw9UyoZj1ffSFfxqJA==}
+  '@remotion/tailwind@4.0.249':
+    resolution: {integrity: sha512-a+khIX8cTMD4HxkeZbxe1BnfwqJcJ3N9j5cfRFzh95VB/nO+bOmrnqugrWhL8Ds1Hccgnn68+u9yWdTdho9hxw==}
     peerDependencies:
-      '@remotion/bundler': 4.0.248
+      '@remotion/bundler': 4.0.249
 
   '@rollup/rollup-android-arm-eabi@4.24.0':
     resolution: {integrity: sha512-Q6HJd7Y6xdB48x8ZNVDOqsbh2uByBhgK8PiQgPhwkIw/HC/YX5Ghq2mQY5sRMZWHb3VsFkWooUVOZHKr7DmDIA==}
@@ -3458,11 +3326,6 @@ packages:
 
   esbuild@0.18.20:
     resolution: {integrity: sha512-ceqxoedUrcayh7Y7ZX6NdbbDzGROiyVBgC4PriJThBKSVPWnnFHZAkfI1lJT8QFkOwH4qOS2SJkS4wvpGl8BpA==}
-    engines: {node: '>=12'}
-    hasBin: true
-
-  esbuild@0.18.6:
-    resolution: {integrity: sha512-5QgxWaAhU/tPBpvkxUmnFv2YINHuZzjbk0LeUUnC2i3aJHjfi5yR49lgKgF7cb98bclOp/kans8M5TGbGFfJlQ==}
     engines: {node: '>=12'}
     hasBin: true
 
@@ -5069,8 +4932,8 @@ packages:
   remark-rehype@10.1.0:
     resolution: {integrity: sha512-EFmR5zppdBp0WQeDVZ/b66CWJipB2q2VLNFMabzDSGR66Z2fQii83G5gTBbgGEnEEA0QRussvrFHxk1HWGJskw==}
 
-  remotion@4.0.248:
-    resolution: {integrity: sha512-Vx2Fxxl3xrzcRseuyLV7KOdnNFp/IZm3EAEyo19mp+p9Zl21PdhL2sQGZ6CR6OAxUZmMTmdj+HL8SpbIeaD3Xw==}
+  remotion@4.0.249:
+    resolution: {integrity: sha512-Rt8pZV8Qhz7hKKobcHUZosZ8bDt6tHGIKnmvjRvyo3QBnU6yHg5uN4gJdRpdjLJ7LtYp0a27OcTwpASkb1Ar+g==}
     peerDependencies:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
@@ -6451,9 +6314,6 @@ snapshots:
   '@esbuild/android-arm64@0.18.20':
     optional: true
 
-  '@esbuild/android-arm64@0.18.6':
-    optional: true
-
   '@esbuild/android-arm64@0.19.12':
     optional: true
 
@@ -6470,9 +6330,6 @@ snapshots:
     optional: true
 
   '@esbuild/android-arm@0.18.20':
-    optional: true
-
-  '@esbuild/android-arm@0.18.6':
     optional: true
 
   '@esbuild/android-arm@0.19.12':
@@ -6493,9 +6350,6 @@ snapshots:
   '@esbuild/android-x64@0.18.20':
     optional: true
 
-  '@esbuild/android-x64@0.18.6':
-    optional: true
-
   '@esbuild/android-x64@0.19.12':
     optional: true
 
@@ -6512,9 +6366,6 @@ snapshots:
     optional: true
 
   '@esbuild/darwin-arm64@0.18.20':
-    optional: true
-
-  '@esbuild/darwin-arm64@0.18.6':
     optional: true
 
   '@esbuild/darwin-arm64@0.19.12':
@@ -6535,9 +6386,6 @@ snapshots:
   '@esbuild/darwin-x64@0.18.20':
     optional: true
 
-  '@esbuild/darwin-x64@0.18.6':
-    optional: true
-
   '@esbuild/darwin-x64@0.19.12':
     optional: true
 
@@ -6554,9 +6402,6 @@ snapshots:
     optional: true
 
   '@esbuild/freebsd-arm64@0.18.20':
-    optional: true
-
-  '@esbuild/freebsd-arm64@0.18.6':
     optional: true
 
   '@esbuild/freebsd-arm64@0.19.12':
@@ -6577,9 +6422,6 @@ snapshots:
   '@esbuild/freebsd-x64@0.18.20':
     optional: true
 
-  '@esbuild/freebsd-x64@0.18.6':
-    optional: true
-
   '@esbuild/freebsd-x64@0.19.12':
     optional: true
 
@@ -6596,9 +6438,6 @@ snapshots:
     optional: true
 
   '@esbuild/linux-arm64@0.18.20':
-    optional: true
-
-  '@esbuild/linux-arm64@0.18.6':
     optional: true
 
   '@esbuild/linux-arm64@0.19.12':
@@ -6619,9 +6458,6 @@ snapshots:
   '@esbuild/linux-arm@0.18.20':
     optional: true
 
-  '@esbuild/linux-arm@0.18.6':
-    optional: true
-
   '@esbuild/linux-arm@0.19.12':
     optional: true
 
@@ -6638,9 +6474,6 @@ snapshots:
     optional: true
 
   '@esbuild/linux-ia32@0.18.20':
-    optional: true
-
-  '@esbuild/linux-ia32@0.18.6':
     optional: true
 
   '@esbuild/linux-ia32@0.19.12':
@@ -6661,9 +6494,6 @@ snapshots:
   '@esbuild/linux-loong64@0.18.20':
     optional: true
 
-  '@esbuild/linux-loong64@0.18.6':
-    optional: true
-
   '@esbuild/linux-loong64@0.19.12':
     optional: true
 
@@ -6680,9 +6510,6 @@ snapshots:
     optional: true
 
   '@esbuild/linux-mips64el@0.18.20':
-    optional: true
-
-  '@esbuild/linux-mips64el@0.18.6':
     optional: true
 
   '@esbuild/linux-mips64el@0.19.12':
@@ -6703,9 +6530,6 @@ snapshots:
   '@esbuild/linux-ppc64@0.18.20':
     optional: true
 
-  '@esbuild/linux-ppc64@0.18.6':
-    optional: true
-
   '@esbuild/linux-ppc64@0.19.12':
     optional: true
 
@@ -6722,9 +6546,6 @@ snapshots:
     optional: true
 
   '@esbuild/linux-riscv64@0.18.20':
-    optional: true
-
-  '@esbuild/linux-riscv64@0.18.6':
     optional: true
 
   '@esbuild/linux-riscv64@0.19.12':
@@ -6745,9 +6566,6 @@ snapshots:
   '@esbuild/linux-s390x@0.18.20':
     optional: true
 
-  '@esbuild/linux-s390x@0.18.6':
-    optional: true
-
   '@esbuild/linux-s390x@0.19.12':
     optional: true
 
@@ -6766,9 +6584,6 @@ snapshots:
   '@esbuild/linux-x64@0.18.20':
     optional: true
 
-  '@esbuild/linux-x64@0.18.6':
-    optional: true
-
   '@esbuild/linux-x64@0.19.12':
     optional: true
 
@@ -6785,9 +6600,6 @@ snapshots:
     optional: true
 
   '@esbuild/netbsd-x64@0.18.20':
-    optional: true
-
-  '@esbuild/netbsd-x64@0.18.6':
     optional: true
 
   '@esbuild/netbsd-x64@0.19.12':
@@ -6814,9 +6626,6 @@ snapshots:
   '@esbuild/openbsd-x64@0.18.20':
     optional: true
 
-  '@esbuild/openbsd-x64@0.18.6':
-    optional: true
-
   '@esbuild/openbsd-x64@0.19.12':
     optional: true
 
@@ -6833,9 +6642,6 @@ snapshots:
     optional: true
 
   '@esbuild/sunos-x64@0.18.20':
-    optional: true
-
-  '@esbuild/sunos-x64@0.18.6':
     optional: true
 
   '@esbuild/sunos-x64@0.19.12':
@@ -6856,9 +6662,6 @@ snapshots:
   '@esbuild/win32-arm64@0.18.20':
     optional: true
 
-  '@esbuild/win32-arm64@0.18.6':
-    optional: true
-
   '@esbuild/win32-arm64@0.19.12':
     optional: true
 
@@ -6877,9 +6680,6 @@ snapshots:
   '@esbuild/win32-ia32@0.18.20':
     optional: true
 
-  '@esbuild/win32-ia32@0.18.6':
-    optional: true
-
   '@esbuild/win32-ia32@0.19.12':
     optional: true
 
@@ -6896,9 +6696,6 @@ snapshots:
     optional: true
 
   '@esbuild/win32-x64@0.18.20':
-    optional: true
-
-  '@esbuild/win32-x64@0.18.6':
     optional: true
 
   '@esbuild/win32-x64@0.19.12':
@@ -7706,16 +7503,16 @@ snapshots:
     dependencies:
       web-streams-polyfill: 3.3.3
 
-  '@remotion/bundler@4.0.248(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@remotion/bundler@4.0.249(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      '@remotion/studio': 4.0.248(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@remotion/studio-shared': 4.0.248(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@remotion/studio': 4.0.249(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@remotion/studio-shared': 4.0.249(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       css-loader: 5.2.7(webpack@5.96.1(esbuild@0.24.0))
       esbuild: 0.24.0
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
       react-refresh: 0.9.0
-      remotion: 4.0.248(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      remotion: 4.0.249(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       source-map: 0.7.3
       style-loader: 2.0.0(webpack@5.96.1(esbuild@0.24.0))
       webpack: 5.96.1(esbuild@0.19.12)
@@ -7727,21 +7524,21 @@ snapshots:
       - utf-8-validate
       - webpack-cli
 
-  '@remotion/cli@4.0.248(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@remotion/cli@4.0.249(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      '@remotion/bundler': 4.0.248(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@remotion/media-utils': 4.0.248(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@remotion/player': 4.0.248(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@remotion/renderer': 4.0.248(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@remotion/studio': 4.0.248(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@remotion/studio-server': 4.0.248(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@remotion/studio-shared': 4.0.248(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@remotion/bundler': 4.0.249(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@remotion/media-utils': 4.0.249(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@remotion/player': 4.0.249(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@remotion/renderer': 4.0.249(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@remotion/studio': 4.0.249(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@remotion/studio-server': 4.0.249(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@remotion/studio-shared': 4.0.249(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       dotenv: 9.0.2
       minimist: 1.2.6
       prompts: 2.4.2
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
-      remotion: 4.0.248(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      remotion: 4.0.249(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
     transitivePeerDependencies:
       - '@swc/core'
       - bufferutil
@@ -7750,83 +7547,83 @@ snapshots:
       - utf-8-validate
       - webpack-cli
 
-  '@remotion/compositor-darwin-arm64@4.0.248':
+  '@remotion/compositor-darwin-arm64@4.0.249':
     optional: true
 
-  '@remotion/compositor-darwin-x64@4.0.248':
+  '@remotion/compositor-darwin-x64@4.0.249':
     optional: true
 
-  '@remotion/compositor-linux-arm64-gnu@4.0.248':
+  '@remotion/compositor-linux-arm64-gnu@4.0.249':
     optional: true
 
-  '@remotion/compositor-linux-arm64-musl@4.0.248':
+  '@remotion/compositor-linux-arm64-musl@4.0.249':
     optional: true
 
-  '@remotion/compositor-linux-x64-gnu@4.0.248':
+  '@remotion/compositor-linux-x64-gnu@4.0.249':
     optional: true
 
-  '@remotion/compositor-linux-x64-musl@4.0.248':
+  '@remotion/compositor-linux-x64-musl@4.0.249':
     optional: true
 
-  '@remotion/compositor-win32-x64-msvc@4.0.248':
+  '@remotion/compositor-win32-x64-msvc@4.0.249':
     optional: true
 
-  '@remotion/google-fonts@4.0.248(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@remotion/google-fonts@4.0.249(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      remotion: 4.0.248(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      remotion: 4.0.249(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
     transitivePeerDependencies:
       - react
       - react-dom
 
-  '@remotion/media-parser@4.0.248': {}
+  '@remotion/media-parser@4.0.249': {}
 
-  '@remotion/media-utils@4.0.248(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@remotion/media-utils@4.0.249(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
-      remotion: 4.0.248(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      remotion: 4.0.249(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
 
-  '@remotion/player@4.0.248(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@remotion/player@4.0.249(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
-      remotion: 4.0.248(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      remotion: 4.0.249(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
 
-  '@remotion/renderer@4.0.248(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@remotion/renderer@4.0.249(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      '@remotion/streaming': 4.0.248
+      '@remotion/streaming': 4.0.249
       execa: 5.1.1
       extract-zip: 2.0.1
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
-      remotion: 4.0.248(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      remotion: 4.0.249(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       source-map: 0.8.0-beta.0
       ws: 8.17.1(bufferutil@4.0.8)
     optionalDependencies:
-      '@remotion/compositor-darwin-arm64': 4.0.248
-      '@remotion/compositor-darwin-x64': 4.0.248
-      '@remotion/compositor-linux-arm64-gnu': 4.0.248
-      '@remotion/compositor-linux-arm64-musl': 4.0.248
-      '@remotion/compositor-linux-x64-gnu': 4.0.248
-      '@remotion/compositor-linux-x64-musl': 4.0.248
-      '@remotion/compositor-win32-x64-msvc': 4.0.248
+      '@remotion/compositor-darwin-arm64': 4.0.249
+      '@remotion/compositor-darwin-x64': 4.0.249
+      '@remotion/compositor-linux-arm64-gnu': 4.0.249
+      '@remotion/compositor-linux-arm64-musl': 4.0.249
+      '@remotion/compositor-linux-x64-gnu': 4.0.249
+      '@remotion/compositor-linux-x64-musl': 4.0.249
+      '@remotion/compositor-win32-x64-msvc': 4.0.249
     transitivePeerDependencies:
       - bufferutil
       - supports-color
       - utf-8-validate
 
-  '@remotion/streaming@4.0.248': {}
+  '@remotion/streaming@4.0.249': {}
 
-  '@remotion/studio-server@4.0.248(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@remotion/studio-server@4.0.249(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@babel/parser': 7.24.1
-      '@remotion/bundler': 4.0.248(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@remotion/renderer': 4.0.248(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@remotion/studio-shared': 4.0.248(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@remotion/bundler': 4.0.249(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@remotion/renderer': 4.0.249(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@remotion/studio-shared': 4.0.249(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       memfs: 3.4.3
       open: 8.4.2
       recast: 0.23.9
-      remotion: 4.0.248(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      remotion: 4.0.249(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       semver: 7.5.3
       source-map: 0.7.3
     transitivePeerDependencies:
@@ -7839,23 +7636,23 @@ snapshots:
       - utf-8-validate
       - webpack-cli
 
-  '@remotion/studio-shared@4.0.248(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@remotion/studio-shared@4.0.249(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      remotion: 4.0.248(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      remotion: 4.0.249(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
     transitivePeerDependencies:
       - react
       - react-dom
 
-  '@remotion/studio@4.0.248(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@remotion/studio@4.0.249(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      '@remotion/media-parser': 4.0.248
-      '@remotion/media-utils': 4.0.248(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@remotion/player': 4.0.248(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@remotion/renderer': 4.0.248(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@remotion/studio-shared': 4.0.248(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@remotion/media-parser': 4.0.249
+      '@remotion/media-utils': 4.0.249(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@remotion/player': 4.0.249(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@remotion/renderer': 4.0.249(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@remotion/studio-shared': 4.0.249(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       memfs: 3.4.3
       open: 8.4.2
-      remotion: 4.0.248(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      remotion: 4.0.249(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       semver: 7.5.3
       source-map: 0.7.3
     transitivePeerDependencies:
@@ -7865,9 +7662,9 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@remotion/tailwind@4.0.248(@remotion/bundler@4.0.248(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.6.3)(webpack@5.96.1(esbuild@0.19.12))':
+  '@remotion/tailwind@4.0.249(@remotion/bundler@4.0.249(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.6.3)(webpack@5.96.1(esbuild@0.19.12))':
     dependencies:
-      '@remotion/bundler': 4.0.248(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@remotion/bundler': 4.0.249(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       autoprefixer: 10.4.20(postcss@8.4.47)
       css-loader: 5.2.7(webpack@5.96.1(esbuild@0.24.0))
       postcss: 8.4.47
@@ -8043,7 +7840,7 @@ snapshots:
       lru-cache: 10.4.3
       media-query-parser: 2.0.2
       modern-ahocorasick: 1.0.1
-      picocolors: 1.1.0
+      picocolors: 1.1.1
     transitivePeerDependencies:
       - babel-plugin-macros
 
@@ -8053,7 +7850,7 @@ snapshots:
       '@babel/plugin-syntax-typescript': 7.25.7(@babel/core@7.25.8)
       '@vanilla-extract/babel-plugin-debug-ids': 1.1.0
       '@vanilla-extract/css': 1.16.0
-      esbuild: 0.18.6
+      esbuild: 0.19.12
       eval: 0.1.8
       find-up: 5.0.0
       javascript-stringify: 2.1.0
@@ -8936,31 +8733,6 @@ snapshots:
       '@esbuild/win32-arm64': 0.18.20
       '@esbuild/win32-ia32': 0.18.20
       '@esbuild/win32-x64': 0.18.20
-
-  esbuild@0.18.6:
-    optionalDependencies:
-      '@esbuild/android-arm': 0.18.6
-      '@esbuild/android-arm64': 0.18.6
-      '@esbuild/android-x64': 0.18.6
-      '@esbuild/darwin-arm64': 0.18.6
-      '@esbuild/darwin-x64': 0.18.6
-      '@esbuild/freebsd-arm64': 0.18.6
-      '@esbuild/freebsd-x64': 0.18.6
-      '@esbuild/linux-arm': 0.18.6
-      '@esbuild/linux-arm64': 0.18.6
-      '@esbuild/linux-ia32': 0.18.6
-      '@esbuild/linux-loong64': 0.18.6
-      '@esbuild/linux-mips64el': 0.18.6
-      '@esbuild/linux-ppc64': 0.18.6
-      '@esbuild/linux-riscv64': 0.18.6
-      '@esbuild/linux-s390x': 0.18.6
-      '@esbuild/linux-x64': 0.18.6
-      '@esbuild/netbsd-x64': 0.18.6
-      '@esbuild/openbsd-x64': 0.18.6
-      '@esbuild/sunos-x64': 0.18.6
-      '@esbuild/win32-arm64': 0.18.6
-      '@esbuild/win32-ia32': 0.18.6
-      '@esbuild/win32-x64': 0.18.6
 
   esbuild@0.19.12:
     optionalDependencies:
@@ -10908,7 +10680,7 @@ snapshots:
       mdast-util-to-hast: 12.3.0
       unified: 10.1.2
 
-  remotion@4.0.248(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  remotion@4.0.249(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)

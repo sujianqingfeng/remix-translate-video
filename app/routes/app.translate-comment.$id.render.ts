@@ -32,17 +32,16 @@ export const action = async ({ params }: ActionFunctionArgs) => {
 	const filePath = translateComment.sourceFilePath || download.filePath
 	let playFile = filePath ? path.basename(filePath) : null
 
-	// scale video to 720p
 	const newPlayFile = `new-${playFile}`
 	const newPlayFilePath = path.join(PUBLIC_DIR, newPlayFile)
 	const end = render.commentsEndFrame / translateComment.fps
+	// -pix_fmt yuv420p \
 	const command = `ffmpeg -y -hwaccel auto -ss 0 -i ${filePath} -t ${end} \
 		-c:v libx264 \
 		-preset ultrafast \
-		-crf 28 \
+		-crf 23 \
 		-vf "scale=trunc(oh*a/2)*2:720" \
 		-movflags +faststart \
-		-pix_fmt yuv420p \
 		-c:a aac \
 		-b:a 128k \
 		${newPlayFilePath} -progress pipe:1`
@@ -85,8 +84,8 @@ export const action = async ({ params }: ActionFunctionArgs) => {
 		inputProps,
 		outputLocation: outputPath,
 		onProgress: throttleRenderOnProgress,
-		concurrency: 4,
-		hardwareAcceleration: 'if-possible',
+		// concurrency: 4,
+		// hardwareAcceleration: 'if-possible',
 	})
 
 	await db
