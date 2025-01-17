@@ -10,7 +10,7 @@ export function assembleLongSentences(words: SentenceWord[]) {
 	const sentences: SentenceWord[][] = []
 	let currentSentence: typeof words = []
 	const sentenceEndMarks = /[.!?。！？]/
-	const specialAbbreviations = ['u.s', 'd.c']
+	const specialAbbreviations = ['u.s', 'd.c', 'U.S']
 
 	for (let i = 0; i < words.length; i++) {
 		const word = words[i]
