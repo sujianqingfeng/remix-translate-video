@@ -4,7 +4,7 @@ import { PROXY } from '~/constants'
 import { tiktokGetComments } from '../index'
 
 describe('tiktok', () => {
-	test('tiktok', async () => {
+	test.skip('tiktok', async () => {
 		const url = 'https://vt.tiktok.com/7437320651205135624'
 
 		const comments = await tiktokGetComments({

@@ -137,105 +137,141 @@ export function processSentenceSegmentation({ words, maxSentenceLength = 70 }: S
 	return sentences
 }
 
-// 当Transcript的text长度超过maxSentenceLength时，进行分成两个Transcript
-// 需要处理start和end，text，其他不用处理
-// 返回新的Transcript数组
+type ProcessTranscriptOptions = {
+	maxEnglishLength?: number
+	maxChineseLength?: number
+}
 
-export function processTranslatedLongTranscripts(transcripts: Transcript[], maxSentenceLength = 70) {
+export function processTranslatedLongTranscripts(transcripts: Transcript[], options: ProcessTranscriptOptions = {}) {
+	const { maxEnglishLength = 70, maxChineseLength = 35 } = options
 	const result: Transcript[] = []
 
 	for (const transcript of transcripts) {
-		// 分别处理英文和中文文本
 		const englishText = transcript.text
 		const chineseText = transcript.textInterpretation || ''
 
-		// 如果英文和中文都不超长，直接添加
-		if (englishText.length <= maxSentenceLength && (!chineseText || chineseText.length <= maxSentenceLength)) {
+		// 分别判断中英文长度
+		if (englishText.length <= maxEnglishLength && (!chineseText || chineseText.length <= maxChineseLength)) {
 			result.push(transcript)
 			continue
 		}
 
-		// 找到英文的分割点
-		const spacePositions: number[] = []
-		for (let i = 0; i < englishText.length; i++) {
-			if (englishText[i] === ' ') {
-				spacePositions.push(i)
-			}
-		}
+		// 使用标点符号作为分割依据
+		const splitRegex = /([.!?。！？][\s]*)/g
+		const englishSentences = englishText.split(splitRegex).filter(Boolean)
 
-		// 如果没有空格且英文不超长，使用中文分割点
-		if (spacePositions.length === 0 && englishText.length <= maxSentenceLength) {
-			// 查找中文分割点（标点符号）
-			const chinesePuncPositions: number[] = []
-			const chinesePuncRegex = /[，。！？；]/
-			for (let i = 0; i < chineseText.length; i++) {
-				if (chinesePuncRegex.test(chineseText[i])) {
-					chinesePuncPositions.push(i)
+		// 只有当中文超过长度限制时才分割中文
+		const shouldSplitChinese = chineseText.length > maxChineseLength
+		const chineseSentences = shouldSplitChinese ? chineseText.split(/([。！？][\s]*)/g).filter(Boolean) : [chineseText]
+
+		// 如果没有找到合适的分割点，回退到使用逗号分号
+		if (englishSentences.length <= 1) {
+			const fallbackRegex = /([,;，；][\s]*)/g
+			const englishParts = englishText.split(fallbackRegex).filter(Boolean)
+			const chineseParts = shouldSplitChinese ? chineseText.split(/([，；][\s]*)/g).filter(Boolean) : [chineseText]
+
+			if (englishParts.length > 1) {
+				const midPoint = Math.ceil(englishParts.length / 2)
+				const firstEnglish = englishParts.slice(0, midPoint).join('')
+				const secondEnglish = englishParts.slice(midPoint).join('')
+
+				const chineseMidPoint = shouldSplitChinese ? Math.ceil(chineseParts.length / 2) : 1
+				const firstChinese = shouldSplitChinese ? chineseParts.slice(0, chineseMidPoint).join('') : chineseText
+				const secondChinese = shouldSplitChinese ? chineseParts.slice(chineseMidPoint).join('') : chineseText
+
+				// 计算分割时间点
+				const words = transcript.words || []
+				const splitRatio = firstEnglish.length / englishText.length
+				const splitWordIndex = Math.floor(words.length * splitRatio)
+				const splitTime = words[splitWordIndex - 1]?.end || transcript.end
+
+				const firstPart: Transcript = {
+					text: firstEnglish.trim(),
+					textInterpretation: firstChinese.trim(),
+					start: transcript.start,
+					end: splitTime,
+					textLiteralTranslation: transcript.textLiteralTranslation,
+					words: words.slice(0, splitWordIndex),
 				}
+
+				const secondPart: Transcript = {
+					text: secondEnglish.trim(),
+					textInterpretation: secondChinese.trim(),
+					start: splitTime,
+					end: transcript.end,
+					textLiteralTranslation: transcript.textLiteralTranslation,
+					words: words.slice(splitWordIndex),
+				}
+
+				result.push(firstPart)
+				result.push(...processTranslatedLongTranscripts([secondPart], options))
+			} else {
+				// 如果实在没有合适的分割点，就按照字符长度均分
+				const splitIndex = Math.floor(englishText.length / 2)
+				const chineseSplitIndex = shouldSplitChinese ? Math.floor(chineseText.length / 2) : chineseText.length
+
+				const words = transcript.words || []
+				const splitRatio = splitIndex / englishText.length
+				const splitWordIndex = Math.floor(words.length * splitRatio)
+				const splitTime = words[splitWordIndex - 1]?.end || transcript.end
+
+				const firstPart: Transcript = {
+					text: englishText.slice(0, splitIndex).trim(),
+					textInterpretation: shouldSplitChinese ? chineseText.slice(0, chineseSplitIndex).trim() : chineseText,
+					start: transcript.start,
+					end: splitTime,
+					textLiteralTranslation: transcript.textLiteralTranslation,
+					words: words.slice(0, splitWordIndex),
+				}
+
+				const secondPart: Transcript = {
+					text: englishText.slice(splitIndex).trim(),
+					textInterpretation: shouldSplitChinese ? chineseText.slice(chineseSplitIndex).trim() : chineseText,
+					start: splitTime,
+					end: transcript.end,
+					textLiteralTranslation: transcript.textLiteralTranslation,
+					words: words.slice(splitWordIndex),
+				}
+
+				result.push(firstPart)
+				result.push(...processTranslatedLongTranscripts([secondPart], options))
 			}
+		} else {
+			// 使用句号等标点符号作为分割点
+			const midPoint = Math.ceil(englishSentences.length / 2)
+			const firstEnglish = englishSentences.slice(0, midPoint).join('')
+			const secondEnglish = englishSentences.slice(midPoint).join('')
 
-			// 找到最接近中间的中文分割点
-			const midPoint = Math.floor(chineseText.length / 2)
-			const splitIndex = chinesePuncPositions.reduce((prev, curr) => (Math.abs(curr - midPoint) < Math.abs(prev - midPoint) ? curr : prev), chinesePuncPositions[0] || midPoint)
+			const chineseMidPoint = shouldSplitChinese ? Math.ceil(chineseSentences.length / 2) : 1
+			const firstChinese = shouldSplitChinese ? chineseSentences.slice(0, chineseMidPoint).join('') : chineseText
+			const secondChinese = shouldSplitChinese ? chineseSentences.slice(chineseMidPoint).join('') : chineseText
 
-			// 分割成两个 Transcript
+			const words = transcript.words || []
+			const splitRatio = firstEnglish.length / englishText.length
+			const splitWordIndex = Math.floor(words.length * splitRatio)
+			const splitTime = words[splitWordIndex - 1]?.end || transcript.end
+
 			const firstPart: Transcript = {
-				text: englishText,
-				textInterpretation: chineseText.slice(0, splitIndex + 1).trim(),
+				text: firstEnglish.trim(),
+				textInterpretation: firstChinese.trim(),
 				start: transcript.start,
-				end: transcript.end,
+				end: splitTime,
 				textLiteralTranslation: transcript.textLiteralTranslation,
-				words: transcript.words,
+				words: words.slice(0, splitWordIndex),
 			}
 
 			const secondPart: Transcript = {
-				text: englishText,
-				textInterpretation: chineseText.slice(splitIndex + 1).trim(),
-				start: transcript.start,
+				text: secondEnglish.trim(),
+				textInterpretation: secondChinese.trim(),
+				start: splitTime,
 				end: transcript.end,
 				textLiteralTranslation: transcript.textLiteralTranslation,
-				words: transcript.words,
+				words: words.slice(splitWordIndex),
 			}
 
-			result.push(firstPart, secondPart)
-			continue
+			result.push(firstPart)
+			result.push(...processTranslatedLongTranscripts([secondPart], options))
 		}
-
-		// 使用英文空格分割
-		const splitIndex = spacePositions.reduce(
-			(prev, curr) => (Math.abs(curr - maxSentenceLength) < Math.abs(prev - maxSentenceLength) ? curr : prev),
-			spacePositions[0] || maxSentenceLength,
-		)
-
-		// 计算到这个位置有多少个单词
-		const wordCount = englishText.slice(0, splitIndex).split(' ').length
-		const words = transcript.words || []
-		const splitTime = words[wordCount - 1]?.end || transcript.end
-
-		// 根据英文分割比例来分割中文
-		const chineseSplitIndex = Math.floor((splitIndex / englishText.length) * chineseText.length)
-
-		// 分割成两个 Transcript
-		const firstPart: Transcript = {
-			text: englishText.slice(0, splitIndex).trim(),
-			textInterpretation: chineseText.slice(0, chineseSplitIndex).trim(),
-			start: transcript.start,
-			end: splitTime,
-			textLiteralTranslation: transcript.textLiteralTranslation,
-			words: words.slice(0, wordCount),
-		}
-
-		const secondPart: Transcript = {
-			text: englishText.slice(splitIndex + 1).trim(),
-			textInterpretation: chineseText.slice(chineseSplitIndex).trim(),
-			start: splitTime,
-			end: transcript.end,
-			textLiteralTranslation: transcript.textLiteralTranslation,
-			words: words.slice(wordCount),
-		}
-
-		result.push(firstPart)
-		result.push(...processTranslatedLongTranscripts([secondPart], maxSentenceLength))
 	}
 
 	return result
