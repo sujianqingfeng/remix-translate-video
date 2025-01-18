@@ -5,12 +5,55 @@ type SentenceSegmentationOptions = {
 	maxSentenceLength?: number
 }
 
+// 配置常量
+const SENTENCE_END_MARKS_PATTERN = /[.!?。！？]/
+const NUMBER_PATTERN = /\d+/
+const SPECIAL_ABBREVIATIONS = new Set(['u.s', 'd.c', 'U.S'])
+
+// 检查是否是数字
+function isNumber(text: string | undefined): boolean {
+	if (!text) return false
+	return NUMBER_PATTERN.test(text)
+}
+
+// 检查是否是数字相关的点号或逗号
+function isNumberRelatedMark(word: SentenceWord, prevWord: SentenceWord | undefined, nextWord: SentenceWord | undefined): boolean {
+	return (word.word === '.' || word.word === ',') && isNumber(prevWord?.word) && isNumber(nextWord?.word)
+}
+
+// 检查是否是特殊缩写的一部分
+function isPartOfSpecialAbbreviation(word: SentenceWord, prevWord: SentenceWord | undefined, nextWord: SentenceWord | undefined): boolean {
+	if (word.word !== '.' || !prevWord) return false
+
+	const prevTwoChars = prevWord.word.toLowerCase()
+	const nextTwoChars = nextWord?.word?.toLowerCase() || ''
+	const possibleAbbr = `${prevTwoChars}.${nextTwoChars}`
+
+	return Array.from(SPECIAL_ABBREVIATIONS).some((abbr) => possibleAbbr.includes(abbr))
+}
+
+// 检查是否是特殊缩写内部的点
+function isInternalAbbreviationDot(word: SentenceWord, prevWord: SentenceWord | undefined, nextWord: SentenceWord | undefined): boolean {
+	if (!prevWord || !nextWord) return false
+
+	const context = `${prevWord.word}${word.word}${nextWord.word}`.toLowerCase()
+	return Array.from(SPECIAL_ABBREVIATIONS).some((abbr) => abbr.includes(context))
+}
+
+// 合并单词
+function mergeWords(target: SentenceWord, connector: string, source: SentenceWord): void {
+	target.word = `${target.word}${connector}${source.word}`
+	target.end = source.end
+}
+
 // 先组装成长句，同时处理科学计数法、小数和特殊缩写
 export function assembleLongSentences(words: SentenceWord[]) {
+	if (!Array.isArray(words) || words.length === 0) {
+		return []
+	}
+
 	const sentences: SentenceWord[][] = []
 	let currentSentence: typeof words = []
-	const sentenceEndMarks = /[.!?。！？]/
-	const specialAbbreviations = ['u.s', 'd.c', 'U.S']
 
 	for (let i = 0; i < words.length; i++) {
 		const word = words[i]
@@ -18,48 +61,31 @@ export function assembleLongSentences(words: SentenceWord[]) {
 		const prevWord = words[i - 1]
 
 		// 处理科学计数法和小数
-		if ((word.word === ',' || word.word === '.') && prevWord?.word?.match(/\d+/) && nextWord?.word?.match(/\d+/)) {
-			// 合并数字
+		if (isNumberRelatedMark(word, prevWord, nextWord)) {
 			if (currentSentence.length > 0) {
-				const lastWord = currentSentence[currentSentence.length - 1]
-				lastWord.word = `${lastWord.word}${word.word}${nextWord.word}`
-				lastWord.end = nextWord.end
+				mergeWords(currentSentence[currentSentence.length - 1], word.word, nextWord)
 				i++ // 跳过下一个数字
 				continue
 			}
 		}
 
 		// 处理特殊缩写
-		if (word.word === '.' && prevWord && nextWord) {
-			const prevTwoChars = prevWord.word.toLowerCase()
-			const nextTwoChars = nextWord.word.toLowerCase()
-			const possibleAbbr = `${prevTwoChars}.${nextTwoChars}`
-
-			if (specialAbbreviations.some((abbr) => possibleAbbr.includes(abbr))) {
-				if (currentSentence.length > 0) {
-					const lastWord = currentSentence[currentSentence.length - 1]
-					lastWord.word = `${lastWord.word}.${nextWord.word}`
-					lastWord.end = nextWord.end
-					i++ // 跳过下一个字符
-					continue
-				}
+		if (isPartOfSpecialAbbreviation(word, prevWord, nextWord)) {
+			if (currentSentence.length > 0) {
+				mergeWords(currentSentence[currentSentence.length - 1], '.', nextWord)
+				i++ // 跳过下一个字符
+				continue
 			}
 		}
 
 		currentSentence.push(word)
 
-		// 检查是否是句子结尾，但要排除特殊缩写的情况
-		if (sentenceEndMarks.test(word.word)) {
-			const isPartOfAbbreviation = specialAbbreviations.some((abbr) => {
-				const lastFewWords = currentSentence
-					.slice(-2)
-					.map((w) => w.word)
-					.join('')
-					.toLowerCase()
-				return lastFewWords.includes(abbr)
-			})
+		// 检查是否是句子结尾
+		if (SENTENCE_END_MARKS_PATTERN.test(word.word)) {
+			const isNumberRelated = isNumberRelatedMark(word, prevWord, nextWord)
+			const isInternalDot = isInternalAbbreviationDot(word, prevWord, nextWord)
 
-			if (!isPartOfAbbreviation || i === words.length - 1) {
+			if ((!isNumberRelated && !isInternalDot) || i === words.length - 1) {
 				sentences.push(currentSentence)
 				currentSentence = []
 			}
