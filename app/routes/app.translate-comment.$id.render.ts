@@ -35,11 +35,11 @@ export const action = async ({ params }: ActionFunctionArgs) => {
 	const newPlayFile = `new-${playFile}`
 	const newPlayFilePath = path.join(PUBLIC_DIR, newPlayFile)
 	const end = render.commentsEndFrame / translateComment.fps
-	// -pix_fmt yuv420p \
 	const command = `ffmpeg -y -hwaccel auto -ss 0 -i ${filePath} -t ${end} \
 		-c:v libx264 \
 		-preset ultrafast \
-		-crf 23 \
+		-crf 28 \
+		-r 30 \
 		-vf "scale=trunc(oh*a/2)*2:720" \
 		-movflags +faststart \
 		-c:a aac \
