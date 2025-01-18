@@ -20,10 +20,11 @@ export const action = async ({ params }: ActionFunctionArgs) => {
 	invariant(id, 'id is required')
 
 	const { translateComment, download } = await getTranslateCommentAndDownloadInfo(id)
+	const fps = translateComment.fps
 
 	const render = await buildTranslateCommentRemotionRenderData({
 		mode: translateComment.mode,
-		fps: translateComment.fps,
+		fps,
 		secondsForEvery30Words: translateComment.secondsForEvery30Words,
 		coverDurationInSeconds: translateComment.coverDurationInSeconds,
 		comments: translateComment.comments ?? [],
@@ -39,7 +40,7 @@ export const action = async ({ params }: ActionFunctionArgs) => {
 		-c:v libx264 \
 		-preset ultrafast \
 		-crf 28 \
-		-r 30 \
+		-r ${fps} \
 		-vf "scale=trunc(oh*a/2)*2:720" \
 		-movflags +faststart \
 		-c:a aac \
@@ -70,7 +71,7 @@ export const action = async ({ params }: ActionFunctionArgs) => {
 	})
 
 	composition.durationInFrames = render.totalDurationInFrames
-	composition.fps = translateComment.fps
+	composition.fps = fps
 	composition.height = render.compositionHeight
 	composition.width = render.compositionWidth
 
