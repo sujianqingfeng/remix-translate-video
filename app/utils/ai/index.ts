@@ -9,9 +9,11 @@ if (!apiKey) {
 }
 const deepSeek = createDeepSeek({ apiKey })
 
+const translatePrompt = '你是一个精通多语言的翻译大师，将文本翻译成中文。如果是中文，就返回原文。保留原文特定的术语(如有)，不要去解释内容和名词。'
+
 export function translate(text: string) {
 	return deepSeek.generateText({
-		system: '你是一个精通多语言的翻译大师，将文本翻译成中文。如果是中文，就返回原文。不要去解释内容。',
+		system: translatePrompt,
 		prompt: text,
 		maxTokens: 500,
 	})
@@ -71,7 +73,7 @@ const chatGPT = createChatGPT({ apiKey: process.env.OPEN_AI_API_KEY || '' })
 
 export function gptTranslate(text: string) {
 	return chatGPT.generateText({
-		system: '你是一个精通多语言的翻译大师，将文本翻译成中文。如果是中文，就返回原文。不要去解释内容。',
+		system: translatePrompt,
 		prompt: text,
 		maxTokens: 500,
 	})
