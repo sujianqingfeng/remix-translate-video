@@ -63,6 +63,9 @@ export const generalComments = sqliteTable(
 		type: text('type', { enum: ['text'] }).notNull(),
 		author: text('author').notNull(),
 		typeInfo: text('type_info', { mode: 'json' }).$type<GeneralCommentTypeTextInfo>().notNull(),
+		source: text('source', { enum: ['twitter', 'youtube', 'tiktok', 'manual'] })
+			.notNull()
+			.$default(() => 'manual'),
 
 		comments: text({ mode: 'json' }).$type<Comment[]>().default([]),
 		commentPullAt: integer('comment_pull_at', { mode: 'timestamp_ms' }),

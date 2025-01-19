@@ -1,9 +1,12 @@
 import type { ActionFunctionArgs } from '@remix-run/node'
-import { Form, useActionData } from '@remix-run/react'
+import { Form, redirect, useActionData, useNavigate } from '@remix-run/react'
+import { format } from 'date-fns'
 import { useState } from 'react'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { Textarea } from '~/components/ui/textarea'
+import { db } from '~/lib/drizzle'
+import { schema } from '~/lib/drizzle'
 import type { Comment } from '~/types'
 
 export async function action({ request }: ActionFunctionArgs) {
@@ -17,11 +20,11 @@ export async function action({ request }: ActionFunctionArgs) {
 	const secondsForEvery30Words = Number(formData.get('secondsForEvery30Words')) || 3
 	const images = JSON.parse((formData.get('images') as string) || '[]') as string[]
 	const comments = JSON.parse((formData.get('comments') as string) || '[]') as Comment[]
+	const source = (formData.get('source') as string) || 'manual'
 
-	// TODO: Add database insert once db connection is set up
-	console.log('Creating general comment:', {
-		author,
+	await db.insert(schema.generalComments).values({
 		type: 'text',
+		author,
 		typeInfo: {
 			title,
 			content,
@@ -32,9 +35,10 @@ export async function action({ request }: ActionFunctionArgs) {
 		fps,
 		coverDurationInSeconds,
 		secondsForEvery30Words,
+		source: source as 'twitter' | 'youtube' | 'tiktok' | 'manual',
 	})
 
-	return { success: true }
+	return redirect('/app/general-comment')
 }
 
 export default function AppGeneralCommentCreate() {
@@ -48,7 +52,9 @@ export default function AppGeneralCommentCreate() {
 		authorThumbnail: '',
 		publishedTime: new Date().toISOString(),
 	})
+	const [source, setSource] = useState<string>('manual')
 
+	// If the action was successful, navigate back to the index page
 	const handleAddImage = () => {
 		if (newImage) {
 			setImages([...images, newImage])
@@ -86,15 +92,70 @@ export default function AppGeneralCommentCreate() {
 		setComments(comments.filter((_, i) => i !== index))
 	}
 
+	const handleImportTwitterData = async () => {
+		try {
+			const fileInput = document.createElement('input')
+			fileInput.type = 'file'
+			fileInput.accept = '.json'
+
+			fileInput.onchange = async (e) => {
+				const file = (e.target as HTMLInputElement).files?.[0]
+				if (!file) return
+
+				const reader = new FileReader()
+				reader.onload = (e) => {
+					const data = JSON.parse(e.target?.result as string)
+
+					// Set author and content
+					const authorInput = document.querySelector('input[name="author"]') as HTMLInputElement
+					if (authorInput) authorInput.value = data.author || ''
+
+					const contentTextarea = document.querySelector('textarea[name="content"]') as HTMLTextAreaElement
+					if (contentTextarea) contentTextarea.value = data.content || ''
+
+					// Set images from media
+					const newImages = data.media?.filter((m: any) => m.type === 'photo').map((m: any) => m.url) || []
+					setImages(newImages)
+
+					// Set comments
+					const formattedComments =
+						data.comments?.map((c: any, index: number) => ({
+							content: c.content,
+							author: c.author,
+							likes: String(c.likes || 0),
+							authorThumbnail: '',
+							publishedTime: format(new Date(c.timestamp), "yyyy-MM-dd'T'HH:mm:ss.SSSxxx"),
+							id: `${c.author}-${c.timestamp}-${index}`,
+						})) || []
+					setComments(formattedComments)
+
+					// Set source
+					setSource('twitter')
+				}
+				reader.readAsText(file)
+			}
+
+			fileInput.click()
+		} catch (error) {
+			console.error('Error importing Twitter data:', error)
+		}
+	}
+
 	return (
 		<div className="min-h-screen bg-gray-50 py-8">
 			<div className="max-w-4xl mx-auto px-4">
-				<h1 className="text-3xl font-bold text-gray-900 mb-8">Create General Comment</h1>
+				<div className="flex justify-between items-center mb-8">
+					<h1 className="text-3xl font-bold text-gray-900">Create General Comment</h1>
+					<Button onClick={handleImportTwitterData} className="bg-blue-600 hover:bg-blue-700 focus:ring-blue-500">
+						Import Twitter Data
+					</Button>
+				</div>
 				<Form method="post" className="space-y-6">
 					{/* Basic Info Card */}
 					<div className="bg-white shadow rounded-lg p-6 space-y-4">
 						<h2 className="text-xl font-semibold text-gray-900 pb-4 border-b">Basic Information</h2>
 						<div className="grid grid-cols-1 gap-4">
+							<input type="hidden" name="source" value={source} />
 							<div>
 								<label htmlFor="author" className="block text-sm font-medium text-gray-700 mb-1">
 									Author
@@ -187,7 +248,7 @@ export default function AppGeneralCommentCreate() {
 							<input type="hidden" name="comments" value={JSON.stringify(comments)} />
 							<div className="space-y-3">
 								{comments.map((comment, index) => (
-									<div key={`comment-${comment.author}-${comment.publishedTime}`} className="bg-gray-50 p-4 rounded-lg">
+									<div key={`${comment.author}-${comment.publishedTime}-${index}`} className="bg-gray-50 p-4 rounded-lg">
 										<div className="flex items-start gap-3">
 											<img src={comment.authorThumbnail || 'https://placehold.co/40x40/png?text=User'} alt={comment.author} className="w-10 h-10 rounded-full object-cover" />
 											<div className="flex-1 min-w-0">

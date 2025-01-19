@@ -77,6 +77,7 @@ export type Comment = {
 	authorThumbnail: string
 	publishedTime: string
 	translatedContent?: string
+	id?: string
 }
 
 export type CompositionInfo = {
