@@ -1,4 +1,4 @@
-import { AbsoluteFill, interpolate, spring, useCurrentFrame, useVideoConfig } from 'remotion'
+import { AbsoluteFill, Img, interpolate, spring, useCurrentFrame, useVideoConfig } from 'remotion'
 
 interface CoverProps {
 	title?: string
@@ -68,7 +68,7 @@ export const Cover: React.FC<CoverProps> = ({ title, author, images }) => {
 						}}
 					>
 						{images.map((image) => (
-							<img key={image} src={image} alt="" className="w-40 h-40 object-cover rounded-lg shadow-lg" />
+							<Img key={image} src={image} alt="" className="w-40 h-40 object-cover rounded-lg shadow-lg" />
 						))}
 					</div>
 				)}

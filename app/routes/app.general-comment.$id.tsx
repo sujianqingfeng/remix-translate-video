@@ -1,8 +1,6 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node'
-import { json, redirect } from '@remix-run/node'
-import { Form, useActionData, useLoaderData, useSubmit } from '@remix-run/react'
+import type { LoaderFunctionArgs } from '@remix-run/node'
+import { Form, useFetcher, useLoaderData } from '@remix-run/react'
 import { Player } from '@remotion/player'
-import { renderMedia, selectComposition } from '@remotion/renderer'
 import { eq } from 'drizzle-orm'
 import { useState } from 'react'
 import { Button } from '~/components/ui/button'
@@ -14,139 +12,7 @@ import { LandscapeGeneralComment } from '~/remotion/general-comment/LandscapeGen
 import { PortraitGeneralComment } from '~/remotion/general-comment/PortraitGeneralComment'
 import { VerticalGeneralComment } from '~/remotion/general-comment/VerticalGeneralComment'
 import type { GeneralCommentTypeTextInfo } from '~/types'
-import { translate } from '~/utils/ai'
-
-// Video configuration based on mode
-const getVideoConfig = (mode: 'landscape' | 'portrait' | 'vertical') => {
-	const config = {
-		fps: 30,
-		...(mode === 'portrait' ? { width: 1080, height: 1920 } : mode === 'vertical' ? { width: 1080, height: 1350 } : { width: 1920, height: 1080 }),
-	}
-	return config
-}
-
-export const action = async ({ request, params }: ActionFunctionArgs) => {
-	const { id } = params
-	if (!id) throw new Error('Comment ID is required')
-
-	const formData = await request.formData()
-	const intent = formData.get('intent')
-
-	if (intent === 'translate') {
-		const comment = await db.query.generalComments.findFirst({
-			where: eq(schema.generalComments.id, id),
-		})
-
-		if (!comment) throw new Error('Comment not found')
-
-		const typeInfo = comment.typeInfo as GeneralCommentTypeTextInfo
-		if (!typeInfo.content) throw new Error('Content is required')
-
-		const translatedContent = await translate(typeInfo.content)
-
-		await db
-			.update(schema.generalComments)
-			.set({
-				typeInfo: {
-					...typeInfo,
-					contentZh: translatedContent,
-				},
-			})
-			.where(eq(schema.generalComments.id, id))
-
-		return json({ success: true })
-	}
-
-	if (intent === 'translate-comments') {
-		const comment = await db.query.generalComments.findFirst({
-			where: eq(schema.generalComments.id, id),
-		})
-
-		if (!comment) throw new Error('Comment not found')
-		if (!comment.comments?.length) throw new Error('No comments to translate')
-
-		// Translate all comments in parallel
-		const translatedComments = await Promise.all(
-			comment.comments.map(async (c) => ({
-				...c,
-				translatedContent: await translate(c.content),
-			})),
-		)
-
-		await db
-			.update(schema.generalComments)
-			.set({
-				comments: translatedComments,
-			})
-			.where(eq(schema.generalComments.id, id))
-
-		return json({ success: true })
-	}
-
-	if (intent === 'render') {
-		const mode = formData.get('mode') as 'landscape' | 'portrait' | 'vertical'
-		const fps = Number(formData.get('fps'))
-		const coverDurationInSeconds = Number(formData.get('coverDurationInSeconds'))
-		const secondsForEvery30Words = Number(formData.get('secondsForEvery30Words'))
-
-		// Update the comment with new settings
-		await db
-			.update(schema.generalComments)
-			.set({
-				fps,
-				coverDurationInSeconds,
-				secondsForEvery30Words,
-			})
-			.where(eq(schema.generalComments.id, id))
-
-		// Get the updated comment
-		const comment = await db.query.generalComments.findFirst({
-			where: eq(schema.generalComments.id, id),
-		})
-
-		if (!comment) throw new Error('Comment not found')
-
-		const typeInfo = comment.typeInfo as GeneralCommentTypeTextInfo
-		const durations = calculateDurations(comment)
-
-		// Get video config based on mode
-		const videoConfig = getVideoConfig(mode)
-
-		try {
-			if (!process.env.REMOTION_SERVE_URL) {
-				throw new Error('REMOTION_SERVE_URL is not defined')
-			}
-
-			// Render the video
-			const renderId = await renderMedia({
-				composition: mode === 'portrait' ? 'PortraitGeneralComment' : mode === 'vertical' ? 'VerticalGeneralComment' : 'LandscapeGeneralComment',
-				serveUrl: process.env.REMOTION_SERVE_URL,
-				codec: 'h264',
-				outputLocation: `public/videos/${id}-${mode}.mp4`,
-				inputProps: {
-					title: typeInfo.title || '',
-					content: typeInfo.content || '',
-					contentZh: typeInfo.contentZh || '',
-					author: comment.author,
-					images: typeInfo.images || [],
-					comments: comment.comments || [],
-					fps: durations.fps,
-					coverDurationInSeconds: durations.coverDurationInSeconds,
-					contentDurationInSeconds: durations.contentDurationInSeconds,
-					commentDurations: durations.commentDurations,
-				},
-				...videoConfig,
-			})
-
-			return json({ success: true, renderId })
-		} catch (error) {
-			console.error('Render error:', error)
-			return json({ success: false, error: 'Failed to render video' }, { status: 500 })
-		}
-	}
-
-	return json({ success: false })
-}
+import { type VideoMode, calculateDurations, getVideoConfig } from '~/utils/general-comment'
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
 	const { id } = params
@@ -166,51 +32,13 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 	return { comment }
 }
 
-// 计算视频时长
-const calculateDurations = (comment: any) => {
-	const typeInfo = comment.typeInfo as GeneralCommentTypeTextInfo
-	const fps = 30
-	const coverDurationInSeconds = 3
-	const secondsForEvery30Words = 5
-
-	// 内容时长
-	const contentWords = typeInfo.content?.split(/\s+/).length || 0
-	const contentZhWords = typeInfo.contentZh?.length ? Math.ceil(typeInfo.contentZh.length / 2) : 0 // 中文每2个字算1个词
-	const totalWords = contentWords + contentZhWords
-	const contentDurationInSeconds = Math.max(
-		Math.ceil(totalWords / 30) * secondsForEvery30Words,
-		5, // 最少5秒
-	)
-
-	// 评论时长
-	const getCommentDuration = (comment: any) => {
-		const baseSeconds = 5 // 基础5秒
-		const wordCount = (comment.content?.length || 0) + (comment.translatedContent?.length || 0)
-		const extraSeconds = Math.ceil(wordCount / 100) * 2 // 每100字增加2秒
-		return baseSeconds + extraSeconds
-	}
-
-	const commentsDurationInSeconds = (comment.comments || []).reduce((acc: number, comment: any) => acc + getCommentDuration(comment), 0)
-
-	// 总时长
-	const totalDurationInSeconds = coverDurationInSeconds + contentDurationInSeconds + commentsDurationInSeconds
-
-	return {
-		fps,
-		coverDurationInSeconds,
-		secondsForEvery30Words,
-		contentDurationInSeconds,
-		commentsDurationInSeconds,
-		totalDurationInSeconds,
-		commentDurations: (comment.comments || []).map(getCommentDuration),
-	}
-}
-
 export default function AppGeneralCommentRender() {
 	const { comment } = useLoaderData<typeof loader>()
 	const typeInfo = comment.typeInfo as GeneralCommentTypeTextInfo
-	const [mode, setMode] = useState<'landscape' | 'portrait' | 'vertical'>('landscape')
+	const [mode, setMode] = useState<VideoMode>('landscape')
 	const durations = calculateDurations(comment)
+	const videoConfig = getVideoConfig(mode)
+	const renderFetcher = useFetcher<{ error?: string }>()
 
 	const getVideoComponent = () => {
 		switch (mode) {
@@ -223,7 +51,7 @@ export default function AppGeneralCommentRender() {
 		}
 	}
 
-	const videoConfig = getVideoConfig(mode)
+	const isRendering = renderFetcher.state !== 'idle'
 
 	return (
 		<div className="min-h-screen bg-gray-50 py-8">
@@ -305,8 +133,7 @@ export default function AppGeneralCommentRender() {
 									<p className="text-gray-900 whitespace-pre-wrap">{typeInfo.content}</p>
 								</div>
 								<div className="flex justify-end">
-									<Form method="post">
-										<input type="hidden" name="intent" value="translate" />
+									<Form action="translate" method="post">
 										<Button type="submit" variant="outline" size="sm" disabled={!typeInfo.content || !!typeInfo.contentZh}>
 											Translate
 										</Button>
@@ -333,8 +160,7 @@ export default function AppGeneralCommentRender() {
 								<div className="border-t pt-4">
 									<div className="flex items-center justify-between mb-4">
 										<h4 className="text-sm font-medium text-gray-900">Comments ({comment.comments.length})</h4>
-										<Form method="post">
-											<input type="hidden" name="intent" value="translate-comments" />
+										<Form action="translate-comments" method="post">
 											<Button type="submit" variant="outline" size="sm" disabled={comment.comments.every((c) => !!c.translatedContent)}>
 												Translate Comments
 											</Button>
@@ -362,8 +188,7 @@ export default function AppGeneralCommentRender() {
 					</Card>
 
 					{/* Render Settings Form */}
-					<Form method="post">
-						<input type="hidden" name="intent" value="render" />
+					<renderFetcher.Form action="render" method="post">
 						<Card>
 							<CardHeader>
 								<CardTitle>Video Settings</CardTitle>
@@ -379,6 +204,7 @@ export default function AppGeneralCommentRender() {
 											className={`relative aspect-video cursor-pointer rounded-lg border-2 ${mode === 'landscape' ? 'border-blue-500 bg-blue-50' : 'border-gray-200'}`}
 											onClick={() => setMode('landscape')}
 											onKeyDown={(e) => e.key === 'Enter' && setMode('landscape')}
+											disabled={isRendering}
 										>
 											<input type="radio" name="mode" value="landscape" className="sr-only" checked={mode === 'landscape'} onChange={() => {}} />
 											<div className="absolute inset-0 flex items-center justify-center">
@@ -390,6 +216,7 @@ export default function AppGeneralCommentRender() {
 											className={`relative aspect-[9/16] cursor-pointer rounded-lg border-2 ${mode === 'portrait' ? 'border-blue-500 bg-blue-50' : 'border-gray-200'}`}
 											onClick={() => setMode('portrait')}
 											onKeyDown={(e) => e.key === 'Enter' && setMode('portrait')}
+											disabled={isRendering}
 										>
 											<input type="radio" name="mode" value="portrait" className="sr-only" checked={mode === 'portrait'} onChange={() => {}} />
 											<div className="absolute inset-0 flex items-center justify-center">
@@ -401,6 +228,7 @@ export default function AppGeneralCommentRender() {
 											className={`relative aspect-[4/5] cursor-pointer rounded-lg border-2 ${mode === 'vertical' ? 'border-blue-500 bg-blue-50' : 'border-gray-200'}`}
 											onClick={() => setMode('vertical')}
 											onKeyDown={(e) => e.key === 'Enter' && setMode('vertical')}
+											disabled={isRendering}
 										>
 											<input type="radio" name="mode" value="vertical" className="sr-only" checked={mode === 'vertical'} onChange={() => {}} />
 											<div className="absolute inset-0 flex items-center justify-center">
@@ -413,27 +241,29 @@ export default function AppGeneralCommentRender() {
 								{/* FPS Setting */}
 								<div className="space-y-3">
 									<Label htmlFor="fps">FPS</Label>
-									<Input type="number" id="fps" name="fps" defaultValue={comment.fps} />
+									<Input type="number" id="fps" name="fps" defaultValue={comment.fps} disabled={isRendering} />
 								</div>
 
 								{/* Cover Duration */}
 								<div className="space-y-3">
 									<Label htmlFor="coverDurationInSeconds">Cover Duration (seconds)</Label>
-									<Input type="number" id="coverDurationInSeconds" name="coverDurationInSeconds" defaultValue={comment.coverDurationInSeconds} />
+									<Input type="number" id="coverDurationInSeconds" name="coverDurationInSeconds" defaultValue={comment.coverDurationInSeconds} disabled={isRendering} />
 								</div>
 
 								{/* Words Duration */}
 								<div className="space-y-3">
 									<Label htmlFor="secondsForEvery30Words">Seconds per 30 Words</Label>
-									<Input type="number" id="secondsForEvery30Words" name="secondsForEvery30Words" defaultValue={comment.secondsForEvery30Words} />
+									<Input type="number" id="secondsForEvery30Words" name="secondsForEvery30Words" defaultValue={comment.secondsForEvery30Words} disabled={isRendering} />
 								</div>
 
-								<Button type="submit" className="w-full">
-									Start Rendering
+								<Button type="submit" className="w-full" disabled={isRendering}>
+									{isRendering ? 'Rendering...' : 'Start Rendering'}
 								</Button>
+
+								{renderFetcher.data?.error && <p className="text-sm text-red-500 mt-2">{renderFetcher.data.error}</p>}
 							</CardContent>
 						</Card>
-					</Form>
+					</renderFetcher.Form>
 				</div>
 			</div>
 		</div>
