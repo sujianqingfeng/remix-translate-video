@@ -1,5 +1,5 @@
 import fs from 'node:fs'
-import { fetch } from 'undici'
+import { ProxyAgent, fetch } from 'undici'
 
 const CHUNK_SIZE = 1024 * 1024 * 5 // 5MB per chunk
 const MAX_RETRIES = 3
@@ -11,11 +11,19 @@ interface DownloadChunk {
 	retry?: number
 }
 
+interface DownloadOptions {
+	proxy?: string
+}
+
 /**
  * 获取文件大小
  */
-async function getFileSize(url: string): Promise<number> {
-	const response = await fetch(url, { method: 'HEAD' })
+async function getFileSize(url: string, options?: DownloadOptions): Promise<number> {
+	const fetchOptions: any = { method: 'HEAD' }
+	if (options?.proxy) {
+		fetchOptions.dispatcher = new ProxyAgent({ uri: options.proxy })
+	}
+	const response = await fetch(url, fetchOptions)
 	const contentLength = response.headers.get('content-length')
 	return contentLength ? Number.parseInt(contentLength, 10) : 0
 }
@@ -23,12 +31,16 @@ async function getFileSize(url: string): Promise<number> {
 /**
  * 下载指定范围的数据
  */
-async function downloadChunk(url: string, chunk: DownloadChunk): Promise<Buffer> {
-	const response = await fetch(url, {
+async function downloadChunk(url: string, chunk: DownloadChunk, options?: DownloadOptions): Promise<Buffer> {
+	const fetchOptions: any = {
 		headers: {
 			Range: `bytes=${chunk.start}-${chunk.end}`,
 		},
-	})
+	}
+	if (options?.proxy) {
+		fetchOptions.dispatcher = new ProxyAgent({ uri: options.proxy })
+	}
+	const response = await fetch(url, fetchOptions)
 
 	if (!response.ok) {
 		throw new Error(`Failed to download chunk: ${response.status} ${response.statusText}`)
@@ -44,12 +56,13 @@ type ChunkDownloadResult = Promise<void>
  * 通过URL下载文件（支持分段下载）
  * @param url 文件的URL地址
  * @param filePath 保存的文件名
+ * @param options 下载选项，包括代理设置
  * @returns Promise<boolean> 下载是否成功
  */
-export async function downloadFile(url: string, filePath: string): Promise<boolean> {
+export async function downloadFile(url: string, filePath: string, options?: DownloadOptions): Promise<boolean> {
 	try {
 		// 获取文件大小
-		const fileSize = await getFileSize(url)
+		const fileSize = await getFileSize(url, options)
 		if (!fileSize) {
 			throw new Error('Could not determine file size')
 		}
@@ -73,7 +86,7 @@ export async function downloadFile(url: string, filePath: string): Promise<boole
 				let lastError: unknown = null
 				for (let retry = 0; retry < MAX_RETRIES; retry++) {
 					try {
-						const buffer = await downloadChunk(url, chunk)
+						const buffer = await downloadChunk(url, chunk, options)
 						// 确保在正确的位置写入数据
 						await new Promise<void>((resolve, reject) => {
 							writeStream.write(buffer, (error) => {

@@ -26,6 +26,13 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 	const coverDurationInSeconds = Number(formData.get('coverDurationInSeconds'))
 	const secondsForEvery30Words = Number(formData.get('secondsForEvery30Words'))
 
+	// Get the comment
+	const comment = await db.query.generalComments.findFirst({
+		where: eq(schema.generalComments.id, id),
+	})
+
+	if (!comment) throw new Error('Comment not found')
+
 	// Update the comment with new settings
 	await db
 		.update(schema.generalComments)
@@ -36,14 +43,12 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 		})
 		.where(eq(schema.generalComments.id, id))
 
-	// Get the updated comment
-	const comment = await db.query.generalComments.findFirst({
-		where: eq(schema.generalComments.id, id),
+	const durations = calculateDurations({
+		...comment,
+		fps,
+		coverDurationInSeconds,
+		secondsForEvery30Words,
 	})
-
-	if (!comment) throw new Error('Comment not found')
-
-	const durations = calculateDurations(comment)
 	const videoConfig = getVideoConfig(mode)
 
 	try {

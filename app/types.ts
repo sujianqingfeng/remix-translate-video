@@ -73,11 +73,14 @@ export type LittleDifficultWord = {
 export type Comment = {
 	content: string
 	author: string
+	translatedContent?: string
 	likes: string
 	authorThumbnail: string
 	publishedTime: string
-	translatedContent?: string
-	id?: string
+	media?: Array<{
+		type: string
+		url: string
+	}>
 }
 
 export type CompositionInfo = {
@@ -141,4 +144,8 @@ export type GeneralCommentTypeTextInfo = {
 	content?: string
 	contentZh?: string
 	images?: string[]
+	video?: {
+		type: string
+		url: string
+	}
 }

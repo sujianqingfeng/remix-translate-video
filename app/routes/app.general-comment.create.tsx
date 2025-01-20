@@ -1,13 +1,13 @@
 import type { ActionFunctionArgs } from '@remix-run/node'
 import { Form, redirect, useActionData, useNavigate } from '@remix-run/react'
 import { format } from 'date-fns'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { Textarea } from '~/components/ui/textarea'
 import { db } from '~/lib/drizzle'
 import { schema } from '~/lib/drizzle'
-import type { Comment } from '~/types'
+import type { Comment, GeneralCommentTypeTextInfo } from '~/types'
 
 export async function action({ request }: ActionFunctionArgs) {
 	const formData = await request.formData()
@@ -21,16 +21,24 @@ export async function action({ request }: ActionFunctionArgs) {
 	const images = JSON.parse((formData.get('images') as string) || '[]') as string[]
 	const comments = JSON.parse((formData.get('comments') as string) || '[]') as Comment[]
 	const source = (formData.get('source') as string) || 'manual'
+	const typeInfoStr = formData.get('typeInfo') as string
 
-	await db.insert(schema.generalComments).values({
-		type: 'text',
-		author,
-		typeInfo: {
+	let typeInfo: GeneralCommentTypeTextInfo
+	if (typeInfoStr) {
+		typeInfo = JSON.parse(typeInfoStr)
+	} else {
+		typeInfo = {
 			title,
 			content,
 			contentZh,
 			images,
-		},
+		}
+	}
+
+	await db.insert(schema.generalComments).values({
+		type: 'text',
+		author,
+		typeInfo,
 		comments,
 		fps,
 		coverDurationInSeconds,
@@ -53,8 +61,8 @@ export default function AppGeneralCommentCreate() {
 		publishedTime: new Date().toISOString(),
 	})
 	const [source, setSource] = useState<string>('manual')
+	const videoPreviewRef = useRef<HTMLDivElement>(null)
 
-	// If the action was successful, navigate back to the index page
 	const handleAddImage = () => {
 		if (newImage) {
 			setImages([...images, newImage])
@@ -113,11 +121,12 @@ export default function AppGeneralCommentCreate() {
 					const contentTextarea = document.querySelector('textarea[name="content"]') as HTMLTextAreaElement
 					if (contentTextarea) contentTextarea.value = data.content || ''
 
-					// Set images from media
+					// Set images and video from media
 					const newImages = data.media?.filter((m: any) => m.type === 'photo').map((m: any) => m.url) || []
+					const video = data.media?.find((m: any) => m.type === 'video')
 					setImages(newImages)
 
-					// Set comments
+					// Set comments with media
 					const formattedComments =
 						data.comments?.map((c: any, index: number) => ({
 							content: c.content,
@@ -125,12 +134,47 @@ export default function AppGeneralCommentCreate() {
 							likes: String(c.likes || 0),
 							authorThumbnail: '',
 							publishedTime: format(new Date(c.timestamp), "yyyy-MM-dd'T'HH:mm:ss.SSSxxx"),
-							id: `${c.author}-${c.timestamp}-${index}`,
+							media: c.media,
 						})) || []
 					setComments(formattedComments)
 
 					// Set source
 					setSource('twitter')
+
+					// Set hidden input for typeInfo
+					const typeInfoInput = document.createElement('input')
+					typeInfoInput.type = 'hidden'
+					typeInfoInput.name = 'typeInfo'
+					typeInfoInput.value = JSON.stringify({
+						title: '',
+						content: data.content,
+						images: newImages,
+						...(video && { video: { type: video.type, url: video.url } }),
+					})
+					const form = document.querySelector('form')
+					const oldTypeInfo = form?.querySelector('input[name="typeInfo"]')
+					if (oldTypeInfo) {
+						form?.removeChild(oldTypeInfo)
+					}
+					form?.appendChild(typeInfoInput)
+
+					// Inject video preview
+					if (video && videoPreviewRef.current) {
+						const videoPreview = document.createElement('video')
+						videoPreview.src = video.url
+						videoPreview.autoplay = true
+						videoPreview.muted = true
+						videoPreview.loop = true
+						videoPreview.style.width = '100%'
+						videoPreview.style.height = 'auto'
+						videoPreview.style.objectFit = 'cover'
+						videoPreview.style.borderRadius = '0.75rem'
+						videoPreview.style.overflow = 'hidden'
+						videoPreview.controls = true
+
+						videoPreviewRef.current.innerHTML = ''
+						videoPreviewRef.current.appendChild(videoPreview)
+					}
 				}
 				reader.readAsText(file)
 			}
@@ -183,6 +227,46 @@ export default function AppGeneralCommentCreate() {
 								</label>
 								<Textarea id="contentZh" name="contentZh" rows={4} className="resize-none" />
 							</div>
+
+							{/* Content Preview */}
+							<div className="border-t pt-4 mt-4">
+								<h3 className="text-lg font-medium text-gray-900 mb-4">Content Preview</h3>
+								<div className="space-y-4">
+									{/* Media Preview */}
+									<div className="space-y-4">
+										{/* Video Preview */}
+										{source === 'twitter' && (
+											<div ref={videoPreviewRef} className="aspect-video w-full bg-black rounded-lg overflow-hidden">
+												{/* Video will be injected here by handleImportTwitterData */}
+											</div>
+										)}
+										{/* Images Preview */}
+										{images.length > 0 && (
+											<div className="grid grid-cols-3 gap-2">
+												{images.map((image) => (
+													<div key={image} className="relative group aspect-square">
+														<img src={image} alt="Content preview" className="w-full h-full object-cover rounded-lg" />
+														<button
+															type="button"
+															onClick={() => handleRemoveImage(images.indexOf(image))}
+															className="absolute top-2 right-2 p-1 rounded-full bg-red-500 text-white opacity-0 group-hover:opacity-100 transition-opacity"
+															aria-label="Remove image"
+														>
+															<svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+																<path
+																	fillRule="evenodd"
+																	d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+																	clipRule="evenodd"
+																/>
+															</svg>
+														</button>
+													</div>
+												))}
+											</div>
+										)}
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
 
@@ -198,8 +282,8 @@ export default function AppGeneralCommentCreate() {
 							</div>
 							<input type="hidden" name="images" value={JSON.stringify(images)} />
 							<div className="space-y-3">
-								{images.map((image, index) => (
-									<div key={`image-${image}`} className="flex items-center gap-3 p-3 bg-gray-50 rounded-md">
+								{images.map((image) => (
+									<div key={image} className="flex items-center gap-3 p-3 bg-gray-50 rounded-md">
 										<img
 											src={image}
 											alt="Preview"
@@ -209,7 +293,7 @@ export default function AppGeneralCommentCreate() {
 											}}
 										/>
 										<span className="flex-1 truncate text-gray-600">{image}</span>
-										<Button type="button" variant="destructive" onClick={() => handleRemoveImage(index)} className="shrink-0">
+										<Button type="button" variant="destructive" onClick={() => handleRemoveImage(images.indexOf(image))} className="shrink-0">
 											Remove
 										</Button>
 									</div>
@@ -247,14 +331,14 @@ export default function AppGeneralCommentCreate() {
 							</div>
 							<input type="hidden" name="comments" value={JSON.stringify(comments)} />
 							<div className="space-y-3">
-								{comments.map((comment, index) => (
-									<div key={`${comment.author}-${comment.publishedTime}-${index}`} className="bg-gray-50 p-4 rounded-lg">
+								{comments.map((comment) => (
+									<div key={`${comment.author}-${comment.publishedTime}`} className="bg-gray-50 p-4 rounded-lg">
 										<div className="flex items-start gap-3">
 											<img src={comment.authorThumbnail || 'https://placehold.co/40x40/png?text=User'} alt={comment.author} className="w-10 h-10 rounded-full object-cover" />
 											<div className="flex-1 min-w-0">
 												<div className="flex items-center justify-between gap-2">
 													<div className="font-medium text-gray-900">{comment.author}</div>
-													<Button type="button" variant="destructive" onClick={() => handleRemoveComment(index)} className="shrink-0">
+													<Button type="button" variant="destructive" onClick={() => handleRemoveComment(comments.indexOf(comment))} className="shrink-0">
 														Remove
 													</Button>
 												</div>
@@ -264,6 +348,19 @@ export default function AppGeneralCommentCreate() {
 													<span>•</span>
 													<span>{new Date(comment.publishedTime).toLocaleDateString()}</span>
 												</div>
+												{comment.media && comment.media.length > 0 && (
+													<div className="mt-2 space-y-2">
+														{comment.media.map((m, mediaIndex) => (
+															<div key={`${m.url}-${mediaIndex}`} className={m.type === 'video' ? 'aspect-video w-full bg-black rounded-lg overflow-hidden' : ''}>
+																{m.type === 'video' ? (
+																	<video src={m.url} controls className="w-full h-full" />
+																) : (
+																	<img src={m.url} alt="Comment media" className="w-full object-cover rounded-lg" />
+																)}
+															</div>
+														))}
+													</div>
+												)}
 											</div>
 										</div>
 									</div>

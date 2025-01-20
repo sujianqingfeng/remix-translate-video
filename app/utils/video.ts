@@ -11,7 +11,5 @@ export function sliceVideo({
 	end: number
 	outputPath: string
 }) {
-	return execCommand(
-		`ffmpeg -ss ${start} -i ${videoPath} -t ${end} -c copy ${outputPath}`,
-	)
+	return execCommand(`ffmpeg -ss ${start} -i ${videoPath} -t ${end} -c copy ${outputPath}`)
 }
