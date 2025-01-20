@@ -3,7 +3,7 @@ import type { LoaderFunctionArgs } from '@remix-run/node'
 import { Link, useFetcher, useLoaderData } from '@remix-run/react'
 import { Player } from '@remotion/player'
 import { format } from 'date-fns'
-import { Copy } from 'lucide-react'
+import { Copy, Trash } from 'lucide-react'
 import invariant from 'tiny-invariant'
 import BackPrevious from '~/components/BackPrevious'
 import LoadingButtonWithState from '~/components/LoadingButtonWithState'
@@ -64,6 +64,7 @@ export default function TranslateCommentPage() {
 	const remoteRenderFetcher = useFetcher()
 	const transformFetcher = useFetcher()
 	const checkSensitiveWordsFetcher = useFetcher()
+	const deleteFetcher = useFetcher()
 
 	const currentTime = format(translateComment.commentPullAt ?? new Date(), 'yyyy-MM-dd HH:mm')
 	const desc = `原链接：${download.link}\n视频仅供娱乐，请勿过度解读\n评论权重受点赞等影响，在不同的时间，评论的内容可能不同，当前视频评论拉取时间${currentTime}\n虽然评论是真实的，但是内容不一定是真的，大家注意分辨。`
@@ -223,7 +224,17 @@ export default function TranslateCommentPage() {
 				{/* Right Column - Comments */}
 				<div className="bg-background border rounded-xl h-full overflow-hidden flex flex-col">
 					<div className="px-5 py-4 border-b bg-muted/5">
-						<h3 className="font-medium text-lg">Comments</h3>
+						<div className="flex justify-between items-center">
+							<h3 className="font-medium text-lg">Comments</h3>
+							{translateComment.comments?.length ? (
+								<deleteFetcher.Form action="delete-all-comments" method="post">
+									<Button variant="ghost" size="sm" className="hover:bg-destructive/10 hover:text-destructive text-destructive">
+										<Trash size={14} className="mr-1" />
+										Delete All
+									</Button>
+								</deleteFetcher.Form>
+							) : null}
+						</div>
 					</div>
 					<div className="flex-1 overflow-y-auto p-5">
 						{translateComment.comments?.length ? (
