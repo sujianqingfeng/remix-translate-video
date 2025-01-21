@@ -1,6 +1,6 @@
 import fs from 'node:fs'
 import path from 'node:path'
-import { PROXY } from '~/constants'
+import { PROXY, PUBLIC_DIR } from '~/constants'
 import { LandscapeGeneralComment } from '~/remotion/general-comment/LandscapeGeneralComment'
 import { PortraitGeneralComment } from '~/remotion/general-comment/PortraitGeneralComment'
 import { VerticalGeneralComment } from '~/remotion/general-comment/VerticalGeneralComment'
@@ -81,7 +81,7 @@ function isLocalPath(url: string) {
 export async function ensurePublicAssets(typeInfo: GeneralCommentTypeTextInfo, comments: any[] | null) {
 	if (!comments) return { typeInfo, comments: [] }
 
-	const publicDir = path.join(process.cwd(), 'public', 'assets', 'downloads')
+	const publicDir = path.join(PUBLIC_DIR, 'assets', 'downloads')
 	if (!fs.existsSync(publicDir)) {
 		fs.mkdirSync(publicDir, { recursive: true })
 	}

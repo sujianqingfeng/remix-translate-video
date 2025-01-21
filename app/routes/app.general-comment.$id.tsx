@@ -135,7 +135,7 @@ export default function AppGeneralCommentRender() {
 								className={`bg-black rounded-lg overflow-hidden mx-auto ${mode === 'landscape' ? 'aspect-video max-w-4xl' : mode === 'portrait' ? 'aspect-[9/16] max-w-sm' : 'aspect-[4/5] max-w-sm'}`}
 							>
 								<Player
-									component={getVideoComponent(mode)}
+									component={getVideoComponent(mode) as any}
 									durationInFrames={durations.totalDurationInSeconds * durations.fps}
 									fps={durations.fps}
 									compositionWidth={videoConfig.width}

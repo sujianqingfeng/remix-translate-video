@@ -60,9 +60,11 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 			webpackOverride,
 			onProgress: bundleOnProgress,
 		})
+		console.log('🚀 ~ action ~ bundleLocation:', bundleLocation)
 
 		// Prepare input props for the video
 		const inputProps = prepareVideoProps(comment, durations)
+		console.log('🚀 ~ action ~ inputProps:', inputProps)
 
 		// Select the composition
 		const compositionId = getCompositionId(mode)

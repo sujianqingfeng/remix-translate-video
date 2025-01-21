@@ -1,4 +1,4 @@
-import { Img, spring, useCurrentFrame, useVideoConfig } from 'remotion'
+import { Img, spring, staticFile, useCurrentFrame, useVideoConfig } from 'remotion'
 
 interface ContentProps {
 	content?: string
@@ -74,7 +74,7 @@ export const Content: React.FC<ContentProps> = ({ content, contentZh, images, fp
 					>
 						{images.map((image) => (
 							<div key={image} className="aspect-[4/3] rounded-2xl shadow-lg overflow-hidden">
-								<Img src={image} alt="" className="w-full h-full object-cover" />
+								<Img src={staticFile(image)} alt="" className="w-full h-full object-cover" />
 							</div>
 						))}
 					</div>
