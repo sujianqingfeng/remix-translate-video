@@ -76,6 +76,8 @@ export const generalComments = sqliteTable(
 		fps: integer('fps').notNull().default(30),
 		outputFilePath: text('output_file_path'),
 		sourceFilePath: text('source_file_path'),
+		audioPath: text('audio_path'),
+		publicAudioPath: text('public_audio_path'),
 		createdAt: integer('created_at', { mode: 'timestamp_ms' })
 			.notNull()
 			.$defaultFn(() => new Date()),

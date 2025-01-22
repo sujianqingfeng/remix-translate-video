@@ -1,6 +1,5 @@
-import type { ActionFunctionArgs } from '@remix-run/node'
 import { Link, useLoaderData, useSubmit } from '@remix-run/react'
-import { desc, eq } from 'drizzle-orm'
+import { desc } from 'drizzle-orm'
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -17,19 +16,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '~
 import { db, schema } from '~/lib/drizzle'
 import type { GeneralCommentTypeTextInfo } from '~/types'
 
-export const action = async ({ request }: ActionFunctionArgs) => {
-	const formData = await request.formData()
-	const id = formData.get('id') as string
-	const intent = formData.get('intent') as string
-
-	if (intent === 'delete' && id) {
-		await db.delete(schema.generalComments).where(eq(schema.generalComments.id, id))
-		return { success: true }
-	}
-
-	return { success: false }
-}
-
 export const loader = async () => {
 	const comments = await db.query.generalComments.findMany({
 		orderBy: desc(schema.generalComments.createdAt),
@@ -45,8 +31,7 @@ export default function AppGeneralCommentIndex() {
 	const handleDelete = (id: string) => {
 		const formData = new FormData()
 		formData.append('id', id)
-		formData.append('intent', 'delete')
-		submit(formData, { method: 'post' })
+		submit(formData, { method: 'post', action: 'delete' })
 	}
 
 	return (

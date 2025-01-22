@@ -1,3 +1,5 @@
+import { copyFile } from 'node:fs/promises'
+import path from 'node:path'
 import type { LoaderFunctionArgs } from '@remix-run/node'
 import { Form, useFetcher, useLoaderData } from '@remix-run/react'
 import { Player } from '@remotion/player'
@@ -13,6 +15,7 @@ import { LandscapeGeneralComment } from '~/remotion/general-comment/LandscapeGen
 import { PortraitGeneralComment } from '~/remotion/general-comment/PortraitGeneralComment'
 import { VerticalGeneralComment } from '~/remotion/general-comment/VerticalGeneralComment'
 import type { GeneralCommentTypeTextInfo } from '~/types'
+import { ensurePublicDir, getPublicAssetPath } from '~/utils/file'
 import { type VideoMode, calculateDurations, ensurePublicAssets, getVideoConfig } from '~/utils/general-comment'
 
 const getVideoComponent = (mode: VideoMode) => {
@@ -44,12 +47,22 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 	const typeInfo = comment.typeInfo as GeneralCommentTypeTextInfo
 	const { typeInfo: newTypeInfo, comments: newComments } = await ensurePublicAssets(typeInfo, comment.comments)
 
+	// 如果有音频文件，复制到 public 目录
+	let publicAudioPath: string | undefined
+	if (comment.audioPath) {
+		const fileName = `${id}-audio.mp3`
+		publicAudioPath = getPublicAssetPath(id, fileName)
+		const publicFilePath = await ensurePublicDir(publicAudioPath)
+		await copyFile(comment.audioPath, publicFilePath)
+	}
+
 	// 更新数据库中的资源路径
 	await db
 		.update(schema.generalComments)
 		.set({
 			typeInfo: newTypeInfo,
 			comments: newComments,
+			publicAudioPath,
 		})
 		.where(eq(schema.generalComments.id, id))
 
@@ -62,6 +75,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 			...comment,
 			typeInfo: newTypeInfo,
 			comments: newComments,
+			publicAudioPath,
 		},
 		durations,
 		videoConfig,
@@ -154,6 +168,8 @@ export default function AppGeneralCommentRender() {
 										coverDurationInSeconds: durations.coverDurationInSeconds,
 										contentDurationInSeconds: durations.contentDurationInSeconds,
 										commentDurations: durations.commentDurations,
+										audioPath: comment.audioPath,
+										publicAudioPath: comment.publicAudioPath,
 									}}
 								/>
 							</div>
@@ -215,6 +231,35 @@ export default function AppGeneralCommentRender() {
 												<span className="text-xs text-gray-500">4:5</span>
 											</div>
 										</button>
+									</div>
+								</div>
+
+								{/* Audio Upload */}
+								<div className="space-y-3">
+									<Label className="text-sm">Background Audio</Label>
+									<div className="flex items-center gap-4">
+										<Input
+											type="file"
+											accept="audio/*"
+											className="text-sm"
+											onChange={(e) => {
+												const file = e.target.files?.[0]
+												if (file) {
+													const formData = new FormData()
+													formData.append('audio', file)
+													fetch(`/app/general-comment/${comment.id}/upload-audio`, {
+														method: 'POST',
+														body: formData,
+													})
+												}
+											}}
+										/>
+										{comment.audioPath && (
+											<audio controls className="flex-1">
+												<source src={`/${comment.publicAudioPath}`} type="audio/mpeg" />
+												<track kind="captions" />
+											</audio>
+										)}
 									</div>
 								</div>
 
@@ -315,14 +360,14 @@ export default function AppGeneralCommentRender() {
 
 							{/* Media Content */}
 							{typeInfo.video && (
-								<div className="aspect-video w-full bg-black rounded-lg overflow-hidden">
+								<div className="aspect-video w-full max-w-2xl mx-auto bg-black rounded-lg overflow-hidden">
 									<video src={typeInfo.video.url} controls className="w-full h-full">
 										<track kind="captions" />
 									</video>
 								</div>
 							)}
 							{typeInfo.images && typeInfo.images.length > 0 && (
-								<div className={`grid ${typeInfo.images.length === 1 ? 'grid-cols-1' : 'grid-cols-2'} gap-2`}>
+								<div className={`grid ${typeInfo.images.length === 1 ? 'grid-cols-1 max-w-sm' : 'grid-cols-2 max-w-lg'} gap-2 mx-auto`}>
 									{typeInfo.images.map((image) => (
 										<img key={image} src={image} alt="" className="aspect-square w-full object-cover rounded-lg" />
 									))}
@@ -414,13 +459,16 @@ export default function AppGeneralCommentRender() {
 												{c.media && c.media.length > 0 && (
 													<div className="mt-2 space-y-2">
 														{c.media.map((m, mediaIndex) => (
-															<div key={`${m.url}-${mediaIndex}`} className={m.type === 'video' ? 'aspect-video w-full bg-black rounded-lg overflow-hidden' : ''}>
+															<div
+																key={`${m.url}-${mediaIndex}`}
+																className={`${m.type === 'video' ? 'aspect-video' : 'aspect-square'} max-w-[240px] bg-black rounded-lg overflow-hidden`}
+															>
 																{m.type === 'video' ? (
 																	<video src={m.url} controls className="w-full h-full">
 																		<track kind="captions" />
 																	</video>
 																) : (
-																	<img src={m.url} alt="Comment media" className="w-full object-cover rounded-lg" />
+																	<img src={m.url} alt="Comment media" className="w-full h-full object-cover" />
 																)}
 															</div>
 														))}

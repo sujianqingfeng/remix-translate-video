@@ -1,0 +1,1 @@
+ALTER TABLE `general_comments` ADD `public_audio_path` text;

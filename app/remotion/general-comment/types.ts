@@ -1,14 +1,16 @@
 import type { Comment } from '~/types'
 
 export interface GeneralCommentProps {
-	title: string
+	title?: string
 	content?: string
 	contentZh?: string
 	author: string
 	images?: string[]
-	comments: Comment[]
+	comments: any[]
 	fps: number
 	coverDurationInSeconds: number
 	contentDurationInSeconds: number
 	commentDurations: number[]
+	audioPath?: string
+	publicAudioPath?: string
 }

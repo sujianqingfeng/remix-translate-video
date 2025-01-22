@@ -1,4 +1,5 @@
-import { AbsoluteFill, Sequence, useCurrentFrame, useVideoConfig } from 'remotion'
+import { AbsoluteFill, Sequence, staticFile, useCurrentFrame, useVideoConfig } from 'remotion'
+import { Audio } from './Audio'
 import { Comments } from './Comments'
 import { Content } from './Content'
 import { Cover } from './Cover'
@@ -15,6 +16,8 @@ export const LandscapeGeneralComment: React.FC<GeneralCommentProps> = ({
 	coverDurationInSeconds,
 	contentDurationInSeconds,
 	commentDurations,
+	audioPath,
+	publicAudioPath,
 }) => {
 	const frame = useCurrentFrame()
 	const { width, height } = useVideoConfig()
@@ -32,6 +35,9 @@ export const LandscapeGeneralComment: React.FC<GeneralCommentProps> = ({
 
 	return (
 		<AbsoluteFill style={{ backgroundColor: '#f3f4f6' }}>
+			{/* Background Audio */}
+			{publicAudioPath && <Audio audioPath={staticFile(publicAudioPath)} />}
+
 			{/* Cover */}
 			<Sequence durationInFrames={coverDurationInFrames}>
 				<Cover title={title} author={author} images={images} />

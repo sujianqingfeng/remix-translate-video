@@ -1,54 +1,68 @@
 import fs from 'node:fs'
+import { copyFile } from 'node:fs/promises'
 import path from 'node:path'
 import { PROXY, PUBLIC_DIR } from '~/constants'
 import { LandscapeGeneralComment } from '~/remotion/general-comment/LandscapeGeneralComment'
 import { PortraitGeneralComment } from '~/remotion/general-comment/PortraitGeneralComment'
 import { VerticalGeneralComment } from '~/remotion/general-comment/VerticalGeneralComment'
-import type { GeneralCommentTypeTextInfo } from '~/types'
+import type { Comment, GeneralCommentTypeTextInfo } from '~/types'
 import { downloadFile } from './download'
+import { ensurePublicDir, getPublicAssetPath } from './file'
 
 export type VideoMode = 'landscape' | 'portrait' | 'vertical'
 
 // Video configuration based on mode
 export const getVideoConfig = (mode: VideoMode) => {
-	const config = {
-		fps: 30,
-		...(mode === 'portrait' ? { width: 1080, height: 1920 } : mode === 'vertical' ? { width: 1080, height: 1350 } : { width: 1920, height: 1080 }),
+	switch (mode) {
+		case 'portrait':
+			return {
+				width: 1080,
+				height: 1920,
+			}
+		case 'vertical':
+			return {
+				width: 1080,
+				height: 1350,
+			}
+		default:
+			return {
+				width: 1920,
+				height: 1080,
+			}
 	}
-	return config
 }
 
 // Calculate video durations
-export const calculateDurations = (comment: any) => {
-	const typeInfo = comment.typeInfo as GeneralCommentTypeTextInfo
-	const fps = comment.fps || 30
-	const coverDurationInSeconds = comment.coverDurationInSeconds || 3
-	const secondsForEvery30Words = comment.secondsForEvery30Words || 5
+export const calculateDurations = (comment: {
+	fps: number
+	coverDurationInSeconds: number
+	secondsForEvery30Words: number
+	typeInfo: GeneralCommentTypeTextInfo
+	comments: Comment[]
+}) => {
+	const fps = comment.fps
+	const coverDurationInSeconds = comment.coverDurationInSeconds
+	const secondsForEvery30Words = comment.secondsForEvery30Words
 
-	// Content duration
-	const contentWords = typeInfo.content?.split(/\s+/).length || 0
-	const contentZhWords = typeInfo.contentZh?.length ? Math.ceil(typeInfo.contentZh.length / 2) : 0
-	const totalWords = contentWords + contentZhWords
-	const contentDurationInSeconds = Math.max(Math.ceil(totalWords / 30) * secondsForEvery30Words, 5)
+	// Calculate content duration
+	const contentWords = [comment.typeInfo.content, comment.typeInfo.contentZh].filter(Boolean).join(' ').split(/\s+/).length
+	const contentDurationInSeconds = Math.ceil((contentWords / 30) * secondsForEvery30Words)
 
-	// Comment durations
-	const getCommentDuration = (comment: any) => {
-		const baseSeconds = 5
-		const wordCount = (comment.content?.length || 0) + (comment.translatedContent?.length || 0)
-		const extraSeconds = Math.ceil(wordCount / 100) * 2
-		return baseSeconds + extraSeconds
-	}
+	// Calculate comment durations
+	const commentDurations = comment.comments.map((c) => {
+		const words = [c.content, c.translatedContent].filter(Boolean).join(' ').split(/\s+/).length
+		return Math.ceil((words / 30) * secondsForEvery30Words)
+	})
 
-	const commentsDurationInSeconds = (comment.comments || []).reduce((acc: number, comment: any) => acc + getCommentDuration(comment), 0)
+	// Calculate total duration
+	const totalDurationInSeconds = coverDurationInSeconds + contentDurationInSeconds + commentDurations.reduce((acc, curr) => acc + curr, 0)
 
 	return {
 		fps,
 		coverDurationInSeconds,
-		secondsForEvery30Words,
 		contentDurationInSeconds,
-		commentsDurationInSeconds,
-		totalDurationInSeconds: coverDurationInSeconds + contentDurationInSeconds + commentsDurationInSeconds,
-		commentDurations: (comment.comments || []).map(getCommentDuration),
+		commentDurations,
+		totalDurationInSeconds,
 	}
 }
 
@@ -78,81 +92,52 @@ function isLocalPath(url: string) {
 	return url.startsWith('/assets/downloads/')
 }
 
-export async function ensurePublicAssets(typeInfo: GeneralCommentTypeTextInfo, comments: any[] | null) {
-	if (!comments) return { typeInfo, comments: [] }
+export const ensurePublicAssets = async (typeInfo: GeneralCommentTypeTextInfo, comments: Comment[]) => {
+	const newTypeInfo = { ...typeInfo }
+	const newComments = [...comments]
 
-	const publicDir = path.join(PUBLIC_DIR, 'assets', 'downloads')
-	if (!fs.existsSync(publicDir)) {
-		fs.mkdirSync(publicDir, { recursive: true })
+	// Handle images in typeInfo
+	if (newTypeInfo.images) {
+		const newImages = await Promise.all(
+			newTypeInfo.images.map(async (image) => {
+				if (image.startsWith('http')) {
+					return image
+				}
+
+				// Copy local file to public directory
+				const fileName = path.basename(image)
+				const publicPath = getPublicAssetPath(path.dirname(image), fileName)
+				const publicFilePath = await ensurePublicDir(publicPath)
+				await copyFile(image, publicFilePath)
+				return `/${publicPath}`
+			}),
+		)
+		newTypeInfo.images = newImages
 	}
 
-	const downloadPromises: Promise<void>[] = []
-
-	if (typeInfo.video?.url) {
-		const videoUrl = typeInfo.video.url
-		if (!isLocalPath(videoUrl)) {
-			const videoPromise = (async () => {
-				const ext = path.extname(videoUrl) || '.mp4'
-				const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}${ext}`
-				const localPath = path.join(publicDir, filename)
-
-				try {
-					const success = await downloadFile(videoUrl, localPath, { proxy: PROXY })
-					if (success && typeInfo.video) {
-						typeInfo.video.url = `/assets/downloads/${filename}`
-					}
-				} catch (error) {
-					console.error('Failed to download video:', error)
-				}
-			})()
-			downloadPromises.push(videoPromise)
-		}
+	// Handle video in typeInfo
+	if (newTypeInfo.video && !newTypeInfo.video.url.startsWith('http')) {
+		const fileName = path.basename(newTypeInfo.video.url)
+		const publicPath = getPublicAssetPath(path.dirname(newTypeInfo.video.url), fileName)
+		const publicFilePath = await ensurePublicDir(publicPath)
+		await copyFile(newTypeInfo.video.url, publicFilePath)
+		newTypeInfo.video.url = `/${publicPath}`
 	}
 
-	// 处理评论中的媒体
-	const commentPromises = comments.map(async (comment) => {
-		if (comment.authorThumbnail && !isLocalPath(comment.authorThumbnail)) {
-			const thumbnailPromise = (async () => {
-				const ext = path.extname(comment.authorThumbnail) || '.jpg'
-				const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}${ext}`
-				const localPath = path.join(publicDir, filename)
-
-				try {
-					const success = await downloadFile(comment.authorThumbnail, localPath, { proxy: PROXY })
-					if (success) {
-						comment.authorThumbnail = `/assets/downloads/${filename}`
-					}
-				} catch (error) {
-					console.error('Failed to download author thumbnail:', error)
-				}
-			})()
-			downloadPromises.push(thumbnailPromise)
-		}
-
+	// Handle media in comments
+	for (const comment of newComments) {
 		if (comment.media) {
-			const mediaPromises = comment.media.map(async (media: { type: string; url: string }) => {
-				if (isLocalPath(media.url)) return
-
-				const ext = path.extname(media.url) || (media.type === 'video' ? '.mp4' : '.jpg')
-				const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}${ext}`
-				const localPath = path.join(publicDir, filename)
-
-				try {
-					const success = await downloadFile(media.url, localPath, { proxy: PROXY })
-					if (success) {
-						media.url = `/assets/downloads/${filename}`
-					}
-				} catch (error) {
-					console.error('Failed to download media:', error)
+			for (const media of comment.media) {
+				if (!media.url.startsWith('http')) {
+					const fileName = path.basename(media.url)
+					const publicPath = getPublicAssetPath(path.dirname(media.url), fileName)
+					const publicFilePath = await ensurePublicDir(publicPath)
+					await copyFile(media.url, publicFilePath)
+					media.url = `/${publicPath}`
 				}
-			})
-			downloadPromises.push(...mediaPromises)
+			}
 		}
-	})
-	downloadPromises.push(...commentPromises)
+	}
 
-	// 等待所有下载完成
-	await Promise.all(downloadPromises)
-
-	return { typeInfo, comments }
+	return { typeInfo: newTypeInfo, comments: newComments }
 }

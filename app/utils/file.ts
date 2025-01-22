@@ -1,5 +1,5 @@
 import { createWriteStream } from 'node:fs'
-import { unlink } from 'node:fs/promises'
+import { mkdir, unlink } from 'node:fs/promises'
 import fsp from 'node:fs/promises'
 import path from 'node:path'
 import archiver from 'archiver'
@@ -82,10 +82,25 @@ export async function readFileJson<T>(path: string): Promise<T> {
 	return JSON.parse(json) as T
 }
 
-export async function createOperationDir(id: string) {
-	const dir = path.join(OPERATIONS_DIR, id)
-	await fsp.mkdir(dir, { recursive: true })
+export const createOperationDir = async (id: string) => {
+	const dir = path.join(process.cwd(), 'operations', id)
+	await mkdir(dir, { recursive: true })
 	return dir
+}
+
+export const getPublicAssetPath = (id: string, fileName: string) => {
+	return `assets/operations/${id}/${fileName}`
+}
+
+export const getPublicFilePath = (publicPath: string) => {
+	return path.join(process.cwd(), 'public', publicPath)
+}
+
+export const ensurePublicDir = async (publicPath: string) => {
+	const publicFilePath = getPublicFilePath(publicPath)
+	const publicDir = path.dirname(publicFilePath)
+	await mkdir(publicDir, { recursive: true })
+	return publicFilePath
 }
 
 export async function copyFileToPublic({

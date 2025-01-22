@@ -149,3 +149,17 @@ export type GeneralCommentTypeTextInfo = {
 		url: string
 	}
 }
+
+export interface GeneralComment {
+	id: string
+	type: 'text'
+	author: string
+	typeInfo: GeneralCommentTypeTextInfo
+	comments: Comment[]
+	fps: number
+	coverDurationInSeconds: number
+	secondsForEvery30Words: number
+	source: 'twitter' | 'youtube' | 'manual'
+	audioPath?: string
+	publicAudioPath?: string
+}
