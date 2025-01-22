@@ -62,6 +62,7 @@ export default function TranslateVideoPage() {
 	const renderFetcher = useFetcher()
 	const remoteRenderFetcher = useFetcher()
 	const splitFetcher = useFetcher()
+	const autoAsrFetcher = useFetcher()
 
 	const onCopy = async (text?: string | null) => {
 		if (!text) {
@@ -133,18 +134,33 @@ export default function TranslateVideoPage() {
 
 							<div className="bg-gray-50 p-6 rounded-lg border border-gray-100">
 								<h3 className="text-lg font-semibold mb-4">ASR Upload</h3>
-								<uploadAsrFetcher.Form method="post" action="upload-asr" encType="multipart/form-data" className="space-y-4">
-									<input
-										type="file"
-										name="file"
-										accept=".json"
-										className="w-full file:mr-4 file:rounded-lg file:border-0 file:bg-blue-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-blue-700 hover:file:bg-blue-100"
-										required
-									/>
-									<Button type="submit" variant="secondary" className="w-full">
-										Upload ASR
-									</Button>
-								</uploadAsrFetcher.Form>
+								<div className="space-y-4">
+									<uploadAsrFetcher.Form method="post" action="upload-asr" encType="multipart/form-data" className="space-y-4">
+										<input
+											type="file"
+											name="file"
+											accept=".json"
+											className="w-full file:mr-4 file:rounded-lg file:border-0 file:bg-blue-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-blue-700 hover:file:bg-blue-100"
+											required
+										/>
+										<Button type="submit" variant="secondary" className="w-full">
+											Upload ASR
+										</Button>
+									</uploadAsrFetcher.Form>
+
+									<div className="relative">
+										<div className="absolute inset-0 flex items-center">
+											<span className="w-full border-t" />
+										</div>
+										<div className="relative flex justify-center text-xs uppercase">
+											<span className="bg-gray-50 px-2 text-muted-foreground">Or</span>
+										</div>
+									</div>
+
+									<autoAsrFetcher.Form method="post" action="auto-asr">
+										<LoadingButtonWithState state={autoAsrFetcher.state} idleText="Auto ASR" className="w-full" />
+									</autoAsrFetcher.Form>
+								</div>
 							</div>
 
 							<div className="space-y-4">

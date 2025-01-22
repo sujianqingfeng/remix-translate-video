@@ -3,10 +3,9 @@ import { AbsoluteFill, Img, interpolate, spring, useCurrentFrame, useVideoConfig
 interface CoverProps {
 	title?: string
 	author: string
-	images?: string[]
 }
 
-export const Cover: React.FC<CoverProps> = ({ title, author, images }) => {
+export const Cover: React.FC<CoverProps> = ({ title, author }) => {
 	const frame = useCurrentFrame()
 	const { fps } = useVideoConfig()
 
@@ -24,19 +23,6 @@ export const Cover: React.FC<CoverProps> = ({ title, author, images }) => {
 		from: 0,
 		to: 1,
 		durationInFrames: 30,
-	})
-
-	const imageScale = spring({
-		frame: frame - 30,
-		fps,
-		from: 0.8,
-		to: 1,
-		durationInFrames: 45,
-	})
-
-	const imageOpacity = interpolate(frame - 30, [0, 30], [0, 1], {
-		extrapolateLeft: 'clamp',
-		extrapolateRight: 'clamp',
 	})
 
 	return (
@@ -58,20 +44,6 @@ export const Cover: React.FC<CoverProps> = ({ title, author, images }) => {
 				>
 					By {author}
 				</p>
-
-				{images && images.length > 0 && (
-					<div
-						className="flex gap-4 justify-center mt-8"
-						style={{
-							opacity: imageOpacity,
-							transform: `scale(${imageScale})`,
-						}}
-					>
-						{images.map((image) => (
-							<Img key={image} src={image} alt="" className="w-40 h-40 object-cover rounded-lg shadow-lg" />
-						))}
-					</div>
-				)}
 			</div>
 		</AbsoluteFill>
 	)

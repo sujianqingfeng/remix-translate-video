@@ -86,48 +86,33 @@ export async function ensurePublicAssets(typeInfo: GeneralCommentTypeTextInfo, c
 		fs.mkdirSync(publicDir, { recursive: true })
 	}
 
-	// 处理主内容的媒体
-	if (typeInfo.images) {
-		const newImages = await Promise.all(
-			typeInfo.images.map(async (url) => {
-				// 如果已经是本地路径，直接返回
-				if (isLocalPath(url)) return url
+	const downloadPromises: Promise<void>[] = []
 
-				const ext = path.extname(url) || '.jpg'
+	if (typeInfo.video?.url) {
+		const videoUrl = typeInfo.video.url
+		if (!isLocalPath(videoUrl)) {
+			const videoPromise = (async () => {
+				const ext = path.extname(videoUrl) || '.mp4'
 				const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}${ext}`
 				const localPath = path.join(publicDir, filename)
 
 				try {
-					const success = await downloadFile(url, localPath, { proxy: PROXY })
-					return success ? `/assets/downloads/${filename}` : url
+					const success = await downloadFile(videoUrl, localPath, { proxy: PROXY })
+					if (success && typeInfo.video) {
+						typeInfo.video.url = `/assets/downloads/${filename}`
+					}
 				} catch (error) {
-					console.error('Failed to download image:', error)
-					return url
+					console.error('Failed to download video:', error)
 				}
-			}),
-		)
-		typeInfo.images = newImages
-	}
-
-	if (typeInfo.video && !isLocalPath(typeInfo.video.url)) {
-		const ext = path.extname(typeInfo.video.url) || '.mp4'
-		const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}${ext}`
-		const localPath = path.join(publicDir, filename)
-
-		try {
-			const success = await downloadFile(typeInfo.video.url, localPath, { proxy: PROXY })
-			if (success) {
-				typeInfo.video.url = `/assets/downloads/${filename}`
-			}
-		} catch (error) {
-			console.error('Failed to download video:', error)
+			})()
+			downloadPromises.push(videoPromise)
 		}
 	}
 
 	// 处理评论中的媒体
-	await Promise.all(
-		comments.map(async (comment) => {
-			if (comment.authorThumbnail && !isLocalPath(comment.authorThumbnail)) {
+	const commentPromises = comments.map(async (comment) => {
+		if (comment.authorThumbnail && !isLocalPath(comment.authorThumbnail)) {
+			const thumbnailPromise = (async () => {
 				const ext = path.extname(comment.authorThumbnail) || '.jpg'
 				const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}${ext}`
 				const localPath = path.join(publicDir, filename)
@@ -140,30 +125,34 @@ export async function ensurePublicAssets(typeInfo: GeneralCommentTypeTextInfo, c
 				} catch (error) {
 					console.error('Failed to download author thumbnail:', error)
 				}
-			}
+			})()
+			downloadPromises.push(thumbnailPromise)
+		}
 
-			if (comment.media) {
-				await Promise.all(
-					comment.media.map(async (media: { type: string; url: string }, mediaIndex: number) => {
-						if (isLocalPath(media.url)) return
+		if (comment.media) {
+			const mediaPromises = comment.media.map(async (media: { type: string; url: string }) => {
+				if (isLocalPath(media.url)) return
 
-						const ext = path.extname(media.url) || (media.type === 'video' ? '.mp4' : '.jpg')
-						const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}${ext}`
-						const localPath = path.join(publicDir, filename)
+				const ext = path.extname(media.url) || (media.type === 'video' ? '.mp4' : '.jpg')
+				const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}${ext}`
+				const localPath = path.join(publicDir, filename)
 
-						try {
-							const success = await downloadFile(media.url, localPath, { proxy: PROXY })
-							if (success) {
-								media.url = `/assets/downloads/${filename}`
-							}
-						} catch (error) {
-							console.error('Failed to download media:', error)
-						}
-					}),
-				)
-			}
-		}),
-	)
+				try {
+					const success = await downloadFile(media.url, localPath, { proxy: PROXY })
+					if (success) {
+						media.url = `/assets/downloads/${filename}`
+					}
+				} catch (error) {
+					console.error('Failed to download media:', error)
+				}
+			})
+			downloadPromises.push(...mediaPromises)
+		}
+	})
+	downloadPromises.push(...commentPromises)
+
+	// 等待所有下载完成
+	await Promise.all(downloadPromises)
 
 	return { typeInfo, comments }
 }

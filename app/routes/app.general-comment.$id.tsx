@@ -117,23 +117,21 @@ export default function AppGeneralCommentRender() {
 
 	return (
 		<div className="min-h-screen bg-gray-50 py-8">
-			<div className="max-w-[1200px] mx-auto px-4">
-				<div className="mb-8">
+			<div className="max-w-[1200px] mx-auto px-4 space-y-6">
+				<div>
 					<h1 className="text-3xl font-bold text-gray-900">Render Configuration</h1>
-					<p className="mt-2 text-gray-600">Configure rendering settings for your general comment video</p>
+					<p className="mt-2 text-gray-600">Configure rendering settings for your video</p>
 				</div>
 
-				<div className="space-y-8">
-					{/* Video Preview */}
-					<Card>
-						<CardHeader>
-							<CardTitle>Video Preview</CardTitle>
-							<CardDescription>Preview how your video will look</CardDescription>
-						</CardHeader>
-						<CardContent>
-							<div
-								className={`bg-black rounded-lg overflow-hidden mx-auto ${mode === 'landscape' ? 'aspect-video max-w-4xl' : mode === 'portrait' ? 'aspect-[9/16] max-w-sm' : 'aspect-[4/5] max-w-sm'}`}
-							>
+				{/* Video Preview */}
+				<Card>
+					<CardHeader>
+						<CardTitle>Video Preview</CardTitle>
+						<CardDescription>Preview how your video will look</CardDescription>
+					</CardHeader>
+					<CardContent>
+						<div className="bg-gray-900 rounded-lg overflow-hidden mx-auto">
+							<div className={`mx-auto ${mode === 'landscape' ? 'aspect-video w-full' : 'aspect-[9/16] w-[360px]'}`}>
 								<Player
 									component={getVideoComponent(mode) as any}
 									durationInFrames={durations.totalDurationInSeconds * durations.fps}
@@ -150,7 +148,7 @@ export default function AppGeneralCommentRender() {
 										content: typeInfo.content,
 										contentZh: typeInfo.contentZh,
 										author: comment.author,
-										images: typeInfo.images,
+										images: typeInfo.images || [],
 										comments: comment.comments || [],
 										fps: durations.fps,
 										coverDurationInSeconds: durations.coverDurationInSeconds,
@@ -159,260 +157,283 @@ export default function AppGeneralCommentRender() {
 									}}
 								/>
 							</div>
-						</CardContent>
-					</Card>
+						</div>
+					</CardContent>
+				</Card>
 
-					{/* Content Preview */}
+				{/* Video Settings */}
+				<renderFetcher.Form action="render" method="post">
 					<Card>
 						<CardHeader>
-							<CardTitle>Content Preview</CardTitle>
-							<CardDescription>Review your content before rendering</CardDescription>
+							<CardTitle>Video Settings</CardTitle>
+							<CardDescription>Configure how your video will be rendered</CardDescription>
 						</CardHeader>
-						<CardContent className="space-y-6">
-							{/* Author Info */}
-							<div className="flex items-center gap-4">
-								<div className="flex-1">
-									<h3 className="font-medium text-gray-900">{typeInfo.title || 'Untitled'}</h3>
-									<p className="text-sm text-gray-600">By {comment.author}</p>
+						<CardContent>
+							<div className="space-y-6">
+								{/* Mode Selection */}
+								<div className="space-y-3">
+									<Label className="text-sm">Video Mode</Label>
+									<div className="grid grid-cols-3 gap-4 max-w-md">
+										<button
+											type="button"
+											className={`relative h-16 rounded-lg border-2 transition-all ${
+												mode === 'landscape' ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+											}`}
+											onClick={() => setMode('landscape')}
+											onKeyDown={(e) => e.key === 'Enter' && setMode('landscape')}
+											disabled={isRendering}
+										>
+											<input type="radio" name="mode" value="landscape" className="sr-only" checked={mode === 'landscape'} onChange={() => {}} />
+											<div className="absolute inset-0 flex flex-col items-center justify-center">
+												<span className="text-xs font-medium">Landscape</span>
+												<span className="text-xs text-gray-500">16:9</span>
+											</div>
+										</button>
+										<button
+											type="button"
+											className={`relative h-16 rounded-lg border-2 transition-all ${mode === 'portrait' ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'}`}
+											onClick={() => setMode('portrait')}
+											onKeyDown={(e) => e.key === 'Enter' && setMode('portrait')}
+											disabled={isRendering}
+										>
+											<input type="radio" name="mode" value="portrait" className="sr-only" checked={mode === 'portrait'} onChange={() => {}} />
+											<div className="absolute inset-0 flex flex-col items-center justify-center">
+												<span className="text-xs font-medium">Portrait</span>
+												<span className="text-xs text-gray-500">9:16</span>
+											</div>
+										</button>
+										<button
+											type="button"
+											className={`relative h-16 rounded-lg border-2 transition-all ${mode === 'vertical' ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'}`}
+											onClick={() => setMode('vertical')}
+											onKeyDown={(e) => e.key === 'Enter' && setMode('vertical')}
+											disabled={isRendering}
+										>
+											<input type="radio" name="mode" value="vertical" className="sr-only" checked={mode === 'vertical'} onChange={() => {}} />
+											<div className="absolute inset-0 flex flex-col items-center justify-center">
+												<span className="text-xs font-medium">Vertical</span>
+												<span className="text-xs text-gray-500">4:5</span>
+											</div>
+										</button>
+									</div>
 								</div>
-								<div>
-									<span
-										className="px-2.5 py-1 rounded-full text-xs font-medium capitalize"
-										style={{
-											backgroundColor: comment.source === 'twitter' ? '#1DA1F2' : comment.source === 'youtube' ? '#FF0000' : '#6B7280',
-											color: comment.source === 'tiktok' ? 'white' : 'inherit',
-										}}
-									>
-										{comment.source}
-									</span>
-								</div>
-							</div>
 
-							{/* Content */}
-							<div className="space-y-4">
-								<div className="bg-gray-50 rounded-lg p-4">
-									<p className="text-gray-900 whitespace-pre-wrap">{typeInfo.content}</p>
+								{/* Settings Grid */}
+								<div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-3xl">
+									{/* FPS Setting */}
+									<div className="space-y-2">
+										<Label htmlFor="fps" className="text-sm">
+											FPS
+										</Label>
+										<Input type="number" id="fps" name="fps" defaultValue={comment.fps} className="text-sm" disabled={isRendering} />
+									</div>
+
+									{/* Cover Duration */}
+									<div className="space-y-2">
+										<Label htmlFor="coverDurationInSeconds" className="text-sm">
+											Cover Duration (seconds)
+										</Label>
+										<Input
+											type="number"
+											id="coverDurationInSeconds"
+											name="coverDurationInSeconds"
+											defaultValue={comment.coverDurationInSeconds}
+											className="text-sm"
+											disabled={isRendering}
+										/>
+									</div>
+
+									{/* Words Duration */}
+									<div className="space-y-2">
+										<Label htmlFor="secondsForEvery30Words" className="text-sm">
+											Seconds per 30 Words
+										</Label>
+										<Input
+											type="number"
+											id="secondsForEvery30Words"
+											name="secondsForEvery30Words"
+											defaultValue={comment.secondsForEvery30Words}
+											className="text-sm"
+											disabled={isRendering}
+										/>
+									</div>
 								</div>
-								<div className="flex justify-end">
-									<Form action="translate" method="post">
-										<Button type="submit" variant="outline" size="sm" disabled={!typeInfo.content || !!typeInfo.contentZh}>
-											Translate
+
+								<Button type="submit" className="w-full h-9 text-sm" disabled={isRendering}>
+									{isRendering ? 'Rendering...' : 'Start Rendering'}
+								</Button>
+
+								{renderFetcher.data?.error && <p className="text-sm text-red-500 mt-2">{renderFetcher.data.error}</p>}
+							</div>
+						</CardContent>
+					</Card>
+				</renderFetcher.Form>
+
+				{/* Content Preview */}
+				<Card>
+					<CardHeader>
+						<CardTitle>Content Preview</CardTitle>
+						<CardDescription>Review your content before rendering</CardDescription>
+					</CardHeader>
+					<CardContent className="space-y-6">
+						{/* Author Info */}
+						<div className="flex items-center gap-4">
+							<div className="flex-1">
+								<h3 className="font-medium text-gray-900">{typeInfo.title || 'Untitled'}</h3>
+								<p className="text-sm text-gray-600">By {comment.author}</p>
+							</div>
+							<div>
+								<span
+									className="px-2.5 py-1 rounded-full text-xs font-medium capitalize"
+									style={{
+										backgroundColor: comment.source === 'twitter' ? '#1DA1F2' : comment.source === 'youtube' ? '#FF0000' : '#6B7280',
+										color: 'white',
+									}}
+								>
+									{comment.source}
+								</span>
+							</div>
+						</div>
+
+						{/* Content */}
+						<div className="space-y-4">
+							<div className="bg-gray-50 rounded-lg p-4">
+								<p className="text-sm text-gray-900 whitespace-pre-wrap">{typeInfo.content}</p>
+							</div>
+							<div className="flex justify-end">
+								<Form action="translate" method="post">
+									<Button type="submit" variant="outline" size="sm" disabled={!typeInfo.content || !!typeInfo.contentZh}>
+										Translate
+									</Button>
+								</Form>
+							</div>
+							{typeInfo.contentZh && (
+								<div className="bg-gray-50 rounded-lg p-4">
+									<p className="text-sm text-gray-600 whitespace-pre-wrap">{typeInfo.contentZh}</p>
+								</div>
+							)}
+
+							{/* Media Content */}
+							{typeInfo.video && (
+								<div className="aspect-video w-full bg-black rounded-lg overflow-hidden">
+									<video src={typeInfo.video.url} controls className="w-full h-full">
+										<track kind="captions" />
+									</video>
+								</div>
+							)}
+							{typeInfo.images && typeInfo.images.length > 0 && (
+								<div className={`grid ${typeInfo.images.length === 1 ? 'grid-cols-1' : 'grid-cols-2'} gap-2`}>
+									{typeInfo.images.map((image) => (
+										<img key={image} src={image} alt="" className="aspect-square w-full object-cover rounded-lg" />
+									))}
+								</div>
+							)}
+						</div>
+
+						{/* Comments */}
+						{comment.comments && comment.comments.length > 0 && (
+							<div className="border-t pt-4">
+								<div className="flex items-center justify-between mb-4">
+									<h4 className="text-sm font-medium text-gray-900">Comments ({comment.comments.length})</h4>
+									<Form action="translate-comments" method="post">
+										<Button type="submit" variant="outline" size="sm" disabled={comment.comments.every((c) => !!c.translatedContent)}>
+											Translate Comments
 										</Button>
 									</Form>
 								</div>
-								{typeInfo.contentZh && (
-									<div className="bg-gray-50 rounded-lg p-4">
-										<p className="text-gray-600 whitespace-pre-wrap">{typeInfo.contentZh}</p>
-									</div>
-								)}
-							</div>
-
-							{/* Media */}
-							<div className="space-y-4">
-								{typeInfo.video && (
-									<div className="aspect-video w-full bg-black rounded-lg overflow-hidden">
-										<video src={typeInfo.video.url} controls className="w-full h-full">
-											<track kind="captions" />
-										</video>
-									</div>
-								)}
-								{typeInfo.images && typeInfo.images.length > 0 && (
-									<div className="grid grid-cols-3 gap-2">
-										{typeInfo.images.map((image) => (
-											<img key={image} src={image} alt="" className="aspect-square w-full object-cover rounded-lg" />
-										))}
-									</div>
-								)}
-							</div>
-
-							{/* Comments */}
-							{comment.comments && comment.comments.length > 0 && (
-								<div className="border-t pt-4">
-									<div className="flex items-center justify-between mb-4">
-										<h4 className="text-sm font-medium text-gray-900">Comments ({comment.comments.length})</h4>
-										<Form action="translate-comments" method="post">
-											<Button type="submit" variant="outline" size="sm" disabled={comment.comments.every((c) => !!c.translatedContent)}>
-												Translate Comments
-											</Button>
-										</Form>
-									</div>
-									<div className="space-y-4 max-h-[600px] overflow-y-auto">
-										{(comment.comments as Comment[]).map((c, i) => (
-											<div key={`${c.author}-${i}`} className="flex gap-3">
-												{c.authorThumbnail && <img src={c.authorThumbnail} alt={c.author} className="w-8 h-8 rounded-full shrink-0" />}
-												<div className="flex-1">
-													<div className="flex items-center justify-between gap-2">
-														<div className="flex items-center gap-2">
-															<span className="font-medium text-sm text-gray-900">{c.author}</span>
-															<span className="text-xs text-gray-500">•</span>
-															<span className="text-xs text-gray-500">👍 {c.likes}</span>
-														</div>
-														<div className="flex items-center gap-2">
-															<Button
-																type="button"
-																variant="outline"
-																size="sm"
-																onClick={() => handleStartEditTranslation(i)}
-																disabled={deleteCommentFetcher.state !== 'idle' || updateTranslationFetcher.state !== 'idle'}
-															>
-																Edit Translation
+								<div className="space-y-4 max-h-[400px] overflow-y-auto">
+									{(comment.comments as Comment[]).map((c, i) => (
+										<div key={`${c.author}-${i}`} className="flex gap-3">
+											{c.authorThumbnail && <img src={c.authorThumbnail} alt={c.author} className="w-6 h-6 rounded-full shrink-0" />}
+											<div className="flex-1">
+												<div className="flex items-center justify-between gap-2">
+													<div className="flex items-center gap-2">
+														<span className="font-medium text-sm text-gray-900">{c.author}</span>
+														<span className="text-xs text-gray-500">•</span>
+														<span className="text-xs text-gray-500">👍 {c.likes}</span>
+													</div>
+													<div className="flex items-center gap-2">
+														<Button
+															type="button"
+															variant="outline"
+															size="sm"
+															onClick={() => handleStartEditTranslation(i)}
+															disabled={deleteCommentFetcher.state !== 'idle' || updateTranslationFetcher.state !== 'idle'}
+														>
+															Edit Translation
+														</Button>
+														<Button
+															type="button"
+															variant="destructive"
+															size="sm"
+															onClick={() => handleDeleteComment(i)}
+															disabled={deleteCommentFetcher.state !== 'idle' || updateTranslationFetcher.state !== 'idle'}
+														>
+															Delete
+														</Button>
+													</div>
+												</div>
+												<p className="text-sm text-gray-700 mt-1">{c.content}</p>
+												{editingCommentIndex === i ? (
+													<div className="mt-1 space-y-2">
+														<Textarea
+															defaultValue={c.translatedContent}
+															className="text-sm"
+															onKeyDown={(e) => {
+																if (e.key === 'Escape') {
+																	handleCancelEditTranslation()
+																}
+															}}
+															ref={(textarea) => {
+																if (textarea) {
+																	textarea.focus()
+																}
+															}}
+														/>
+														<div className="flex justify-end gap-2">
+															<Button type="button" variant="outline" size="sm" onClick={handleCancelEditTranslation}>
+																Cancel
 															</Button>
 															<Button
 																type="button"
-																variant="destructive"
 																size="sm"
-																onClick={() => handleDeleteComment(i)}
-																disabled={deleteCommentFetcher.state !== 'idle' || updateTranslationFetcher.state !== 'idle'}
+																onClick={(e) => {
+																	const textarea = e.currentTarget.parentElement?.previousElementSibling as HTMLTextAreaElement
+																	if (textarea) {
+																		handleUpdateTranslation(i, textarea.value)
+																	}
+																}}
 															>
-																Delete
+																Save
 															</Button>
 														</div>
 													</div>
-													<p className="text-sm text-gray-700 mt-1">{c.content}</p>
-													{editingCommentIndex === i ? (
-														<div className="mt-1 space-y-2">
-															<Textarea
-																defaultValue={c.translatedContent}
-																className="text-sm"
-																onKeyDown={(e) => {
-																	if (e.key === 'Escape') {
-																		handleCancelEditTranslation()
-																	}
-																}}
-																ref={(textarea) => {
-																	if (textarea) {
-																		textarea.focus()
-																	}
-																}}
-															/>
-															<div className="flex justify-end gap-2">
-																<Button type="button" variant="outline" size="sm" onClick={handleCancelEditTranslation}>
-																	Cancel
-																</Button>
-																<Button
-																	type="button"
-																	size="sm"
-																	onClick={(e) => {
-																		const textarea = e.currentTarget.parentElement?.previousElementSibling as HTMLTextAreaElement
-																		if (textarea) {
-																			handleUpdateTranslation(i, textarea.value)
-																		}
-																	}}
-																>
-																	Save
-																</Button>
+												) : (
+													c.translatedContent && <p className="text-sm text-gray-500 mt-1">{c.translatedContent}</p>
+												)}
+												{c.media && c.media.length > 0 && (
+													<div className="mt-2 space-y-2">
+														{c.media.map((m, mediaIndex) => (
+															<div key={`${m.url}-${mediaIndex}`} className={m.type === 'video' ? 'aspect-video w-full bg-black rounded-lg overflow-hidden' : ''}>
+																{m.type === 'video' ? (
+																	<video src={m.url} controls className="w-full h-full">
+																		<track kind="captions" />
+																	</video>
+																) : (
+																	<img src={m.url} alt="Comment media" className="w-full object-cover rounded-lg" />
+																)}
 															</div>
-														</div>
-													) : (
-														c.translatedContent && <p className="text-sm text-gray-500 mt-1">{c.translatedContent}</p>
-													)}
-													{c.media && c.media.length > 0 && (
-														<div className="mt-2 space-y-2">
-															{c.media.map((m, mediaIndex) => (
-																<div key={`${m.url}-${mediaIndex}`} className={m.type === 'video' ? 'aspect-video w-full bg-black rounded-lg overflow-hidden' : ''}>
-																	{m.type === 'video' ? (
-																		<video src={m.url} controls className="w-full h-full">
-																			<track kind="captions" />
-																		</video>
-																	) : (
-																		<img src={m.url} alt="Comment media" className="w-full object-cover rounded-lg" />
-																	)}
-																</div>
-															))}
-														</div>
-													)}
-												</div>
+														))}
+													</div>
+												)}
 											</div>
-										))}
-									</div>
+										</div>
+									))}
 								</div>
-							)}
-						</CardContent>
-					</Card>
-
-					{/* Video Settings */}
-					<renderFetcher.Form action="render" method="post">
-						<Card>
-							<CardHeader>
-								<CardTitle>Video Settings</CardTitle>
-								<CardDescription>Configure how your video will be rendered</CardDescription>
-							</CardHeader>
-							<CardContent>
-								<div className="max-w-2xl mx-auto space-y-6">
-									{/* Mode Selection */}
-									<div className="space-y-3">
-										<Label>Video Mode</Label>
-										<div className="grid grid-cols-3 gap-4">
-											<button
-												type="button"
-												className={`relative aspect-video cursor-pointer rounded-lg border-2 ${mode === 'landscape' ? 'border-blue-500 bg-blue-50' : 'border-gray-200'}`}
-												onClick={() => setMode('landscape')}
-												onKeyDown={(e) => e.key === 'Enter' && setMode('landscape')}
-												disabled={isRendering}
-											>
-												<input type="radio" name="mode" value="landscape" className="sr-only" checked={mode === 'landscape'} onChange={() => {}} />
-												<div className="absolute inset-0 flex items-center justify-center">
-													<span className="text-xs font-medium">16:9</span>
-												</div>
-											</button>
-											<button
-												type="button"
-												className={`relative aspect-[9/16] cursor-pointer rounded-lg border-2 ${mode === 'portrait' ? 'border-blue-500 bg-blue-50' : 'border-gray-200'}`}
-												onClick={() => setMode('portrait')}
-												onKeyDown={(e) => e.key === 'Enter' && setMode('portrait')}
-												disabled={isRendering}
-											>
-												<input type="radio" name="mode" value="portrait" className="sr-only" checked={mode === 'portrait'} onChange={() => {}} />
-												<div className="absolute inset-0 flex items-center justify-center">
-													<span className="text-xs font-medium">9:16</span>
-												</div>
-											</button>
-											<button
-												type="button"
-												className={`relative aspect-[4/5] cursor-pointer rounded-lg border-2 ${mode === 'vertical' ? 'border-blue-500 bg-blue-50' : 'border-gray-200'}`}
-												onClick={() => setMode('vertical')}
-												onKeyDown={(e) => e.key === 'Enter' && setMode('vertical')}
-												disabled={isRendering}
-											>
-												<input type="radio" name="mode" value="vertical" className="sr-only" checked={mode === 'vertical'} onChange={() => {}} />
-												<div className="absolute inset-0 flex items-center justify-center">
-													<span className="text-xs font-medium">4:5</span>
-												</div>
-											</button>
-										</div>
-									</div>
-
-									{/* Settings Grid */}
-									<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-										{/* FPS Setting */}
-										<div className="space-y-3">
-											<Label htmlFor="fps">FPS</Label>
-											<Input type="number" id="fps" name="fps" defaultValue={comment.fps} disabled={isRendering} />
-										</div>
-
-										{/* Cover Duration */}
-										<div className="space-y-3">
-											<Label htmlFor="coverDurationInSeconds">Cover Duration (seconds)</Label>
-											<Input type="number" id="coverDurationInSeconds" name="coverDurationInSeconds" defaultValue={comment.coverDurationInSeconds} disabled={isRendering} />
-										</div>
-
-										{/* Words Duration */}
-										<div className="space-y-3">
-											<Label htmlFor="secondsForEvery30Words">Seconds per 30 Words</Label>
-											<Input type="number" id="secondsForEvery30Words" name="secondsForEvery30Words" defaultValue={comment.secondsForEvery30Words} disabled={isRendering} />
-										</div>
-									</div>
-
-									<Button type="submit" className="w-full" disabled={isRendering}>
-										{isRendering ? 'Rendering...' : 'Start Rendering'}
-									</Button>
-
-									{renderFetcher.data?.error && <p className="text-sm text-red-500 mt-2">{renderFetcher.data.error}</p>}
-								</div>
-							</CardContent>
-						</Card>
-					</renderFetcher.Form>
-				</div>
+							</div>
+						)}
+					</CardContent>
+				</Card>
 			</div>
 		</div>
 	)

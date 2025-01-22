@@ -54,6 +54,7 @@ export default function TranslateCommentPage() {
 							<TableRow className="hover:bg-muted/50 border-b border-border/40">
 								<TableHead className="w-[100px] font-semibold">Id</TableHead>
 								<TableHead className="font-semibold">Source</TableHead>
+								<TableHead className="font-semibold">Title</TableHead>
 								<TableHead className="text-right font-semibold">Actions</TableHead>
 							</TableRow>
 						</TableHeader>
@@ -62,6 +63,7 @@ export default function TranslateCommentPage() {
 								<TableRow key={video.id} className="group hover:bg-muted/30 transition-colors duration-200">
 									<TableCell className="font-medium text-primary/80">{video.id}</TableCell>
 									<TableCell className="max-w-[400px] truncate font-medium">{video.source}</TableCell>
+									<TableCell className="max-w-[400px] truncate font-medium">{video.title}</TableCell>
 									<TableCell className="text-right">
 										<div className="flex justify-end gap-3">
 											<Link to={`/app/translate-video/${video.id}`}>

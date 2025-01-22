@@ -9,8 +9,8 @@ import { getAmountText } from '~/utils'
 import { tiktokDownloadInfo } from '~/utils/tiktok'
 import { createProxyYoutubeInnertube } from '~/utils/youtube'
 
-async function downloadTiktokInfo({ url, id }: { url: string; id: string }) {
-	const { status, result, message } = await tiktokDownloadInfo(url)
+async function downloadTiktokInfo({ link, id }: { link: string; id: string }) {
+	const { status, result, message } = await tiktokDownloadInfo(link)
 
 	if (status === 'error' || !result) {
 		throw new Error(`Tiktok download error: ${message}`)
@@ -79,7 +79,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 	switch (type) {
 		case 'tiktok':
-			await downloadTiktokInfo({ url: link, id })
+			await downloadTiktokInfo({ link, id })
 			break
 
 		case 'youtube':
