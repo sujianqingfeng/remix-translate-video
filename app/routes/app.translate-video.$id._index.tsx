@@ -195,6 +195,10 @@ export default function TranslateVideoPage() {
 									<Form method="post" action="create-translate-comment">
 										<Button variant="secondary">Start Translate Comment</Button>
 									</Form>
+
+									<Link to="batch-replace">
+										<Button variant="outline">Batch Replace</Button>
+									</Link>
 								</div>
 							</div>
 						</div>

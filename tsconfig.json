@@ -7,7 +7,8 @@
 		"**/.client/**/*.ts",
 		"**/.client/**/*.tsx",
 		"app/routes/app.translate-comment._indextsx",
-		"app/routes/app.dialogue._indextsx"
+		"app/routes/app.dialogue._indextsx",
+		"app/routes/app.translate-video.$id._indextsx"
 	],
 	"compilerOptions": {
 		"lib": ["DOM", "DOM.Iterable", "ES2022"],

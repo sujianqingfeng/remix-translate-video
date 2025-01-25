@@ -3,6 +3,7 @@ import type { LoaderFunctionArgs } from '@remix-run/node'
 import { Link, useFetcher, useLoaderData } from '@remix-run/react'
 import { Player } from '@remotion/player'
 import { format } from 'date-fns'
+import getVideoId from 'get-video-id'
 import { Copy, Trash } from 'lucide-react'
 import invariant from 'tiny-invariant'
 import BackPrevious from '~/components/BackPrevious'
@@ -50,11 +51,13 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 		comments: translateComment.comments ?? [],
 	})
 
-	return { dId: translateComment.downloadId, id, download, render, translateComment, playFile }
+	const videoId = getVideoId(download.link).id
+
+	return { dId: translateComment.downloadId, id, download, render, translateComment, playFile, videoId }
 }
 
 export default function TranslateCommentPage() {
-	const { dId, download, render, translateComment, playFile } = useLoaderData<typeof loader>()
+	const { dId, download, render, translateComment, playFile, videoId } = useLoaderData<typeof loader>()
 	const downloadInfoFetcher = useFetcher()
 	const downloadVideoFetcher = useFetcher()
 	const downloadCommentsFetcher = useFetcher()
@@ -67,8 +70,7 @@ export default function TranslateCommentPage() {
 	const deleteFetcher = useFetcher()
 
 	const currentTime = format(translateComment.commentPullAt ?? new Date(), 'yyyy-MM-dd HH:mm')
-	const desc = `原链接：${download.link}\n视频仅供娱乐，请勿过度解读\n评论权重受点赞等影响，在不同的时间，评论的内容可能不同，当前视频评论拉取时间${currentTime}\n虽然评论是真实的，但是内容不一定是真的，大家注意分辨。`
-
+	const desc = `视频ID：${videoId}\n视频仅供娱乐，请勿过度解读\n评论权重受点赞等影响，在不同的时间，评论的内容可能不同，当前视频评论拉取时间${currentTime}\n虽然评论是真实的，但是内容不一定是真的，大家注意分辨。`
 	const publishTitle = `外网真实评论：${translateComment.translatedTitle}`
 
 	const onCopy = async (text?: string) => {

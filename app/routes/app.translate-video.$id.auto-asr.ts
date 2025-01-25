@@ -37,18 +37,18 @@ export const action = async ({ params }: ActionFunctionArgs) => {
 			whisperCmd.stderr.on('data', (data: Buffer) => {
 				const output = data.toString()
 				stderr += output
-				console.log('Whisper:', output)
+				console.log(output)
 			})
 		}
 
 		if (whisperCmd.stdout) {
 			whisperCmd.stdout.on('data', (data: Buffer) => {
-				console.log('Whisper:', data.toString())
+				console.log(data.toString())
 			})
 		}
 
 		whisperCmd.on('error', (error: Error) => {
-			reject(new Error(`Whisper process error: ${error.message}`))
+			reject(new Error(`process error: ${error.message}`))
 		})
 
 		whisperCmd.on('close', (code: number | null) => {
