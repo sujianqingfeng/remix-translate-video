@@ -24,14 +24,8 @@ export const LandscapeGeneralComment: React.FC<GeneralCommentProps> = ({
 
 	// Convert seconds to frames
 	const coverDurationInFrames = coverDurationInSeconds * fps
-	const mainContentDurationInFrames = contentDurationInSeconds * fps
-	const commentDurationsInFrames = commentDurations.map((seconds) => seconds * fps)
-
-	// Calculate start frames for each comment
-	const commentsStartFrame = coverDurationInFrames
-	const getCommentStartFrame = (index: number) => {
-		return commentsStartFrame + commentDurationsInFrames.slice(0, index).reduce((acc, curr) => acc + curr, 0)
-	}
+	const totalCommentsDuration = commentDurations.reduce((acc, curr) => acc + curr, 0)
+	const totalCommentDurationInFrames = totalCommentsDuration * fps
 
 	return (
 		<AbsoluteFill style={{ backgroundColor: '#f3f4f6' }}>
@@ -61,18 +55,7 @@ export const LandscapeGeneralComment: React.FC<GeneralCommentProps> = ({
 
 							{/* Comments List */}
 							<div className="flex-1 relative">
-								{comments.map((comment, index) => {
-									const startFrame = getCommentStartFrame(index)
-									const duration = commentDurationsInFrames[index]
-
-									return (
-										<Sequence key={`${comment.author}-${comment.publishedTime}-${index}`} from={startFrame} durationInFrames={duration} layout="none">
-											<div className="absolute inset-0">
-												<Comments comments={[comment]} />
-											</div>
-										</Sequence>
-									)
-								})}
+								<Comments comments={comments} totalDurationInFrames={totalCommentDurationInFrames} />
 							</div>
 						</div>
 					</div>

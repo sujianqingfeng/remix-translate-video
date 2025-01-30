@@ -1,25 +1,25 @@
 import { ThumbsUp } from 'lucide-react'
-import { spring, useCurrentFrame, useVideoConfig } from 'remotion'
+import { useEffect, useRef, useState } from 'react'
+import { interpolate, spring, useCurrentFrame, useVideoConfig } from 'remotion'
 import type { Comment } from '~/types'
+import { formatLikes } from '~/utils/format'
 
 interface CommentsProps {
 	comments: Comment[]
+	totalDurationInFrames?: number
 }
 
-const formatLikes = (count: number) => {
-	if (count >= 10000) {
-		return `${(count / 10000).toFixed(1)}w`
-	}
-	if (count >= 1000) {
-		return `${(count / 1000).toFixed(1)}k`
-	}
-	return count.toString()
-}
-
-export const Comments: React.FC<CommentsProps> = ({ comments }) => {
+export const Comments: React.FC<CommentsProps> = ({ comments, totalDurationInFrames }) => {
 	const frame = useCurrentFrame()
 	const { fps } = useVideoConfig()
-	const comment = comments[0] // We now handle one comment at a time
+	const containerRef = useRef<HTMLDivElement>(null)
+	const [scrollHeight, setScrollHeight] = useState(0)
+
+	useEffect(() => {
+		if (containerRef.current) {
+			setScrollHeight(containerRef.current.scrollHeight)
+		}
+	}, [comments])
 
 	const opacity = spring({
 		frame,
@@ -29,51 +29,95 @@ export const Comments: React.FC<CommentsProps> = ({ comments }) => {
 		durationInFrames: 30,
 	})
 
-	const scale = spring({
-		frame,
-		fps,
-		from: 0.8,
-		to: 1,
-		durationInFrames: 30,
-	})
+	// 计算滚动位置
+	const calculateScrollPosition = () => {
+		const visibleHeight = 700 // 可视区域高度
+		const scrollDistance = Math.max(0, scrollHeight - visibleHeight)
 
-	const likes = typeof comment.likes === 'string' ? Number.parseInt(comment.likes, 10) : comment.likes
+		// 使用 interpolate 计算滚动位置
+		const duration = totalDurationInFrames || fps * 15 // 如果没有提供总时长，默认使用15秒
+		const scrollProgress = interpolate(
+			frame,
+			[fps * 0.5, duration - fps * 0.5], // 从0.5秒开始，在结束前0.5秒完成
+			[0, scrollDistance],
+			{
+				extrapolateLeft: 'clamp',
+				extrapolateRight: 'clamp',
+			},
+		)
+
+		return scrollProgress
+	}
 
 	return (
-		<div className="h-full flex items-center">
+		<div className="h-full w-full overflow-hidden">
 			<div
-				className="w-full px-8"
+				className="w-full h-full"
 				style={{
 					opacity,
-					transform: `scale(${scale})`,
 				}}
 			>
-				<div className="bg-gray-50 rounded-2xl p-8">
-					<div className="flex items-start gap-5">
-						{comment.authorThumbnail && <img src={comment.authorThumbnail} alt={comment.author} className="w-16 h-16 rounded-full object-cover ring-2 ring-white" />}
-						<div className="flex-1 min-w-0">
-							<div className="flex items-center gap-2 mb-3">
-								<h3 className="text-2xl font-semibold text-gray-900 truncate">{comment.author}</h3>
-								<span className="text-base text-gray-500">•</span>
-								<span className="text-base text-gray-500">{new Date(comment.publishedTime).toLocaleDateString()}</span>
-							</div>
-							<div className="space-y-4">
-								<div>
-									<h4 className="text-sm font-medium text-blue-600 tracking-wide uppercase mb-2">Original</h4>
-									<p className="text-xl text-gray-600 leading-relaxed">{comment.content}</p>
-								</div>
-								{comment.translatedContent && (
-									<div>
-										<h4 className="text-sm font-medium text-emerald-600 tracking-wide uppercase mb-2">Translation</h4>
-										<p className="text-[2.5rem] text-gray-900 leading-normal font-medium">{comment.translatedContent}</p>
+				<div className="h-full px-6 py-4 overflow-hidden relative">
+					<div
+						ref={containerRef}
+						className="comments-container space-y-4 absolute inset-x-0"
+						style={{
+							transform: `translateY(-${calculateScrollPosition()}px)`,
+						}}
+					>
+						{comments.map((comment, index) => {
+							const likes = typeof comment.likes === 'string' ? Number.parseInt(comment.likes, 10) : comment.likes
+
+							return (
+								<div key={`${comment.author}-${index}`} className="bg-gray-50/80 rounded-xl p-6 flex flex-col gap-4">
+									{/* Author Info */}
+									<div className="flex items-center gap-4">
+										{comment.authorThumbnail && <img src={comment.authorThumbnail} alt={comment.author} className="w-10 h-10 rounded-full object-cover ring-1 ring-gray-200" />}
+										<div className="min-w-0">
+											<h3 className="text-lg font-medium text-gray-900 truncate">{comment.author}</h3>
+											<div className="flex items-center gap-2 mt-1">
+												<ThumbsUp className="w-4 h-4 text-gray-600" />
+												<span className="text-base text-gray-600">{formatLikes(likes)}</span>
+											</div>
+										</div>
 									</div>
-								)}
-							</div>
-							<div className="mt-5 flex items-center gap-2">
-								<ThumbsUp className="w-7 h-7 text-gray-700" />
-								<span className="text-xl font-medium text-gray-700">{formatLikes(likes)}</span>
-							</div>
-						</div>
+
+									{/* Text Content */}
+									<div className="flex flex-col gap-3">
+										<div>
+											<h4 className="text-xs font-medium text-blue-600 tracking-wide uppercase mb-1.5">Original</h4>
+											<p className="text-base text-gray-600 leading-relaxed">{comment.content}</p>
+										</div>
+										{comment.translatedContent && (
+											<div>
+												<h4 className="text-xs font-medium text-emerald-600 tracking-wide uppercase mb-1.5">Translation</h4>
+												<p className="text-xl text-gray-900 leading-normal font-medium">{comment.translatedContent}</p>
+											</div>
+										)}
+									</div>
+
+									{/* Media Content */}
+									{comment.media && comment.media.length > 0 && (
+										<div className="flex gap-3 overflow-x-auto">
+											{comment.media.map((m, mediaIndex) => (
+												<div
+													key={`${m.url}-${mediaIndex}`}
+													className={`${m.type === 'video' ? 'w-[240px] aspect-video' : 'w-[240px] aspect-[4/3]'} flex-shrink-0 bg-black rounded-lg overflow-hidden`}
+												>
+													{m.type === 'video' ? (
+														<video src={m.url} controls={false} autoPlay loop muted className="w-full h-full object-cover">
+															<track kind="captions" />
+														</video>
+													) : (
+														<img src={m.url} alt="Comment media" className="w-full h-full object-cover" />
+													)}
+												</div>
+											))}
+										</div>
+									)}
+								</div>
+							)
+						})}
 					</div>
 				</div>
 			</div>

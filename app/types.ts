@@ -70,17 +70,22 @@ export type LittleDifficultWord = {
 	translation: string
 }
 
-export type Comment = {
-	content: string
+export interface Comment {
+	id: string
 	author: string
+	authorThumbnail?: string
+	content: string
 	translatedContent?: string
-	likes: string
-	authorThumbnail: string
-	publishedTime: string
+	likes: number | string
 	media?: Array<{
-		type: string
+		type: 'image' | 'video'
 		url: string
 	}>
+}
+
+export interface CommentData {
+	comments: Comment[]
+	nextPageToken?: string
 }
 
 export type CompositionInfo = {
