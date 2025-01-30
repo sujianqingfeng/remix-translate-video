@@ -70,6 +70,12 @@ export type LittleDifficultWord = {
 	translation: string
 }
 
+export interface CommentMedia {
+	type: 'video' | 'photo'
+	url: string
+	localUrl?: string
+}
+
 export interface Comment {
 	id: string
 	author: string
@@ -77,10 +83,7 @@ export interface Comment {
 	content: string
 	translatedContent?: string
 	likes: number | string
-	media?: Array<{
-		type: 'image' | 'video'
-		url: string
-	}>
+	media?: CommentMedia[]
 }
 
 export interface CommentData {

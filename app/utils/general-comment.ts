@@ -146,15 +146,54 @@ export const ensurePublicAssets = async (id: string, typeInfo: GeneralCommentTyp
 	// Handle media in comments
 	for (const [commentIndex, comment] of newComments.entries()) {
 		if (comment.media) {
-			for (const [mediaIndex, media] of comment.media.entries()) {
-				if (!media.url.startsWith('http')) {
-					const extension = path.extname(media.url)
-					const fileName = `comment-${commentIndex}-media-${mediaIndex}${extension}`
-					const publicPath = getPublicAssetPath(id, fileName)
-					const publicFilePath = await ensurePublicDir(publicPath)
-					await copyFile(media.url, publicFilePath)
-					media.localUrl = publicPath
-				}
+			const newMedia = await Promise.all(
+				comment.media.map(async (media, mediaIndex) => {
+					const newMedia = { ...media }
+
+					// 处理远程资源
+					if (media.url.startsWith('http')) {
+						try {
+							const extension = path.extname(media.url) || (media.type === 'video' ? '.mp4' : '.png')
+							const fileName = `comment-${commentIndex}-media-${mediaIndex}${extension}`
+							const publicPath = getPublicAssetPath(id, fileName)
+							const publicFilePath = await ensurePublicDir(publicPath)
+
+							// 下载远程资源
+							await downloadFile(media.url, publicFilePath, { proxy: PROXY })
+							newMedia.localUrl = publicPath
+						} catch (error) {
+							console.error('Failed to download media:', error)
+							return media
+						}
+					} else {
+						// 处理本地资源
+						const extension = path.extname(media.url)
+						const fileName = `comment-${commentIndex}-media-${mediaIndex}${extension}`
+						const publicPath = getPublicAssetPath(id, fileName)
+						const publicFilePath = await ensurePublicDir(publicPath)
+						await copyFile(media.url, publicFilePath)
+						newMedia.localUrl = publicPath
+					}
+
+					return newMedia
+				}),
+			)
+			comment.media = newMedia
+		}
+
+		// 处理评论作者头像
+		if (comment.authorThumbnail && comment.authorThumbnail.startsWith('http')) {
+			try {
+				const extension = path.extname(comment.authorThumbnail) || '.png'
+				const fileName = `comment-${commentIndex}-author${extension}`
+				const publicPath = getPublicAssetPath(id, fileName)
+				const publicFilePath = await ensurePublicDir(publicPath)
+
+				// 下载远程头像
+				await downloadFile(comment.authorThumbnail, publicFilePath, { proxy: PROXY })
+				comment.authorThumbnail = publicPath
+			} catch (error) {
+				console.error('Failed to download author thumbnail:', error)
 			}
 		}
 	}

@@ -26,25 +26,49 @@ export const Cover: React.FC<CoverProps> = ({ title, author, images }) => {
 		durationInFrames: 30,
 	})
 
+	const backgroundScale = spring({
+		frame,
+		fps,
+		from: 1.2,
+		to: 1,
+		durationInFrames: 60,
+		config: {
+			damping: 100,
+		},
+	})
+
 	return (
-		<AbsoluteFill className="bg-gray-100 flex items-center justify-center p-20">
-			<div className="text-center space-y-8">
+		<AbsoluteFill className="bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-20 relative overflow-hidden">
+			{/* Background Pattern */}
+			<div className="absolute inset-0 opacity-5">
+				<div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,#000_1px,transparent_0)] bg-[length:40px_40px]" />
+			</div>
+
+			{/* Content Container */}
+			<div
+				className="relative z-10 max-w-4xl mx-auto text-center space-y-12 bg-white/80 backdrop-blur-sm p-16 rounded-3xl shadow-2xl"
+				style={{
+					transform: `scale(${backgroundScale})`,
+				}}
+			>
 				<h1
-					className="text-6xl font-bold text-gray-900"
+					className="text-7xl font-bold bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent"
 					style={{
 						opacity: titleOpacity,
 					}}
 				>
 					{title || 'Untitled'}
 				</h1>
-				<p
-					className="text-2xl text-gray-600"
+				<div
+					className="flex items-center justify-center gap-4"
 					style={{
 						opacity: authorOpacity,
 					}}
 				>
-					By {author}
-				</p>
+					<div className="h-px w-12 bg-gray-300" />
+					<p className="text-2xl text-gray-600 font-medium tracking-wide">By {author}</p>
+					<div className="h-px w-12 bg-gray-300" />
+				</div>
 			</div>
 		</AbsoluteFill>
 	)

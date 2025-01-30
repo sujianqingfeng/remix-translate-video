@@ -229,6 +229,10 @@ export default function AppGeneralCommentRender() {
 										commentDurations: durations.commentDurations,
 										audioPath: comment.audioPath,
 										publicAudioPath: comment.publicAudioPath,
+										createdAt: new Date(comment.createdAt * 1000).toISOString(),
+										likes: comment.likes || 0,
+										views: comment.views || 0,
+										commentCount: (comment.comments || []).length,
 									}}
 								/>
 							</div>

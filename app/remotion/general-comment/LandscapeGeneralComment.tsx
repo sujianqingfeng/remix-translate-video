@@ -18,6 +18,10 @@ export const LandscapeGeneralComment: React.FC<GeneralCommentProps> = ({
 	commentDurations,
 	audioPath,
 	publicAudioPath,
+	createdAt,
+	likes,
+	views,
+	commentCount,
 }) => {
 	const frame = useCurrentFrame()
 	const { width, height } = useVideoConfig()
@@ -28,7 +32,12 @@ export const LandscapeGeneralComment: React.FC<GeneralCommentProps> = ({
 	const totalCommentDurationInFrames = totalCommentsDuration * fps
 
 	return (
-		<AbsoluteFill style={{ backgroundColor: '#f3f4f6' }}>
+		<AbsoluteFill className="bg-gradient-to-br from-gray-50 to-gray-100">
+			{/* Background Pattern */}
+			<div className="absolute inset-0 opacity-[0.02]">
+				<div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,#000_1px,transparent_0)] bg-[length:40px_40px]" />
+			</div>
+
 			{/* Background Audio */}
 			{publicAudioPath && <Audio publicAudioPath={publicAudioPath} />}
 
@@ -40,17 +49,20 @@ export const LandscapeGeneralComment: React.FC<GeneralCommentProps> = ({
 			{/* Main Content Container */}
 			<Sequence from={coverDurationInFrames}>
 				<AbsoluteFill className="p-12">
-					<div className="bg-white rounded-3xl shadow-xl h-full flex overflow-hidden">
+					<div className="bg-white rounded-3xl shadow-xl h-full flex overflow-hidden ring-1 ring-black/[0.02]">
 						{/* Left Column: Content */}
-						<div className="w-[55%] p-16 border-r border-gray-100 bg-gradient-to-br from-white to-gray-50 overflow-hidden">
-							<Content content={content} contentZh={contentZh} images={images} fps={fps} />
+						<div className="w-[55%] border-r border-gray-100 bg-gradient-to-br from-white to-gray-50/50 overflow-hidden">
+							<Content content={content} contentZh={contentZh} images={images} fps={fps} createdAt={createdAt} likes={likes} views={views} commentCount={commentCount} />
 						</div>
 
 						{/* Right Column: Comments */}
 						<div className="w-[45%] flex flex-col bg-white">
 							{/* Comments Header */}
-							<div className="py-8 px-12 border-b border-gray-100">
-								<h2 className="text-2xl font-bold text-gray-900">Comments</h2>
+							<div className="py-8 px-12 border-b border-gray-100 bg-white/80 backdrop-blur-sm">
+								<div className="flex items-center gap-3">
+									<div className="h-6 w-1 bg-gradient-to-b from-gray-900 to-gray-700 rounded-full" />
+									<h2 className="text-2xl font-bold text-gray-900">Comments</h2>
+								</div>
 							</div>
 
 							{/* Comments List */}

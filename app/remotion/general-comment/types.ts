@@ -13,4 +13,8 @@ export interface GeneralCommentProps {
 	commentDurations: number[]
 	audioPath?: string
 	publicAudioPath?: string
+	createdAt?: string
+	likes?: number
+	views?: number
+	commentCount?: number
 }

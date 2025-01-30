@@ -81,6 +81,9 @@ export const generalComments = sqliteTable(
 		createdAt: integer('created_at', { mode: 'timestamp_ms' })
 			.notNull()
 			.$defaultFn(() => new Date()),
+
+		likes: integer('likes').default(0),
+		views: integer('views').default(0),
 	},
 	(t) => [index('general_comments_id_idx').on(t.id)],
 )
