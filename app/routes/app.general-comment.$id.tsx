@@ -54,6 +54,11 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 		publicAudioPath = getPublicAssetPath(id, fileName)
 		const publicFilePath = await ensurePublicDir(publicAudioPath)
 		await copyFile(comment.audioPath, publicFilePath)
+		console.log('Audio paths:', {
+			audioPath: comment.audioPath,
+			publicAudioPath,
+			publicFilePath,
+		})
 	}
 
 	// 更新数据库中的资源路径

@@ -1,7 +1,7 @@
 import { staticFile } from 'remotion'
 import type { GeneralCommentProps } from './types'
 
-export const Content: React.FC<Pick<GeneralCommentProps, 'content' | 'contentZh' | 'images'>> = ({ content, contentZh, images }) => {
+export const Content: React.FC<Pick<GeneralCommentProps, 'content' | 'contentZh' | 'images' | 'fps'>> = ({ content, contentZh, images, fps }) => {
 	return (
 		<div className="space-y-8">
 			{/* Original Content */}

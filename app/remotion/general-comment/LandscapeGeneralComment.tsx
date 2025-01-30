@@ -36,7 +36,7 @@ export const LandscapeGeneralComment: React.FC<GeneralCommentProps> = ({
 	return (
 		<AbsoluteFill style={{ backgroundColor: '#f3f4f6' }}>
 			{/* Background Audio */}
-			{publicAudioPath && <Audio audioPath={staticFile(publicAudioPath)} />}
+			{publicAudioPath && <Audio publicAudioPath={publicAudioPath} />}
 
 			{/* Cover */}
 			<Sequence durationInFrames={coverDurationInFrames}>
