@@ -8,5 +8,10 @@ interface AudioProps {
 export const Audio: React.FC<AudioProps> = ({ publicAudioPath }) => {
 	if (!publicAudioPath) return null
 
-	return <RemotionAudio src={staticFile(publicAudioPath)} />
+	// 移除开头的斜杠和 public/，因为 staticFile 会自动从 public 目录加载
+	const normalizedPath = publicAudioPath
+		.replace(/^\//, '') // 移除开头的斜杠
+		.replace(/^public\//, '') // 移除 public/ 前缀
+
+	return <RemotionAudio src={staticFile(normalizedPath)} />
 }

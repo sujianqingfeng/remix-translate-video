@@ -144,9 +144,11 @@ export type GeneralCommentTypeTextInfo = {
 	content?: string
 	contentZh?: string
 	images?: string[]
+	localImages?: string[]
 	video?: {
 		type: string
 		url: string
+		localUrl?: string
 	}
 }
 

@@ -3,9 +3,10 @@ import { AbsoluteFill, Img, interpolate, spring, useCurrentFrame, useVideoConfig
 interface CoverProps {
 	title?: string
 	author: string
+	images?: string[]
 }
 
-export const Cover: React.FC<CoverProps> = ({ title, author }) => {
+export const Cover: React.FC<CoverProps> = ({ title, author, images }) => {
 	const frame = useCurrentFrame()
 	const { fps } = useVideoConfig()
 

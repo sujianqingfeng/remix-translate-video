@@ -79,12 +79,15 @@ export const prepareVideoProps = (comment: any, durations: ReturnType<typeof cal
 		content: typeInfo.content || '',
 		contentZh: typeInfo.contentZh || '',
 		author: comment.author,
-		images: typeInfo.images || [],
+		// 优先使用本地路径
+		images: typeInfo.localImages || typeInfo.images || [],
 		comments: comment.comments || [],
 		fps: durations.fps,
 		coverDurationInSeconds: durations.coverDurationInSeconds,
 		contentDurationInSeconds: durations.contentDurationInSeconds,
 		commentDurations: durations.commentDurations,
+		audioPath: comment.audioPath,
+		publicAudioPath: comment.publicAudioPath,
 	}
 }
 
@@ -98,21 +101,34 @@ export const ensurePublicAssets = async (typeInfo: GeneralCommentTypeTextInfo, c
 
 	// Handle images in typeInfo
 	if (newTypeInfo.images) {
-		const newImages = await Promise.all(
+		const newLocalImages = await Promise.all(
 			newTypeInfo.images.map(async (image) => {
+				// 处理远程图片
 				if (image.startsWith('http')) {
-					return image
+					try {
+						const fileName = `${Date.now()}-${path.basename(image)}`
+						const publicPath = getPublicAssetPath('downloads', fileName)
+						const publicFilePath = await ensurePublicDir(publicPath)
+
+						// 下载远程图片
+						await downloadFile(image, publicFilePath, { proxy: PROXY })
+						return publicPath
+					} catch (error) {
+						console.error('Failed to download image:', error)
+						return null
+					}
 				}
 
-				// Copy local file to public directory
+				// 处理本地图片
 				const fileName = path.basename(image)
 				const publicPath = getPublicAssetPath(path.dirname(image), fileName)
 				const publicFilePath = await ensurePublicDir(publicPath)
 				await copyFile(image, publicFilePath)
-				return `/${publicPath}`
+				return publicPath
 			}),
 		)
-		newTypeInfo.images = newImages
+		// 保留原始图片路径，同时添加本地路径
+		newTypeInfo.localImages = newLocalImages.filter(Boolean) as string[]
 	}
 
 	// Handle video in typeInfo
@@ -121,7 +137,7 @@ export const ensurePublicAssets = async (typeInfo: GeneralCommentTypeTextInfo, c
 		const publicPath = getPublicAssetPath(path.dirname(newTypeInfo.video.url), fileName)
 		const publicFilePath = await ensurePublicDir(publicPath)
 		await copyFile(newTypeInfo.video.url, publicFilePath)
-		newTypeInfo.video.url = `/${publicPath}`
+		newTypeInfo.video.localUrl = publicPath
 	}
 
 	// Handle media in comments
@@ -133,7 +149,7 @@ export const ensurePublicAssets = async (typeInfo: GeneralCommentTypeTextInfo, c
 					const publicPath = getPublicAssetPath(path.dirname(media.url), fileName)
 					const publicFilePath = await ensurePublicDir(publicPath)
 					await copyFile(media.url, publicFilePath)
-					media.url = `/${publicPath}`
+					media.localUrl = publicPath
 				}
 			}
 		}

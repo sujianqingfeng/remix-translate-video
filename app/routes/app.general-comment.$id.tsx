@@ -45,7 +45,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 	}
 
 	const typeInfo = comment.typeInfo as GeneralCommentTypeTextInfo
-	const { typeInfo: newTypeInfo, comments: newComments } = await ensurePublicAssets(typeInfo, comment.comments)
+	const { typeInfo: newTypeInfo, comments: newComments } = await ensurePublicAssets(typeInfo, comment.comments || [])
 
 	// 如果有音频文件，复制到 public 目录
 	let publicAudioPath: string | undefined
@@ -67,7 +67,11 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 		.where(eq(schema.generalComments.id, id))
 
 	// 计算视频配置和时长
-	const durations = calculateDurations(comment)
+	const durations = calculateDurations({
+		...comment,
+		comments: comment.comments || [],
+		typeInfo: newTypeInfo,
+	})
 	const videoConfig = getVideoConfig('landscape')
 
 	return {
@@ -387,96 +391,103 @@ export default function AppGeneralCommentRender() {
 									</Form>
 								</div>
 								<div className="space-y-4 max-h-[400px] overflow-y-auto">
-									{(comment.comments as Comment[]).map((c, i) => (
-										<div key={`${c.author}-${i}`} className="flex gap-3">
-											{c.authorThumbnail && <img src={c.authorThumbnail} alt={c.author} className="w-6 h-6 rounded-full shrink-0" />}
-											<div className="flex-1">
-												<div className="flex items-center justify-between gap-2">
-													<div className="flex items-center gap-2">
-														<span className="font-medium text-sm text-gray-900">{c.author}</span>
-														<span className="text-xs text-gray-500">•</span>
-														<span className="text-xs text-gray-500">👍 {c.likes}</span>
-													</div>
-													<div className="flex items-center gap-2">
-														<Button
-															type="button"
-															variant="outline"
-															size="sm"
-															onClick={() => handleStartEditTranslation(i)}
-															disabled={deleteCommentFetcher.state !== 'idle' || updateTranslationFetcher.state !== 'idle'}
-														>
-															Edit Translation
-														</Button>
-														<Button
-															type="button"
-															variant="destructive"
-															size="sm"
-															onClick={() => handleDeleteComment(i)}
-															disabled={deleteCommentFetcher.state !== 'idle' || updateTranslationFetcher.state !== 'idle'}
-														>
-															Delete
-														</Button>
-													</div>
-												</div>
-												<p className="text-sm text-gray-700 mt-1">{c.content}</p>
-												{editingCommentIndex === i ? (
-													<div className="mt-1 space-y-2">
-														<Textarea
-															defaultValue={c.translatedContent}
-															className="text-sm"
-															onKeyDown={(e) => {
-																if (e.key === 'Escape') {
-																	handleCancelEditTranslation()
-																}
-															}}
-															ref={(textarea) => {
-																if (textarea) {
-																	textarea.focus()
-																}
-															}}
-														/>
-														<div className="flex justify-end gap-2">
-															<Button type="button" variant="outline" size="sm" onClick={handleCancelEditTranslation}>
-																Cancel
+									{(comment.comments || []).map((c, i) => {
+										// 确保 likes 是数字类型
+										const commentWithNumberLikes = {
+											...c,
+											likes: typeof c.likes === 'string' ? Number.parseInt(c.likes, 10) : c.likes,
+										}
+										return (
+											<div key={`${c.author}-${i}`} className="flex gap-3">
+												{c.authorThumbnail && <img src={c.authorThumbnail} alt={c.author} className="w-6 h-6 rounded-full shrink-0" />}
+												<div className="flex-1">
+													<div className="flex items-center justify-between gap-2">
+														<div className="flex items-center gap-2">
+															<span className="font-medium text-sm text-gray-900">{c.author}</span>
+															<span className="text-xs text-gray-500">•</span>
+															<span className="text-xs text-gray-500">👍 {commentWithNumberLikes.likes}</span>
+														</div>
+														<div className="flex items-center gap-2">
+															<Button
+																type="button"
+																variant="outline"
+																size="sm"
+																onClick={() => handleStartEditTranslation(i)}
+																disabled={deleteCommentFetcher.state !== 'idle' || updateTranslationFetcher.state !== 'idle'}
+															>
+																Edit Translation
 															</Button>
 															<Button
 																type="button"
+																variant="destructive"
 																size="sm"
-																onClick={(e) => {
-																	const textarea = e.currentTarget.parentElement?.previousElementSibling as HTMLTextAreaElement
-																	if (textarea) {
-																		handleUpdateTranslation(i, textarea.value)
-																	}
-																}}
+																onClick={() => handleDeleteComment(i)}
+																disabled={deleteCommentFetcher.state !== 'idle' || updateTranslationFetcher.state !== 'idle'}
 															>
-																Save
+																Delete
 															</Button>
 														</div>
 													</div>
-												) : (
-													c.translatedContent && <p className="text-sm text-gray-500 mt-1">{c.translatedContent}</p>
-												)}
-												{c.media && c.media.length > 0 && (
-													<div className="mt-2 space-y-2">
-														{c.media.map((m, mediaIndex) => (
-															<div
-																key={`${m.url}-${mediaIndex}`}
-																className={`${m.type === 'video' ? 'aspect-video' : 'aspect-square'} max-w-[240px] bg-black rounded-lg overflow-hidden`}
-															>
-																{m.type === 'video' ? (
-																	<video src={m.url} controls className="w-full h-full">
-																		<track kind="captions" />
-																	</video>
-																) : (
-																	<img src={m.url} alt="Comment media" className="w-full h-full object-cover" />
-																)}
+													<p className="text-sm text-gray-700 mt-1">{c.content}</p>
+													{editingCommentIndex === i ? (
+														<div className="mt-1 space-y-2">
+															<Textarea
+																defaultValue={c.translatedContent}
+																className="text-sm"
+																onKeyDown={(e) => {
+																	if (e.key === 'Escape') {
+																		handleCancelEditTranslation()
+																	}
+																}}
+																ref={(textarea) => {
+																	if (textarea) {
+																		textarea.focus()
+																	}
+																}}
+															/>
+															<div className="flex justify-end gap-2">
+																<Button type="button" variant="outline" size="sm" onClick={handleCancelEditTranslation}>
+																	Cancel
+																</Button>
+																<Button
+																	type="button"
+																	size="sm"
+																	onClick={(e) => {
+																		const textarea = e.currentTarget.parentElement?.previousElementSibling as HTMLTextAreaElement
+																		if (textarea) {
+																			handleUpdateTranslation(i, textarea.value)
+																		}
+																	}}
+																>
+																	Save
+																</Button>
 															</div>
-														))}
-													</div>
-												)}
+														</div>
+													) : (
+														c.translatedContent && <p className="text-sm text-gray-500 mt-1">{c.translatedContent}</p>
+													)}
+													{c.media && c.media.length > 0 && (
+														<div className="mt-2 space-y-2">
+															{c.media.map((m, mediaIndex) => (
+																<div
+																	key={`${m.url}-${mediaIndex}`}
+																	className={`${m.type === 'video' ? 'aspect-video' : 'aspect-square'} max-w-[240px] bg-black rounded-lg overflow-hidden`}
+																>
+																	{m.type === 'video' ? (
+																		<video src={m.url} controls className="w-full h-full">
+																			<track kind="captions" />
+																		</video>
+																	) : (
+																		<img src={m.url} alt="Comment media" className="w-full h-full object-cover" />
+																	)}
+																</div>
+															))}
+														</div>
+													)}
+												</div>
 											</div>
-										</div>
-									))}
+										)
+									})}
 								</div>
 							</div>
 						)}

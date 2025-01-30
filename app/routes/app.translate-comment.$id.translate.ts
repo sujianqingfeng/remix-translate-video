@@ -20,9 +20,11 @@ async function translateSingleComment(translateComment: typeof schema.translateC
 	const indexNumber = Number(index)
 
 	const comment = translateComment.comments?.[indexNumber]
+	console.log('🚀 ~ translateSingleComment ~ comment:', comment)
 	invariant(comment, 'comment is not correct')
 
-	const result = await translate(comment.content)
+	const result = await gptTranslate(comment.content)
+	console.log('🚀 ~ translateSingleComment ~ result:', result)
 	comment.translatedContent = result
 
 	await db
@@ -38,7 +40,7 @@ async function translateDefaultAction(translateComment: typeof schema.translateC
 
 	if (translateComment.comments?.length) {
 		await asyncPool(30, translateComment.comments, async (item) => {
-			const result = await translate(item.content)
+			const result = await gptTranslate(item.content)
 			item.translatedContent = result
 			return item
 		})
