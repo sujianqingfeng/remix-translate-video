@@ -11,6 +11,7 @@ import { Button } from '~/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select'
 import { Textarea } from '~/components/ui/textarea'
 import { db, schema } from '~/lib/drizzle'
 import { LandscapeGeneralComment } from '~/remotion/general-comment/LandscapeGeneralComment'
@@ -109,11 +110,13 @@ export default function AppGeneralCommentRender() {
 	const [mode, setMode] = useState<VideoMode>('landscape')
 	const [editingCommentIndex, setEditingCommentIndex] = useState<number | null>(null)
 	const [isEditingTitle, setIsEditingTitle] = useState(false)
+	const [isEditingContentTranslation, setIsEditingContentTranslation] = useState(false)
 	const renderFetcher = useFetcher<{ error?: string }>()
 	const deleteCommentFetcher = useFetcher()
 	const updateTranslationFetcher = useFetcher()
 	const generateTitleFetcher = useFetcher()
 	const updateTitleFetcher = useFetcher()
+	const updateContentTranslationFetcher = useFetcher()
 
 	const handleDeleteComment = (index: number) => {
 		const formData = new FormData()
@@ -142,6 +145,13 @@ export default function AppGeneralCommentRender() {
 		formData.append('title', title)
 		updateTitleFetcher.submit(formData, { method: 'post', action: 'update-title' })
 		setIsEditingTitle(false)
+	}
+
+	const handleUpdateContentTranslation = (translatedContent: string) => {
+		const formData = new FormData()
+		formData.append('translatedContent', translatedContent)
+		updateContentTranslationFetcher.submit(formData, { method: 'post', action: 'update-content-translation' })
+		setIsEditingContentTranslation(false)
 	}
 
 	const isRendering = renderFetcher.state !== 'idle'
@@ -400,8 +410,17 @@ export default function AppGeneralCommentRender() {
 							<div className="bg-gray-50 rounded-lg p-4">
 								<p className="text-sm text-gray-900 whitespace-pre-wrap">{typeInfo.content}</p>
 							</div>
-							<div className="flex justify-end">
-								<Form action="translate" method="post">
+							<div className="flex justify-end gap-2">
+								<Form action="translate" method="post" className="flex gap-2">
+									<Select name="model" defaultValue="deepseek">
+										<SelectTrigger className="w-[120px]">
+											<SelectValue placeholder="Select model" />
+										</SelectTrigger>
+										<SelectContent>
+											<SelectItem value="deepseek">DeepSeek</SelectItem>
+											<SelectItem value="openai">OpenAI</SelectItem>
+										</SelectContent>
+									</Select>
 									<Button type="submit" variant="outline" size="sm" className="gap-2" disabled={!typeInfo.content || !!typeInfo.contentZh}>
 										<Languages className="h-4 w-4" />
 										Translate
@@ -410,7 +429,48 @@ export default function AppGeneralCommentRender() {
 							</div>
 							{typeInfo.contentZh && (
 								<div className="bg-gray-50 rounded-lg p-4">
-									<p className="text-sm text-gray-600 whitespace-pre-wrap">{typeInfo.contentZh}</p>
+									{isEditingContentTranslation ? (
+										<div className="space-y-2">
+											<Textarea
+												defaultValue={typeInfo.contentZh}
+												className="text-sm"
+												onKeyDown={(e) => {
+													if (e.key === 'Escape') {
+														setIsEditingContentTranslation(false)
+													}
+												}}
+												ref={(textarea) => {
+													if (textarea) {
+														textarea.focus()
+													}
+												}}
+											/>
+											<div className="flex justify-end gap-2">
+												<Button type="button" variant="outline" size="sm" onClick={() => setIsEditingContentTranslation(false)}>
+													Cancel
+												</Button>
+												<Button
+													type="button"
+													size="sm"
+													onClick={(e) => {
+														const textarea = e.currentTarget.parentElement?.previousElementSibling as HTMLTextAreaElement
+														if (textarea) {
+															handleUpdateContentTranslation(textarea.value)
+														}
+													}}
+												>
+													Save
+												</Button>
+											</div>
+										</div>
+									) : (
+										<div className="flex items-start justify-between gap-2">
+											<p className="text-sm text-gray-600 whitespace-pre-wrap">{typeInfo.contentZh}</p>
+											<Button type="button" variant="ghost" size="sm" className="h-6 px-2 shrink-0" onClick={() => setIsEditingContentTranslation(true)}>
+												<Edit3 className="h-3 w-3" />
+											</Button>
+										</div>
+									)}
 								</div>
 							)}
 
@@ -436,14 +496,23 @@ export default function AppGeneralCommentRender() {
 							<div className="border-t pt-4">
 								<div className="flex items-center justify-between mb-4">
 									<h4 className="text-sm font-medium text-gray-900">Comments ({comment.comments.length})</h4>
-									<Form action="translate-comments" method="post">
+									<Form action="translate-comments" method="post" className="flex gap-2">
+										<Select name="model" defaultValue="deepseek">
+											<SelectTrigger className="w-[120px]">
+												<SelectValue placeholder="Select model" />
+											</SelectTrigger>
+											<SelectContent>
+												<SelectItem value="deepseek">DeepSeek</SelectItem>
+												<SelectItem value="openai">OpenAI</SelectItem>
+											</SelectContent>
+										</Select>
 										<Button type="submit" variant="outline" size="sm" className="gap-2" disabled={comment.comments.every((c) => !!c.translatedContent)}>
 											<Languages className="h-4 w-4" />
 											Translate Comments
 										</Button>
 									</Form>
 								</div>
-								<div className="space-y-4 max-h-[400px] overflow-y-auto">
+								<div className="space-y-4">
 									{(comment.comments || []).map((c, i) => {
 										// 确保 likes 是数字类型
 										const commentWithNumberLikes = {

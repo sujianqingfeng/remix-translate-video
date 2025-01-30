@@ -11,7 +11,22 @@ const deepSeek = createDeepSeek({ apiKey })
 
 const translatePrompt = '你是一个精通多语言的翻译大师，将文本翻译成中文。如果是中文，就返回原文。保留原文特定的术语(如有)，不要去解释内容和名词。'
 
-export function translate(text: string) {
+export type TranslationModel = 'deepseek' | 'openai'
+
+export async function translate(text: string, model: TranslationModel = 'deepseek') {
+	if (model === 'openai') {
+		const apiKey = process.env.OPEN_AI_API_KEY
+		if (!apiKey) {
+			throw new Error('OPEN_AI_API_KEY is not set')
+		}
+		const chatGPT = createChatGPT({ apiKey })
+		return chatGPT.generateText({
+			system: translatePrompt,
+			prompt: text,
+			maxTokens: 500,
+		})
+	}
+
 	return deepSeek.generateText({
 		system: translatePrompt,
 		prompt: text,

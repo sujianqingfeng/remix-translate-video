@@ -3,14 +3,13 @@ import { json } from '@remix-run/node'
 import { eq } from 'drizzle-orm'
 import { db, schema } from '~/lib/drizzle'
 import type { GeneralCommentTypeTextInfo } from '~/types'
-import { type TranslationModel, translate } from '~/utils/ai'
 
 export const action = async ({ params, request }: ActionFunctionArgs) => {
 	const { id } = params
 	if (!id) throw new Error('Comment ID is required')
 
 	const formData = await request.formData()
-	const model = ((formData.get('model') as string) || 'deepseek') as TranslationModel
+	const translatedContent = formData.get('translatedContent') as string
 
 	const comment = await db.query.generalComments.findFirst({
 		where: eq(schema.generalComments.id, id),
@@ -20,8 +19,6 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
 
 	const typeInfo = comment.typeInfo as GeneralCommentTypeTextInfo
 	if (!typeInfo.content) throw new Error('Content is required')
-
-	const translatedContent = await translate(typeInfo.content, model)
 
 	await db
 		.update(schema.generalComments)
