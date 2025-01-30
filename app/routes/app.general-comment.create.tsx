@@ -15,7 +15,7 @@ export async function action({ request }: ActionFunctionArgs) {
 	const title = formData.get('title') as string
 	const content = formData.get('content') as string
 	const contentZh = formData.get('contentZh') as string
-	const fps = Number(formData.get('fps')) || 30
+	const fps = Number(formData.get('fps')) || 60
 	const coverDurationInSeconds = Number(formData.get('coverDurationInSeconds')) || 3
 	const secondsForEvery30Words = Number(formData.get('secondsForEvery30Words')) || 3
 	const images = JSON.parse((formData.get('images') as string) || '[]') as string[]

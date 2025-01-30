@@ -167,33 +167,51 @@ export default function TranslateCommentPage() {
 
 							{/* Action Buttons */}
 							<div className="p-5">
-								<div className="flex flex-wrap gap-2">
-									<downloadInfoFetcher.Form action="/app/downloads/download-info" method="post">
-										<input name="id" value={dId} hidden readOnly />
-										<LoadingButtonWithState variant="secondary" size="sm" state={downloadInfoFetcher.state} idleText="Download info" />
-									</downloadInfoFetcher.Form>
-
-									{download.author && !download.filePath && (
-										<downloadVideoFetcher.Form action="/app/downloads/download-video" method="post">
+								<div className="flex flex-wrap gap-3">
+									{/* Info & Download Group */}
+									<div className="flex gap-2">
+										<downloadInfoFetcher.Form action="/app/downloads/download-info" method="post">
 											<input name="id" value={dId} hidden readOnly />
-											<LoadingButtonWithState variant="secondary" size="sm" state={downloadVideoFetcher.state} idleText="Download video" />
-										</downloadVideoFetcher.Form>
-									)}
+											<LoadingButtonWithState variant="secondary" size="sm" state={downloadInfoFetcher.state} idleText="Download info" />
+										</downloadInfoFetcher.Form>
 
-									<translateFetcher.Form action="translate" method="post">
-										<LoadingButtonWithState variant="secondary" size="sm" state={translateFetcher.state} idleText="Translate" />
-									</translateFetcher.Form>
+										{download.author && !download.filePath && (
+											<downloadVideoFetcher.Form action="/app/downloads/download-video" method="post">
+												<input name="id" value={dId} hidden readOnly />
+												<LoadingButtonWithState variant="secondary" size="sm" state={downloadVideoFetcher.state} idleText="Download video" />
+											</downloadVideoFetcher.Form>
+										)}
+									</div>
 
-									<transformFetcher.Form action="transform" method="post">
-										<LoadingButtonWithState variant="secondary" size="sm" state={transformFetcher.state} idleText="Transform" />
-									</transformFetcher.Form>
+									{/* Translation Group */}
+									<div className="flex items-center gap-2 border-l pl-3">
+										<translateFetcher.Form action="translate" method="post">
+											<div className="flex gap-2">
+												<Select name="aiModel" defaultValue="deepseek">
+													<SelectTrigger className="w-[120px] h-9">
+														<SelectValue placeholder="Select AI" />
+													</SelectTrigger>
+													<SelectContent>
+														<SelectItem value="deepseek">Deepseek</SelectItem>
+														<SelectItem value="openai">OpenAI</SelectItem>
+													</SelectContent>
+												</Select>
+												<LoadingButtonWithState variant="secondary" size="sm" state={translateFetcher.state} idleText="Translate" />
+											</div>
+										</translateFetcher.Form>
 
-									<checkSensitiveWordsFetcher.Form action="check-sensitive-words" method="post">
-										<LoadingButtonWithState variant="secondary" size="sm" state={checkSensitiveWordsFetcher.state} idleText="Check Sensitive Words" />
-									</checkSensitiveWordsFetcher.Form>
+										<transformFetcher.Form action="transform" method="post">
+											<LoadingButtonWithState variant="secondary" size="sm" state={transformFetcher.state} idleText="Transform" />
+										</transformFetcher.Form>
 
+										<checkSensitiveWordsFetcher.Form action="check-sensitive-words" method="post">
+											<LoadingButtonWithState variant="secondary" size="sm" state={checkSensitiveWordsFetcher.state} idleText="Check Words" />
+										</checkSensitiveWordsFetcher.Form>
+									</div>
+
+									{/* Render Group */}
 									{download.author && download.filePath && (
-										<>
+										<div className="flex gap-2 border-l pl-3">
 											<renderFetcher.Form action="render" method="post">
 												<LoadingButtonWithState variant="secondary" size="sm" state={renderFetcher.state} idleText="Render" />
 											</renderFetcher.Form>
@@ -201,22 +219,16 @@ export default function TranslateCommentPage() {
 											<remoteRenderFetcher.Form action="remote-render" method="post">
 												<LoadingButtonWithState variant="secondary" size="sm" state={remoteRenderFetcher.state} idleText="Remote Render" />
 											</remoteRenderFetcher.Form>
-										</>
-									)}
 
-									{translateComment.outputFilePath && (
-										<Link to="local-download" target="_blank" rel="noopener noreferrer">
-											<Button variant="secondary" size="sm">
-												Download Local
-											</Button>
-										</Link>
+											{translateComment.outputFilePath && (
+												<Link to="local-download" target="_blank" rel="noopener noreferrer">
+													<Button variant="secondary" size="sm">
+														Download Local
+													</Button>
+												</Link>
+											)}
+										</div>
 									)}
-
-									<Link to="cover">
-										<Button variant="secondary" size="sm">
-											Cover
-										</Button>
-									</Link>
 								</div>
 							</div>
 						</div>

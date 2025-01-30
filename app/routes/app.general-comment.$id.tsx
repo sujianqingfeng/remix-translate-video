@@ -4,7 +4,7 @@ import type { LoaderFunctionArgs } from '@remix-run/node'
 import { Form, useFetcher, useLoaderData } from '@remix-run/react'
 import { Player } from '@remotion/player'
 import { eq } from 'drizzle-orm'
-import { ArrowLeft, Edit3, Film, Languages, Loader2, Play, Settings, Trash, Upload } from 'lucide-react'
+import { ArrowLeft, Edit3, Film, Languages, Loader2, Play, Settings, Trash, Upload, Wand2 } from 'lucide-react'
 import { useState } from 'react'
 import { VideoModeSelect } from '~/components/business/video-mode/VideoModeSelect'
 import { Button } from '~/components/ui/button'
@@ -108,9 +108,12 @@ export default function AppGeneralCommentRender() {
 	const typeInfo = comment.typeInfo as GeneralCommentTypeTextInfo
 	const [mode, setMode] = useState<VideoMode>('landscape')
 	const [editingCommentIndex, setEditingCommentIndex] = useState<number | null>(null)
+	const [isEditingTitle, setIsEditingTitle] = useState(false)
 	const renderFetcher = useFetcher<{ error?: string }>()
 	const deleteCommentFetcher = useFetcher()
 	const updateTranslationFetcher = useFetcher()
+	const generateTitleFetcher = useFetcher()
+	const updateTitleFetcher = useFetcher()
 
 	const handleDeleteComment = (index: number) => {
 		const formData = new FormData()
@@ -132,6 +135,13 @@ export default function AppGeneralCommentRender() {
 		formData.append('translatedContent', translatedContent)
 		updateTranslationFetcher.submit(formData, { method: 'post', action: 'update-comment-translation' })
 		setEditingCommentIndex(null)
+	}
+
+	const handleUpdateTitle = (title: string) => {
+		const formData = new FormData()
+		formData.append('title', title)
+		updateTitleFetcher.submit(formData, { method: 'post', action: 'update-title' })
+		setIsEditingTitle(false)
 	}
 
 	const isRendering = renderFetcher.state !== 'idle'
@@ -318,7 +328,58 @@ export default function AppGeneralCommentRender() {
 						{/* Author Info */}
 						<div className="flex items-center gap-4">
 							<div className="flex-1">
-								<h3 className="font-medium text-gray-900">{typeInfo.title || 'Untitled'}</h3>
+								{isEditingTitle ? (
+									<div className="space-y-2">
+										<Input
+											defaultValue={typeInfo.title}
+											className="text-base font-medium"
+											onKeyDown={(e) => {
+												if (e.key === 'Escape') {
+													setIsEditingTitle(false)
+												} else if (e.key === 'Enter') {
+													const input = e.currentTarget as HTMLInputElement
+													handleUpdateTitle(input.value)
+												}
+											}}
+											ref={(input) => {
+												if (input) {
+													input.focus()
+												}
+											}}
+										/>
+										<div className="flex justify-end gap-2">
+											<Button type="button" variant="outline" size="sm" onClick={() => setIsEditingTitle(false)}>
+												Cancel
+											</Button>
+											<Button
+												type="button"
+												size="sm"
+												onClick={(e) => {
+													const input = e.currentTarget.parentElement?.previousElementSibling as HTMLInputElement
+													if (input) {
+														handleUpdateTitle(input.value)
+													}
+												}}
+											>
+												Save
+											</Button>
+										</div>
+									</div>
+								) : (
+									<div className="flex items-center gap-2">
+										<h3 className="font-medium text-gray-900">{typeInfo.title || 'Untitled'}</h3>
+										<div className="flex items-center gap-1">
+											<Button type="button" variant="ghost" size="sm" className="h-6 px-2" onClick={() => setIsEditingTitle(true)}>
+												<Edit3 className="h-3 w-3" />
+											</Button>
+											<generateTitleFetcher.Form method="post" action="generate-title">
+												<Button type="submit" variant="ghost" size="sm" className="h-6 px-2" disabled={generateTitleFetcher.state !== 'idle'}>
+													<Wand2 className="h-3 w-3" />
+												</Button>
+											</generateTitleFetcher.Form>
+										</div>
+									</div>
+								)}
 								<p className="text-sm text-gray-600">By {comment.author}</p>
 							</div>
 							<div>

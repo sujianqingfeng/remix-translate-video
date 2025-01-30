@@ -1,4 +1,6 @@
+import { PlusIcon } from '@radix-ui/react-icons'
 import { Link, useFetcher, useLoaderData } from '@remix-run/react'
+import { format } from 'date-fns'
 import { desc } from 'drizzle-orm'
 import {
 	AlertDialog,
@@ -40,95 +42,122 @@ export default function AppGeneralCommentIndex() {
 	}
 
 	return (
-		<div className="min-h-screen bg-gray-50 py-8">
-			<div className="max-w-7xl mx-auto px-4">
-				<div className="flex justify-between items-center mb-8">
-					<h1 className="text-3xl font-bold text-gray-900">General Comments</h1>
+		<div className="min-h-screen bg-gray-50/40">
+			<div className="max-w-[90rem] mx-auto p-8">
+				<div className="flex justify-between items-center mb-6">
+					<div>
+						<h1 className="text-2xl font-semibold text-gray-900">General Comments</h1>
+						<p className="text-sm text-gray-500 mt-1">Manage and generate your comments</p>
+					</div>
 					<Link to="/app/general-comment/create">
-						<Button className="bg-blue-600 hover:bg-blue-700 focus:ring-blue-500">Create New</Button>
+						<Button className="bg-blue-600 hover:bg-blue-700 focus:ring-blue-500">
+							<PlusIcon className="mr-2 h-4 w-4" />
+							New Comment
+						</Button>
 					</Link>
 				</div>
 
-				<div className="bg-white shadow rounded-lg overflow-hidden">
+				<div className="bg-white shadow-sm rounded-lg border border-gray-200">
 					<Table>
 						<TableHeader>
-							<TableRow>
-								<TableHead>Title</TableHead>
-								<TableHead>Author</TableHead>
+							<TableRow className="bg-gray-50/50">
+								<TableHead className="w-[200px]">Title</TableHead>
+								<TableHead className="w-[120px]">Author</TableHead>
 								<TableHead>Content</TableHead>
-								<TableHead>Source</TableHead>
-								<TableHead>Comments</TableHead>
-								<TableHead>Created At</TableHead>
-								<TableHead className="text-right">Actions</TableHead>
+								<TableHead className="w-[100px]">Source</TableHead>
+								<TableHead className="w-[100px] text-center">Comments</TableHead>
+								<TableHead className="w-[120px]">Created At</TableHead>
+								<TableHead className="w-[160px] text-right">Actions</TableHead>
 							</TableRow>
 						</TableHeader>
 						<TableBody>
 							{comments.map((comment) => {
 								const typeInfo = comment.typeInfo as GeneralCommentTypeTextInfo
 								return (
-									<TableRow key={comment.id}>
-										<TableCell className="font-medium">{typeInfo.title || 'Untitled'}</TableCell>
-										<TableCell>{comment.author}</TableCell>
-										<TableCell className="max-w-md py-6">
-											<div className="space-y-6">
-												<div className="bg-gray-50 rounded-lg p-4">
-													<h4 className="text-xs font-medium text-blue-600 tracking-wide uppercase mb-2">Original</h4>
-													<p className="text-base text-gray-900">{typeInfo.content}</p>
+									<TableRow key={comment.id} className="group hover:bg-gray-50/50">
+										<TableCell className="font-medium">
+											<div className="truncate max-w-[180px]" title={typeInfo.title || 'Untitled'}>
+												{typeInfo.title || 'Untitled'}
+											</div>
+										</TableCell>
+										<TableCell>
+											<div className="truncate max-w-[100px]" title={comment.author}>
+												{comment.author}
+											</div>
+										</TableCell>
+										<TableCell>
+											<div className="space-y-3 py-2">
+												<div className="bg-gray-50/50 rounded-md p-3">
+													<div className="flex items-center space-x-2 mb-2">
+														<div className="h-1.5 w-1.5 rounded-full bg-blue-500"></div>
+														<span className="text-xs font-medium text-gray-500">Original</span>
+													</div>
+													<p className="text-sm text-gray-900 line-clamp-2">{typeInfo.content}</p>
 												</div>
 												{typeInfo.contentZh && (
-													<div className="bg-gray-50 rounded-lg p-4">
-														<h4 className="text-xs font-medium text-emerald-600 tracking-wide uppercase mb-2">Translation</h4>
-														<p className="text-base text-gray-900 font-medium">{typeInfo.contentZh}</p>
+													<div className="bg-gray-50/50 rounded-md p-3">
+														<div className="flex items-center space-x-2 mb-2">
+															<div className="h-1.5 w-1.5 rounded-full bg-emerald-500"></div>
+															<span className="text-xs font-medium text-gray-500">Translation</span>
+														</div>
+														<p className="text-sm text-gray-900 line-clamp-2">{typeInfo.contentZh}</p>
 													</div>
 												)}
 												{typeInfo.images && typeInfo.images.length > 0 && (
-													<div className="flex gap-2">
+													<div className="flex gap-2 overflow-x-auto py-1">
 														{typeInfo.images.map((image) => (
-															<img key={image} src={image} alt="" className="h-12 w-12 object-cover rounded-lg shadow-sm" />
+															<img key={image} src={image} alt="" className="h-14 w-14 object-cover rounded-md shadow-sm flex-shrink-0" />
 														))}
 													</div>
 												)}
 											</div>
 										</TableCell>
 										<TableCell>
-											<span
-												className="px-2.5 py-0.5 rounded-full text-xs font-medium capitalize"
-												style={{ backgroundColor: getSourceColor(comment.source), color: comment.source === 'tiktok' ? 'white' : 'inherit' }}
-											>
+											<span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium capitalize ${getSourceStyles(comment.source)}`}>
 												{comment.source}
 											</span>
 										</TableCell>
-										<TableCell>{comment.comments?.length || 0}</TableCell>
-										<TableCell>{new Date(comment.createdAt).toLocaleDateString()}</TableCell>
-										<TableCell className="text-right space-x-2">
-											<Link to={`/app/general-comment/${comment.id}`}>
-												<Button variant="outline" size="sm">
-													Render
-												</Button>
-											</Link>
-											<AlertDialog>
-												<AlertDialogTrigger asChild>
-													<Button variant="destructive" size="sm">
-														Delete
+										<TableCell className="text-center">
+											<span className="inline-flex items-center justify-center min-w-[1.75rem] h-7 px-2 text-xs font-medium bg-gray-50 text-gray-600 rounded-full">
+												{comment.comments?.length || 0}
+											</span>
+										</TableCell>
+										<TableCell>
+											<time className="text-sm text-gray-500" dateTime={comment.createdAt}>
+												{format(new Date(comment.createdAt), 'MMM d, yyyy')}
+											</time>
+										</TableCell>
+										<TableCell className="text-right">
+											<div className="flex justify-end space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+												<Link to={`/app/general-comment/${comment.id}`}>
+													<Button variant="outline" size="sm" className="h-8">
+														Render
 													</Button>
-												</AlertDialogTrigger>
-												<AlertDialogContent>
-													<AlertDialogHeader>
-														<AlertDialogTitle>Are you sure?</AlertDialogTitle>
-														<AlertDialogDescription>
-															This action cannot be undone. This will permanently delete the comment and all its data.
-															{deleteFetcher.state === 'submitting' && <p className="mt-2 text-sm text-yellow-600">Deleting...</p>}
-															{deleteFetcher.data?.error && <p className="mt-2 text-sm text-red-600">{deleteFetcher.data.error}</p>}
-														</AlertDialogDescription>
-													</AlertDialogHeader>
-													<AlertDialogFooter>
-														<AlertDialogCancel>Cancel</AlertDialogCancel>
-														<AlertDialogAction onClick={() => handleDelete(comment.id)} disabled={deleteFetcher.state === 'submitting'}>
-															{deleteFetcher.state === 'submitting' ? 'Deleting...' : 'Delete'}
-														</AlertDialogAction>
-													</AlertDialogFooter>
-												</AlertDialogContent>
-											</AlertDialog>
+												</Link>
+												<AlertDialog>
+													<AlertDialogTrigger asChild>
+														<Button variant="destructive" size="sm" className="h-8">
+															Delete
+														</Button>
+													</AlertDialogTrigger>
+													<AlertDialogContent>
+														<AlertDialogHeader>
+															<AlertDialogTitle>Are you sure?</AlertDialogTitle>
+															<AlertDialogDescription>
+																This action cannot be undone. This will permanently delete the comment and all its data.
+																{deleteFetcher.state === 'submitting' && <p className="mt-2 text-sm text-yellow-600">Deleting...</p>}
+																{deleteFetcher.data?.error && <p className="mt-2 text-sm text-red-600">{deleteFetcher.data.error}</p>}
+															</AlertDialogDescription>
+														</AlertDialogHeader>
+														<AlertDialogFooter>
+															<AlertDialogCancel>Cancel</AlertDialogCancel>
+															<AlertDialogAction onClick={() => handleDelete(comment.id)} disabled={deleteFetcher.state === 'submitting'}>
+																{deleteFetcher.state === 'submitting' ? 'Deleting...' : 'Delete'}
+															</AlertDialogAction>
+														</AlertDialogFooter>
+													</AlertDialogContent>
+												</AlertDialog>
+											</div>
 										</TableCell>
 									</TableRow>
 								)
@@ -141,15 +170,15 @@ export default function AppGeneralCommentIndex() {
 	)
 }
 
-function getSourceColor(source: string): string {
+function getSourceStyles(source: string): string {
 	switch (source) {
 		case 'twitter':
-			return '#1DA1F2'
+			return 'bg-[#1DA1F2]/10 text-[#1DA1F2]'
 		case 'youtube':
-			return '#FF0000'
+			return 'bg-[#FF0000]/10 text-[#FF0000]'
 		case 'tiktok':
-			return '#000000'
+			return 'bg-black/10 text-black'
 		default:
-			return '#6B7280'
+			return 'bg-gray-100 text-gray-600'
 	}
 }
