@@ -1,4 +1,4 @@
-import { Link, useLoaderData, useSubmit } from '@remix-run/react'
+import { Link, useFetcher, useLoaderData } from '@remix-run/react'
 import { desc } from 'drizzle-orm'
 import {
 	AlertDialog,
@@ -16,6 +16,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '~
 import { db, schema } from '~/lib/drizzle'
 import type { GeneralCommentTypeTextInfo } from '~/types'
 
+type DeleteActionData = {
+	success: boolean
+	error?: string
+}
+
 export const loader = async () => {
 	const comments = await db.query.generalComments.findMany({
 		orderBy: desc(schema.generalComments.createdAt),
@@ -26,12 +31,12 @@ export const loader = async () => {
 
 export default function AppGeneralCommentIndex() {
 	const { comments } = useLoaderData<typeof loader>()
-	const submit = useSubmit()
+	const deleteFetcher = useFetcher<DeleteActionData>()
 
 	const handleDelete = (id: string) => {
 		const formData = new FormData()
 		formData.append('id', id)
-		submit(formData, { method: 'post', action: 'delete' })
+		deleteFetcher.submit(formData, { method: 'post', action: 'delete' })
 	}
 
 	return (
@@ -64,18 +69,26 @@ export default function AppGeneralCommentIndex() {
 									<TableRow key={comment.id}>
 										<TableCell className="font-medium">{typeInfo.title || 'Untitled'}</TableCell>
 										<TableCell>{comment.author}</TableCell>
-										<TableCell className="max-w-md">
-											<div className="space-y-1">
-												<p className="text-sm text-gray-900 line-clamp-2">{typeInfo.content}</p>
-												{typeInfo.contentZh && <p className="text-sm text-gray-500 line-clamp-2">{typeInfo.contentZh}</p>}
-											</div>
-											{typeInfo.images && typeInfo.images.length > 0 && (
-												<div className="flex gap-1 mt-2">
-													{typeInfo.images.map((image) => (
-														<img key={image} src={image} alt="" className="h-8 w-8 object-cover rounded" />
-													))}
+										<TableCell className="max-w-md py-6">
+											<div className="space-y-6">
+												<div className="bg-gray-50 rounded-lg p-4">
+													<h4 className="text-xs font-medium text-blue-600 tracking-wide uppercase mb-2">Original</h4>
+													<p className="text-base text-gray-900">{typeInfo.content}</p>
 												</div>
-											)}
+												{typeInfo.contentZh && (
+													<div className="bg-gray-50 rounded-lg p-4">
+														<h4 className="text-xs font-medium text-emerald-600 tracking-wide uppercase mb-2">Translation</h4>
+														<p className="text-base text-gray-900 font-medium">{typeInfo.contentZh}</p>
+													</div>
+												)}
+												{typeInfo.images && typeInfo.images.length > 0 && (
+													<div className="flex gap-2">
+														{typeInfo.images.map((image) => (
+															<img key={image} src={image} alt="" className="h-12 w-12 object-cover rounded-lg shadow-sm" />
+														))}
+													</div>
+												)}
+											</div>
 										</TableCell>
 										<TableCell>
 											<span
@@ -102,11 +115,17 @@ export default function AppGeneralCommentIndex() {
 												<AlertDialogContent>
 													<AlertDialogHeader>
 														<AlertDialogTitle>Are you sure?</AlertDialogTitle>
-														<AlertDialogDescription>This action cannot be undone. This will permanently delete the comment and all its data.</AlertDialogDescription>
+														<AlertDialogDescription>
+															This action cannot be undone. This will permanently delete the comment and all its data.
+															{deleteFetcher.state === 'submitting' && <p className="mt-2 text-sm text-yellow-600">Deleting...</p>}
+															{deleteFetcher.data?.error && <p className="mt-2 text-sm text-red-600">{deleteFetcher.data.error}</p>}
+														</AlertDialogDescription>
 													</AlertDialogHeader>
 													<AlertDialogFooter>
 														<AlertDialogCancel>Cancel</AlertDialogCancel>
-														<AlertDialogAction onClick={() => handleDelete(comment.id)}>Delete</AlertDialogAction>
+														<AlertDialogAction onClick={() => handleDelete(comment.id)} disabled={deleteFetcher.state === 'submitting'}>
+															{deleteFetcher.state === 'submitting' ? 'Deleting...' : 'Delete'}
+														</AlertDialogAction>
 													</AlertDialogFooter>
 												</AlertDialogContent>
 											</AlertDialog>

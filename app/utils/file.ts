@@ -89,7 +89,8 @@ export const createOperationDir = async (id: string) => {
 }
 
 export const getPublicAssetPath = (id: string, fileName: string) => {
-	return `assets/operations/${id}/${fileName}`
+	// 所有资源都放在 assets/operations/[id]/resources 目录下
+	return `assets/operations/${id}/resources/${fileName}`
 }
 
 export const getPublicFilePath = (publicPath: string) => {

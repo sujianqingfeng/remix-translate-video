@@ -95,19 +95,20 @@ function isLocalPath(url: string) {
 	return url.startsWith('/assets/downloads/')
 }
 
-export const ensurePublicAssets = async (typeInfo: GeneralCommentTypeTextInfo, comments: Comment[]) => {
+export const ensurePublicAssets = async (id: string, typeInfo: GeneralCommentTypeTextInfo, comments: Comment[]) => {
 	const newTypeInfo = { ...typeInfo }
 	const newComments = [...comments]
 
 	// Handle images in typeInfo
 	if (newTypeInfo.images) {
 		const newLocalImages = await Promise.all(
-			newTypeInfo.images.map(async (image) => {
+			newTypeInfo.images.map(async (image, index) => {
 				// 处理远程图片
 				if (image.startsWith('http')) {
 					try {
-						const fileName = `${Date.now()}-${path.basename(image)}`
-						const publicPath = getPublicAssetPath('downloads', fileName)
+						const extension = path.extname(image) || '.png'
+						const fileName = `image-${index}${extension}`
+						const publicPath = getPublicAssetPath(id, fileName)
 						const publicFilePath = await ensurePublicDir(publicPath)
 
 						// 下载远程图片
@@ -120,8 +121,9 @@ export const ensurePublicAssets = async (typeInfo: GeneralCommentTypeTextInfo, c
 				}
 
 				// 处理本地图片
-				const fileName = path.basename(image)
-				const publicPath = getPublicAssetPath(path.dirname(image), fileName)
+				const extension = path.extname(image)
+				const fileName = `image-${index}${extension}`
+				const publicPath = getPublicAssetPath(id, fileName)
 				const publicFilePath = await ensurePublicDir(publicPath)
 				await copyFile(image, publicFilePath)
 				return publicPath
@@ -133,20 +135,22 @@ export const ensurePublicAssets = async (typeInfo: GeneralCommentTypeTextInfo, c
 
 	// Handle video in typeInfo
 	if (newTypeInfo.video && !newTypeInfo.video.url.startsWith('http')) {
-		const fileName = path.basename(newTypeInfo.video.url)
-		const publicPath = getPublicAssetPath(path.dirname(newTypeInfo.video.url), fileName)
+		const extension = path.extname(newTypeInfo.video.url)
+		const fileName = `video${extension}`
+		const publicPath = getPublicAssetPath(id, fileName)
 		const publicFilePath = await ensurePublicDir(publicPath)
 		await copyFile(newTypeInfo.video.url, publicFilePath)
 		newTypeInfo.video.localUrl = publicPath
 	}
 
 	// Handle media in comments
-	for (const comment of newComments) {
+	for (const [commentIndex, comment] of newComments.entries()) {
 		if (comment.media) {
-			for (const media of comment.media) {
+			for (const [mediaIndex, media] of comment.media.entries()) {
 				if (!media.url.startsWith('http')) {
-					const fileName = path.basename(media.url)
-					const publicPath = getPublicAssetPath(path.dirname(media.url), fileName)
+					const extension = path.extname(media.url)
+					const fileName = `comment-${commentIndex}-media-${mediaIndex}${extension}`
+					const publicPath = getPublicAssetPath(id, fileName)
 					const publicFilePath = await ensurePublicDir(publicPath)
 					await copyFile(media.url, publicFilePath)
 					media.localUrl = publicPath

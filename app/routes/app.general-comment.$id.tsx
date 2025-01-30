@@ -4,7 +4,9 @@ import type { LoaderFunctionArgs } from '@remix-run/node'
 import { Form, useFetcher, useLoaderData } from '@remix-run/react'
 import { Player } from '@remotion/player'
 import { eq } from 'drizzle-orm'
+import { ArrowLeft, Edit3, Film, Languages, Loader2, Play, Settings, Trash, Upload } from 'lucide-react'
 import { useState } from 'react'
+import { VideoModeSelect } from '~/components/business/video-mode/VideoModeSelect'
 import { Button } from '~/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card'
 import { Input } from '~/components/ui/input'
@@ -45,20 +47,16 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 	}
 
 	const typeInfo = comment.typeInfo as GeneralCommentTypeTextInfo
-	const { typeInfo: newTypeInfo, comments: newComments } = await ensurePublicAssets(typeInfo, comment.comments || [])
+	const { typeInfo: newTypeInfo, comments: newComments } = await ensurePublicAssets(id, typeInfo, comment.comments || [])
 
 	// 如果有音频文件，复制到 public 目录
 	let publicAudioPath: string | undefined
 	if (comment.audioPath) {
-		const fileName = `${id}-audio.mp3`
+		const extension = path.extname(comment.audioPath)
+		const fileName = `audio${extension}`
 		publicAudioPath = getPublicAssetPath(id, fileName)
 		const publicFilePath = await ensurePublicDir(publicAudioPath)
 		await copyFile(comment.audioPath, publicFilePath)
-		console.log('Audio paths:', {
-			audioPath: comment.audioPath,
-			publicAudioPath,
-			publicFilePath,
-		})
 	}
 
 	// 更新数据库中的资源路径
@@ -141,16 +139,48 @@ export default function AppGeneralCommentRender() {
 	return (
 		<div className="min-h-screen bg-gray-50 py-8">
 			<div className="max-w-[1200px] mx-auto px-4 space-y-6">
-				<div>
-					<h1 className="text-3xl font-bold text-gray-900">Render Configuration</h1>
-					<p className="mt-2 text-gray-600">Configure rendering settings for your video</p>
+				<div className="flex items-center justify-between">
+					<div>
+						<div className="flex items-center gap-3 mb-2">
+							<Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => window.history.back()}>
+								<ArrowLeft className="h-4 w-4" />
+							</Button>
+							<h1 className="text-2xl font-bold text-gray-900">Render Configuration</h1>
+						</div>
+						<p className="text-sm text-gray-600 ml-11">Configure and preview your video before rendering</p>
+					</div>
+					<div className="flex items-center gap-2">
+						<Button variant="outline" size="sm" className="gap-2" onClick={() => window.location.reload()}>
+							<Settings className="h-4 w-4" />
+							Reset
+						</Button>
+						<Button type="submit" size="sm" className="gap-2" form="renderForm" disabled={isRendering}>
+							{isRendering ? (
+								<>
+									<Loader2 className="h-4 w-4 animate-spin" />
+									Rendering...
+								</>
+							) : (
+								<>
+									<Film className="h-4 w-4" />
+									Start Rendering
+								</>
+							)}
+						</Button>
+					</div>
 				</div>
 
 				{/* Video Preview */}
 				<Card>
-					<CardHeader>
-						<CardTitle>Video Preview</CardTitle>
-						<CardDescription>Preview how your video will look</CardDescription>
+					<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+						<div className="space-y-1">
+							<CardTitle className="flex items-center gap-2">
+								<Play className="h-4 w-4" />
+								Preview
+							</CardTitle>
+							<CardDescription>Preview how your video will look</CardDescription>
+						</div>
+						<VideoModeSelect mode={mode} onChange={setMode} disabled={isRendering} />
 					</CardHeader>
 					<CardContent>
 						<div className="bg-gray-900 rounded-lg overflow-hidden mx-auto">
@@ -187,65 +217,23 @@ export default function AppGeneralCommentRender() {
 				</Card>
 
 				{/* Video Settings */}
-				<renderFetcher.Form action="render" method="post">
+				<renderFetcher.Form id="renderForm" action="render" method="post">
 					<Card>
 						<CardHeader>
-							<CardTitle>Video Settings</CardTitle>
+							<CardTitle className="flex items-center gap-2">
+								<Settings className="h-4 w-4" />
+								Settings
+							</CardTitle>
 							<CardDescription>Configure how your video will be rendered</CardDescription>
 						</CardHeader>
 						<CardContent>
 							<div className="space-y-6">
-								{/* Mode Selection */}
-								<div className="space-y-3">
-									<Label className="text-sm">Video Mode</Label>
-									<div className="grid grid-cols-3 gap-4 max-w-md">
-										<button
-											type="button"
-											className={`relative h-16 rounded-lg border-2 transition-all ${
-												mode === 'landscape' ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
-											}`}
-											onClick={() => setMode('landscape')}
-											onKeyDown={(e) => e.key === 'Enter' && setMode('landscape')}
-											disabled={isRendering}
-										>
-											<input type="radio" name="mode" value="landscape" className="sr-only" checked={mode === 'landscape'} onChange={() => {}} />
-											<div className="absolute inset-0 flex flex-col items-center justify-center">
-												<span className="text-xs font-medium">Landscape</span>
-												<span className="text-xs text-gray-500">16:9</span>
-											</div>
-										</button>
-										<button
-											type="button"
-											className={`relative h-16 rounded-lg border-2 transition-all ${mode === 'portrait' ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'}`}
-											onClick={() => setMode('portrait')}
-											onKeyDown={(e) => e.key === 'Enter' && setMode('portrait')}
-											disabled={isRendering}
-										>
-											<input type="radio" name="mode" value="portrait" className="sr-only" checked={mode === 'portrait'} onChange={() => {}} />
-											<div className="absolute inset-0 flex flex-col items-center justify-center">
-												<span className="text-xs font-medium">Portrait</span>
-												<span className="text-xs text-gray-500">9:16</span>
-											</div>
-										</button>
-										<button
-											type="button"
-											className={`relative h-16 rounded-lg border-2 transition-all ${mode === 'vertical' ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'}`}
-											onClick={() => setMode('vertical')}
-											onKeyDown={(e) => e.key === 'Enter' && setMode('vertical')}
-											disabled={isRendering}
-										>
-											<input type="radio" name="mode" value="vertical" className="sr-only" checked={mode === 'vertical'} onChange={() => {}} />
-											<div className="absolute inset-0 flex flex-col items-center justify-center">
-												<span className="text-xs font-medium">Vertical</span>
-												<span className="text-xs text-gray-500">4:5</span>
-											</div>
-										</button>
-									</div>
-								</div>
-
 								{/* Audio Upload */}
 								<div className="space-y-3">
-									<Label className="text-sm">Background Audio</Label>
+									<Label className="flex items-center gap-2 text-sm">
+										<Upload className="h-4 w-4" />
+										Background Audio
+									</Label>
 									<div className="flex items-center gap-4">
 										<Input
 											type="file"
@@ -312,12 +300,6 @@ export default function AppGeneralCommentRender() {
 										/>
 									</div>
 								</div>
-
-								<Button type="submit" className="w-full h-9 text-sm" disabled={isRendering}>
-									{isRendering ? 'Rendering...' : 'Start Rendering'}
-								</Button>
-
-								{renderFetcher.data?.error && <p className="text-sm text-red-500 mt-2">{renderFetcher.data.error}</p>}
 							</div>
 						</CardContent>
 					</Card>
@@ -326,8 +308,11 @@ export default function AppGeneralCommentRender() {
 				{/* Content Preview */}
 				<Card>
 					<CardHeader>
-						<CardTitle>Content Preview</CardTitle>
-						<CardDescription>Review your content before rendering</CardDescription>
+						<CardTitle className="flex items-center gap-2">
+							<Edit3 className="h-4 w-4" />
+							Content
+						</CardTitle>
+						<CardDescription>Review and edit your content before rendering</CardDescription>
 					</CardHeader>
 					<CardContent className="space-y-6">
 						{/* Author Info */}
@@ -356,7 +341,8 @@ export default function AppGeneralCommentRender() {
 							</div>
 							<div className="flex justify-end">
 								<Form action="translate" method="post">
-									<Button type="submit" variant="outline" size="sm" disabled={!typeInfo.content || !!typeInfo.contentZh}>
+									<Button type="submit" variant="outline" size="sm" className="gap-2" disabled={!typeInfo.content || !!typeInfo.contentZh}>
+										<Languages className="h-4 w-4" />
 										Translate
 									</Button>
 								</Form>
@@ -390,7 +376,8 @@ export default function AppGeneralCommentRender() {
 								<div className="flex items-center justify-between mb-4">
 									<h4 className="text-sm font-medium text-gray-900">Comments ({comment.comments.length})</h4>
 									<Form action="translate-comments" method="post">
-										<Button type="submit" variant="outline" size="sm" disabled={comment.comments.every((c) => !!c.translatedContent)}>
+										<Button type="submit" variant="outline" size="sm" className="gap-2" disabled={comment.comments.every((c) => !!c.translatedContent)}>
+											<Languages className="h-4 w-4" />
 											Translate Comments
 										</Button>
 									</Form>
@@ -417,18 +404,22 @@ export default function AppGeneralCommentRender() {
 																type="button"
 																variant="outline"
 																size="sm"
+																className="gap-1"
 																onClick={() => handleStartEditTranslation(i)}
 																disabled={deleteCommentFetcher.state !== 'idle' || updateTranslationFetcher.state !== 'idle'}
 															>
-																Edit Translation
+																<Edit3 className="h-3 w-3" />
+																Edit
 															</Button>
 															<Button
 																type="button"
 																variant="destructive"
 																size="sm"
+																className="gap-1"
 																onClick={() => handleDeleteComment(i)}
 																disabled={deleteCommentFetcher.state !== 'idle' || updateTranslationFetcher.state !== 'idle'}
 															>
+																<Trash className="h-3 w-3" />
 																Delete
 															</Button>
 														</div>
