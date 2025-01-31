@@ -10,6 +10,8 @@ import Transcripts from '~/components/business/translate-video/Transcripts'
 import VideoPlayer from '~/components/business/translate-video/VideoPlayer'
 import { Button } from '~/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select'
+import { Separator } from '~/components/ui/separator'
 import { toast } from '~/hooks/use-toast'
 import { db, schema } from '~/lib/drizzle'
 import { safeCopyFileToPublic } from '~/utils/file'
@@ -202,7 +204,16 @@ export default function TranslateVideoPage() {
 									Translation Actions
 								</h3>
 								<div className="flex flex-wrap gap-3">
-									<translateFetcher.Form method="post" action="translate">
+									<translateFetcher.Form method="post" action="translate" className="flex items-center gap-2">
+										<Select name="model" defaultValue="deepseek">
+											<SelectTrigger className="w-[140px]">
+												<SelectValue placeholder="Select Model" />
+											</SelectTrigger>
+											<SelectContent>
+												<SelectItem value="deepseek">DeepSeek</SelectItem>
+												<SelectItem value="openai">OpenAI</SelectItem>
+											</SelectContent>
+										</Select>
 										<LoadingButtonWithState
 											state={translateFetcher.state}
 											idleText="Translate"
@@ -211,6 +222,8 @@ export default function TranslateVideoPage() {
 											icon={<Languages size={16} />}
 										/>
 									</translateFetcher.Form>
+
+									<Separator orientation="vertical" className="h-10" />
 
 									<splitFetcher.Form method="post" action="split">
 										<LoadingButtonWithState state={splitFetcher.state} idleText="Split" className="transition-colors hover:bg-primary/10 hover:text-primary" variant="outline" />
