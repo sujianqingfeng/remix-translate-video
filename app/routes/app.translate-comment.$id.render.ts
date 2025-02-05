@@ -37,9 +37,9 @@ export const action = async ({ params }: ActionFunctionArgs) => {
 	const newPlayFilePath = path.join(PUBLIC_DIR, newPlayFile)
 	const end = render.commentsEndFrame / translateComment.fps
 	const command = `ffmpeg -y -hwaccel auto -ss 0 -i ${filePath} -t ${end} \
-		-c:v libx264 \
-		-preset ultrafast \
-		-crf 28 \
+		-c:v h264_videotoolbox \
+		-preset fast \
+		-crf 23 \
 		-r ${fps} \
 		-vf "scale=trunc(oh*a/2)*2:720" \
 		-movflags +faststart \
@@ -85,8 +85,9 @@ export const action = async ({ params }: ActionFunctionArgs) => {
 		inputProps,
 		outputLocation: outputPath,
 		onProgress: throttleRenderOnProgress,
-		concurrency: 4,
-		hardwareAcceleration: 'if-possible',
+		concurrency: 8,
+		hardwareAcceleration: 'required',
+		logLevel: 'error',
 	})
 
 	await db

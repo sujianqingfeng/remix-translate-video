@@ -9,10 +9,9 @@ export function useVideoFrame(coverDuration: number) {
 	const coverFrames = coverDuration * fps
 
 	return useMemo(() => {
-		const frameSkip = 10
+		const frameSkip = 30
 		const normalizedFrame = Math.floor(frame / frameSkip) * frameSkip
-		const restFrame = normalizedFrame - coverFrames
-		return restFrame
+		return normalizedFrame - coverFrames
 	}, [frame, coverFrames])
 }
 
@@ -23,17 +22,34 @@ export function useTranslateComment({
 	availableHeight,
 	isRemoteRender,
 	playFile,
-}: { coverDurationInSeconds: number; comments: RemotionVideoComment[]; availableWidth: number; availableHeight: number; isRemoteRender: boolean; playFile: string }) {
+}: {
+	coverDurationInSeconds: number
+	comments: RemotionVideoComment[]
+	availableWidth: number
+	availableHeight: number
+	isRemoteRender: boolean
+	playFile: string
+}) {
 	const videoFrame = useVideoFrame(coverDurationInSeconds)
 	const fontSizeCache = useRef<Record<string, number>>({})
+	const commentsMap = useRef<Map<number, RemotionVideoComment>>(new Map())
+
+	// Build comments map for faster lookup
+	useMemo(() => {
+		commentsMap.current.clear()
+		for (const comment of comments) {
+			const startFrame = comment.form
+			const endFrame = comment.form + comment.durationInFrames
+			for (let frame = startFrame; frame <= endFrame; frame += 30) {
+				commentsMap.current.set(frame, comment)
+			}
+		}
+	}, [comments])
 
 	const currentComment = useMemo(() => {
-		return comments.find((item) => {
-			const startFrame = item.form
-			const endFrame = item.form + item.durationInFrames
-			return videoFrame >= startFrame && videoFrame <= endFrame
-		})
-	}, [comments, videoFrame])
+		const normalizedFrame = Math.floor(videoFrame / 30) * 30
+		return commentsMap.current.get(normalizedFrame)
+	}, [videoFrame])
 
 	const fontSize = useMemo(() => {
 		if (!currentComment?.translatedContent) return 20
@@ -53,7 +69,9 @@ export function useTranslateComment({
 		return size
 	}, [currentComment?.translatedContent, availableWidth, availableHeight])
 
-	const playSrc = isRemoteRender ? playFile : staticFile(playFile)
+	const playSrc = useMemo(() => {
+		return isRemoteRender ? playFile : staticFile(playFile)
+	}, [isRemoteRender, playFile])
 
 	return {
 		currentComment,

@@ -28,9 +28,6 @@ export async function translate(text: string, model: TranslationModel = 'deepsee
 	// API key validation
 	switch (model) {
 		case 'openai': {
-			if (!process.env.OPEN_AI_API_KEY) {
-				throw new Error('OPEN_AI_API_KEY is not set')
-			}
 			return chatGPT.generateText({
 				system: translatePrompt,
 				prompt: text,
@@ -38,9 +35,6 @@ export async function translate(text: string, model: TranslationModel = 'deepsee
 			})
 		}
 		case 'r1': {
-			if (!process.env.R1_API_KEY) {
-				throw new Error('R1_API_KEY is not set')
-			}
 			return r1.generateText({
 				system: translatePrompt,
 				prompt: text,
@@ -48,9 +42,6 @@ export async function translate(text: string, model: TranslationModel = 'deepsee
 			})
 		}
 		case 'deepseek': {
-			if (!process.env.DEEP_SEEK_API_KEY) {
-				throw new Error('DEEP_SEEK_API_KEY is not set')
-			}
 			return deepSeek.generateText({
 				system: translatePrompt,
 				prompt: text,

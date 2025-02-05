@@ -205,14 +205,14 @@ export default function TranslateVideoPage() {
 								</h3>
 								<div className="flex flex-wrap gap-3">
 									<translateFetcher.Form method="post" action="translate" className="flex items-center gap-2">
-										<Select name="model" defaultValue="deepseek">
+										<Select name="model" defaultValue="r1">
 											<SelectTrigger className="w-[140px]">
 												<SelectValue placeholder="Select Model" />
 											</SelectTrigger>
 											<SelectContent>
+												<SelectItem value="r1">R1</SelectItem>
 												<SelectItem value="deepseek">DeepSeek</SelectItem>
 												<SelectItem value="openai">OpenAI</SelectItem>
-												<SelectItem value="r1">R1</SelectItem>
 											</SelectContent>
 										</Select>
 										<LoadingButtonWithState
