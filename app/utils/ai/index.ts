@@ -2,36 +2,65 @@ import type { ShortText } from '~/types'
 import createChatGPT from './chatgpt'
 import createDeepSeek from './deep-seek'
 import createDouBao from './doubao'
+import createR1 from './r1'
 
-const apiKey = process.env.DEEP_SEEK_API_KEY
-if (!apiKey) {
-	throw new Error('DEEP_SEEK_API_KEY is not set')
-}
-const deepSeek = createDeepSeek({ apiKey })
+const chatGPT = createChatGPT({ apiKey: process.env.OPEN_AI_API_KEY || '' })
+const deepSeek = createDeepSeek({ apiKey: process.env.DEEP_SEEK_API_KEY || '' })
+const r1 = createR1({ apiKey: process.env.R1_API_KEY || '' })
 
 const translatePrompt = '你是一个精通多语言的翻译大师，将文本翻译成中文。如果是中文，就返回原文。保留原文特定的术语(如有)，不要去解释内容和名词。'
 
-export type TranslationModel = 'deepseek' | 'openai'
+export type TranslationModel = 'deepseek' | 'openai' | 'r1'
 
-export async function translate(text: string, model: TranslationModel = 'deepseek') {
-	if (model === 'openai') {
-		const apiKey = process.env.OPEN_AI_API_KEY
-		if (!apiKey) {
-			throw new Error('OPEN_AI_API_KEY is not set')
-		}
-		const chatGPT = createChatGPT({ apiKey })
-		return chatGPT.generateText({
-			system: translatePrompt,
-			prompt: text,
-			maxTokens: 500,
-		})
+const MAX_TOKENS = 2000
+const MIN_TEXT_LENGTH = 1
+const MAX_TEXT_LENGTH = 5000
+
+export async function translate(text: string, model: TranslationModel = 'deepseek'): Promise<string> {
+	// Input validation
+	if (!text || text.length < MIN_TEXT_LENGTH) {
+		throw new Error('Text is too short')
+	}
+	if (text.length > MAX_TEXT_LENGTH) {
+		throw new Error('Text is too long')
 	}
 
-	return deepSeek.generateText({
-		system: translatePrompt,
-		prompt: text,
-		maxTokens: 500,
-	})
+	// API key validation
+	switch (model) {
+		case 'openai': {
+			if (!process.env.OPEN_AI_API_KEY) {
+				throw new Error('OPEN_AI_API_KEY is not set')
+			}
+			return chatGPT.generateText({
+				system: translatePrompt,
+				prompt: text,
+				maxTokens: MAX_TOKENS,
+			})
+		}
+		case 'r1': {
+			if (!process.env.R1_API_KEY) {
+				throw new Error('R1_API_KEY is not set')
+			}
+			return r1.generateText({
+				system: translatePrompt,
+				prompt: text,
+				maxTokens: MAX_TOKENS,
+			})
+		}
+		case 'deepseek': {
+			if (!process.env.DEEP_SEEK_API_KEY) {
+				throw new Error('DEEP_SEEK_API_KEY is not set')
+			}
+			return deepSeek.generateText({
+				system: translatePrompt,
+				prompt: text,
+				maxTokens: MAX_TOKENS,
+			})
+		}
+		default: {
+			throw new Error(`Unsupported model: ${model}`)
+		}
+	}
 }
 
 export async function generateShortText(theme: string) {
@@ -84,14 +113,4 @@ export async function generateShortText(theme: string) {
 	return JSON.parse(`${PREFILL_PREFIX}${result}`) as ShortText
 }
 
-const chatGPT = createChatGPT({ apiKey: process.env.OPEN_AI_API_KEY || '' })
-
-export function gptTranslate(text: string) {
-	return chatGPT.generateText({
-		system: translatePrompt,
-		prompt: text,
-		maxTokens: 500,
-	})
-}
-
-export { deepSeek, chatGPT }
+export { deepSeek, chatGPT, r1 }

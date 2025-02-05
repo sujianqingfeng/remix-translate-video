@@ -212,6 +212,7 @@ export default function TranslateVideoPage() {
 											<SelectContent>
 												<SelectItem value="deepseek">DeepSeek</SelectItem>
 												<SelectItem value="openai">OpenAI</SelectItem>
+												<SelectItem value="r1">R1</SelectItem>
 											</SelectContent>
 										</Select>
 										<LoadingButtonWithState

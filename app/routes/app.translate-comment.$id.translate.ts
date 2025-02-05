@@ -3,35 +3,27 @@ import { type SQL, eq } from 'drizzle-orm'
 import invariant from 'tiny-invariant'
 import { db, schema } from '~/lib/drizzle'
 import { asyncPool } from '~/utils'
-import { gptTranslate, translate } from '~/utils/ai'
+import { type TranslationModel, translate } from '~/utils/ai'
 
-type AIModel = 'deepseek' | 'openai'
-
-async function translateText(text: string, aiModel: AIModel) {
-	return aiModel === 'openai' ? await gptTranslate(text) : await translate(text)
-}
-
-async function startTranslatedTitle(title: string | null, aiModel: AIModel) {
+async function startTranslatedTitle(title: string | null, aiModel: TranslationModel) {
 	let translatedTitle = ''
 	if (title) {
-		translatedTitle = await translateText(title, aiModel)
+		translatedTitle = await translate(title, aiModel)
 	}
 	return translatedTitle
 }
 
 async function translateSingleComment(translateComment: typeof schema.translateComments.$inferSelect, formData: FormData, translateCommentWhere: SQL) {
 	const index = formData.get('index')
-	const aiModel = (formData.get('aiModel') || 'deepseek') as AIModel
+	const aiModel = (formData.get('aiModel') || 'deepseek') as TranslationModel
 
 	invariant(index, 'index is required')
 	const indexNumber = Number(index)
 
 	const comment = translateComment.comments?.[indexNumber]
-	console.log('🚀 ~ translateSingleComment ~ comment:', comment)
 	invariant(comment, 'comment is not correct')
 
-	const result = await translateText(comment.content, aiModel)
-	console.log('🚀 ~ translateSingleComment ~ result:', result)
+	const result = await translate(comment.content, aiModel)
 	comment.translatedContent = result
 
 	await db
@@ -42,12 +34,12 @@ async function translateSingleComment(translateComment: typeof schema.translateC
 		.where(translateCommentWhere)
 }
 
-async function translateDefaultAction(translateComment: typeof schema.translateComments.$inferSelect, title: string | null, translateCommentWhere: SQL, aiModel: AIModel) {
+async function translateDefaultAction(translateComment: typeof schema.translateComments.$inferSelect, title: string | null, translateCommentWhere: SQL, aiModel: TranslationModel) {
 	const translatedTitle = await startTranslatedTitle(title, aiModel)
 
 	if (translateComment.comments?.length) {
 		await asyncPool(30, translateComment.comments, async (item) => {
-			const result = await translateText(item.content, aiModel)
+			const result = await translate(item.content, aiModel)
 			item.translatedContent = result
 			return item
 		})
@@ -77,7 +69,7 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
 	invariant(download, 'download is not correct')
 
 	const formData = await request.formData()
-	const aiModel = (formData.get('aiModel') || 'deepseek') as AIModel
+	const aiModel = (formData.get('aiModel') || 'deepseek') as TranslationModel
 
 	const action = formData.get('action')
 	const { title } = download

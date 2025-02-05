@@ -187,11 +187,12 @@ export default function TranslateCommentPage() {
 									<div className="flex items-center gap-2 border-l pl-3">
 										<translateFetcher.Form action="translate" method="post">
 											<div className="flex gap-2">
-												<Select name="aiModel" defaultValue="deepseek">
+												<Select name="aiModel" defaultValue="r1">
 													<SelectTrigger className="w-[120px] h-9">
 														<SelectValue placeholder="Select AI" />
 													</SelectTrigger>
 													<SelectContent>
+														<SelectItem value="r1">R1</SelectItem>
 														<SelectItem value="deepseek">Deepseek</SelectItem>
 														<SelectItem value="openai">OpenAI</SelectItem>
 													</SelectContent>
