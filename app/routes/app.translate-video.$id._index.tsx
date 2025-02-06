@@ -81,7 +81,7 @@ export default function TranslateVideoPage() {
 		<div className="container mx-auto py-8 px-4">
 			<BackPrevious />
 			<div className="flex flex-col lg:flex-row gap-8 mt-6">
-				<div className="flex-1 space-y-8">
+				<div className="flex-1 lg:flex-[2] space-y-8">
 					<Card className="group transition-all duration-300 hover:shadow-lg">
 						<CardContent className="p-0 overflow-hidden rounded-lg">
 							<VideoPlayer playFile={playFile} transcripts={translateVideo.transcripts ?? []} />
@@ -95,8 +95,8 @@ export default function TranslateVideoPage() {
 								Video Information
 							</CardTitle>
 						</CardHeader>
-						<CardContent className="space-y-6">
-							<div className="grid gap-4">
+						<CardContent className="space-y-8">
+							<div className="grid gap-6">
 								<div className="p-4 bg-muted/50 rounded-lg space-y-1.5 transition-colors duration-200 hover:bg-muted/70">
 									<div className="text-sm text-muted-foreground">Original Title</div>
 									<div className="text-lg font-medium break-all">{translateVideo.title}</div>
@@ -125,12 +125,14 @@ export default function TranslateVideoPage() {
 								</div>
 							</div>
 
+							<Separator />
+
 							<div className="space-y-4">
 								<h3 className="text-lg font-semibold flex items-center gap-2">
 									<FileAudio className="w-5 h-5 text-muted-foreground" />
 									Media Controls
 								</h3>
-								<div className="flex flex-wrap gap-3">
+								<div className="flex flex-wrap gap-4">
 									<Link to="download-audio" target="_blank" rel="noopener noreferrer">
 										<Button variant="outline" className="gap-2 transition-colors hover:bg-primary/10 hover:text-primary hover:border-primary">
 											<FileAudio size={16} />
@@ -154,6 +156,8 @@ export default function TranslateVideoPage() {
 									)}
 								</div>
 							</div>
+
+							<Separator />
 
 							<Card className="bg-muted/30 group transition-all duration-300 hover:shadow-md">
 								<CardHeader>
@@ -198,12 +202,14 @@ export default function TranslateVideoPage() {
 								</CardContent>
 							</Card>
 
+							<Separator />
+
 							<div className="space-y-4">
 								<h3 className="text-lg font-semibold flex items-center gap-2">
 									<Languages className="w-5 h-5 text-muted-foreground" />
 									Translation Actions
 								</h3>
-								<div className="flex flex-wrap gap-3">
+								<div className="flex flex-wrap gap-4">
 									<translateFetcher.Form method="post" action="translate" className="flex items-center gap-2">
 										<Select name="model" defaultValue="r1">
 											<SelectTrigger className="w-[140px]">
@@ -218,7 +224,7 @@ export default function TranslateVideoPage() {
 										<LoadingButtonWithState
 											state={translateFetcher.state}
 											idleText="Translate"
-											className="gap-2 transition-colors hover:bg-primary/10 hover:text-primary"
+											className="gap-2 transition-colors hover:bg-primary/10 hover:text-primary hover:border-primary"
 											variant="outline"
 											icon={<Languages size={16} />}
 										/>
@@ -279,9 +285,9 @@ export default function TranslateVideoPage() {
 					</Card>
 				</div>
 
-				<div className="w-full lg:w-[500px]">
+				<div className="w-full lg:w-[400px] lg:flex-1">
 					<Card className="sticky top-4 group transition-all duration-300 hover:shadow-lg">
-						<CardHeader>
+						<CardHeader className="sticky top-0 bg-card z-10">
 							<CardTitle className="flex items-center gap-2">
 								<Languages className="w-5 h-5 text-muted-foreground" />
 								Transcripts
