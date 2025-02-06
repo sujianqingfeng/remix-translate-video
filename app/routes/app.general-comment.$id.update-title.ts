@@ -1,4 +1,4 @@
-import { type ActionFunctionArgs, json } from '@remix-run/node'
+import type { ActionFunctionArgs } from '@remix-run/node'
 import { eq } from 'drizzle-orm'
 import { db, schema } from '~/lib/drizzle'
 import type { GeneralCommentTypeTextInfo } from '~/types'
@@ -38,5 +38,5 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
 		})
 		.where(eq(schema.generalComments.id, id))
 
-	return json({ title })
+	return { title }
 }

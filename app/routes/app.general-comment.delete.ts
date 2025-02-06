@@ -1,6 +1,6 @@
 import { rm } from 'node:fs/promises'
 import path from 'node:path'
-import { type ActionFunctionArgs, json } from '@remix-run/node'
+import type { ActionFunctionArgs } from '@remix-run/node'
 import { eq } from 'drizzle-orm'
 import invariant from 'tiny-invariant'
 import { db, schema } from '~/lib/drizzle'
@@ -16,7 +16,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 	})
 
 	if (!comment) {
-		return json({ success: false, error: 'Comment not found' })
+		return { success: false, error: 'Comment not found' }
 	}
 
 	try {
@@ -38,9 +38,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 		})
 
 		console.log(`Successfully deleted comment ${id} and its resources`)
-		return json({ success: true })
+		return { success: true }
 	} catch (error) {
 		console.error(`Failed to delete comment ${id}:`, error)
-		return json({ success: false, error: 'Failed to delete comment and resources' })
+		return { success: false, error: 'Failed to delete comment and resources' }
 	}
 }

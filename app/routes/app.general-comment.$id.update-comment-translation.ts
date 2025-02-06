@@ -1,5 +1,4 @@
 import type { ActionFunctionArgs } from '@remix-run/node'
-import { json } from '@remix-run/node'
 import { eq } from 'drizzle-orm'
 import { db, schema } from '~/lib/drizzle'
 
@@ -12,7 +11,6 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
 	const translatedContent = formData.get('translatedContent') as string
 
 	if (Number.isNaN(commentIndex)) throw new Error('Comment index is required')
-	if (!translatedContent) throw new Error('Translated content is required')
 
 	const comment = await db.query.generalComments.findFirst({
 		where: eq(schema.generalComments.id, id),
@@ -35,5 +33,5 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
 		})
 		.where(eq(schema.generalComments.id, id))
 
-	return json({ success: true })
+	return { success: true }
 }

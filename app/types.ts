@@ -82,8 +82,10 @@ export interface Comment {
 	authorThumbnail?: string
 	content: string
 	translatedContent?: string
-	likes: number | string
+	likes: number
 	media?: CommentMedia[]
+	bookmarkCount?: number
+	replyCount?: number
 }
 
 export interface CommentData {
@@ -158,6 +160,10 @@ export type GeneralCommentTypeTextInfo = {
 		url: string
 		localUrl?: string
 	}
+	bookmarkCount?: number
+	replyCount?: number
+	likes?: number
+	retweets?: number
 }
 
 export interface GeneralComment {

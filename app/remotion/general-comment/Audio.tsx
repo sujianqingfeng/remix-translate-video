@@ -13,5 +13,5 @@ export const Audio: React.FC<AudioProps> = ({ publicAudioPath }) => {
 		.replace(/^\//, '') // 移除开头的斜杠
 		.replace(/^public\//, '') // 移除 public/ 前缀
 
-	return <RemotionAudio src={staticFile(normalizedPath)} volume={0.1} />
+	return <RemotionAudio loop src={staticFile(normalizedPath)} volume={0.1} />
 }

@@ -1,6 +1,7 @@
 import type { ActionFunctionArgs } from '@remix-run/node'
 import { Form, redirect, useActionData, useNavigate } from '@remix-run/react'
 import { format } from 'date-fns'
+import { Edit3, Trash } from 'lucide-react'
 import { useRef, useState } from 'react'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
@@ -56,9 +57,8 @@ export default function AppGeneralCommentCreate() {
 	const [newComment, setNewComment] = useState<Partial<Comment>>({
 		content: '',
 		author: '',
-		likes: '0',
+		likes: 0,
 		authorThumbnail: '',
-		publishedTime: new Date().toISOString(),
 	})
 	const [source, setSource] = useState<string>('manual')
 	const videoPreviewRef = useRef<HTMLDivElement>(null)
@@ -79,19 +79,18 @@ export default function AppGeneralCommentCreate() {
 			setComments([
 				...comments,
 				{
+					id: `manual-${Date.now()}`,
 					content: newComment.content,
 					author: newComment.author,
-					likes: newComment.likes || '0',
+					likes: Number(newComment.likes || 0),
 					authorThumbnail: newComment.authorThumbnail || '',
-					publishedTime: newComment.publishedTime || new Date().toISOString(),
 				} as Comment,
 			])
 			setNewComment({
 				content: '',
 				author: '',
-				likes: '0',
+				likes: 0,
 				authorThumbnail: '',
-				publishedTime: new Date().toISOString(),
 			})
 		}
 	}
@@ -129,12 +128,14 @@ export default function AppGeneralCommentCreate() {
 					// Set comments with media
 					const formattedComments =
 						data.comments?.map((c: any, index: number) => ({
+							id: c.id || `imported-${index}`,
 							content: c.content,
 							author: c.author,
-							likes: String(c.likes || 0),
+							likes: Number(c.likes || 0),
 							authorThumbnail: '',
-							publishedTime: format(new Date(c.timestamp), "yyyy-MM-dd'T'HH:mm:ss.SSSxxx"),
 							media: c.media,
+							bookmarkCount: Number(c.bookmark_count || 0),
+							replyCount: Number(c.reply_count || 0),
 						})) || []
 					setComments(formattedComments)
 
@@ -150,6 +151,10 @@ export default function AppGeneralCommentCreate() {
 						content: data.content,
 						images: newImages,
 						...(video && { video: { type: video.type, url: video.url } }),
+						bookmarkCount: Number(data.bookmark_count || 0),
+						replyCount: Number(data.reply_count || 0),
+						likes: Number(data.likes || 0),
+						retweets: Number(data.retweets || 0),
 					})
 					const form = document.querySelector('form')
 					const oldTypeInfo = form?.querySelector('input[name="typeInfo"]')
@@ -253,6 +258,7 @@ export default function AppGeneralCommentCreate() {
 															aria-label="Remove image"
 														>
 															<svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+																<title>Remove image</title>
 																<path
 																	fillRule="evenodd"
 																	d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
@@ -316,7 +322,13 @@ export default function AppGeneralCommentCreate() {
 									className="resize-none"
 								/>
 								<div className="flex gap-3">
-									<Input type="text" value={newComment.likes} onChange={(e) => setNewComment({ ...newComment, likes: e.target.value })} placeholder="Likes" className="w-1/3" />
+									<Input
+										type="number"
+										value={newComment.likes}
+										onChange={(e) => setNewComment({ ...newComment, likes: Number(e.target.value) })}
+										placeholder="Likes"
+										className="w-1/3"
+									/>
 									<Input
 										type="text"
 										value={newComment.authorThumbnail}
@@ -331,29 +343,46 @@ export default function AppGeneralCommentCreate() {
 							</div>
 							<input type="hidden" name="comments" value={JSON.stringify(comments)} />
 							<div className="space-y-3">
-								{comments.map((comment) => (
-									<div key={`${comment.author}-${comment.publishedTime}`} className="bg-gray-50 p-4 rounded-lg">
+								{comments.map((comment, index) => (
+									<div key={`${comment.id}-${index}`} className="bg-gray-50 p-4 rounded-lg">
 										<div className="flex items-start gap-3">
 											<img src={comment.authorThumbnail || 'https://placehold.co/40x40/png?text=User'} alt={comment.author} className="w-10 h-10 rounded-full object-cover" />
 											<div className="flex-1 min-w-0">
 												<div className="flex items-center justify-between gap-2">
-													<div className="font-medium text-gray-900">{comment.author}</div>
-													<Button type="button" variant="destructive" onClick={() => handleRemoveComment(comments.indexOf(comment))} className="shrink-0">
+													<div className="flex items-center gap-2">
+														<span className="font-medium text-gray-900">{comment.author}</span>
+														<span className="text-xs text-gray-500">•</span>
+														<span className="text-xs text-gray-500">👍 {comment.likes}</span>
+													</div>
+													<Button type="button" variant="destructive" onClick={() => handleRemoveComment(index)} className="shrink-0">
+														<Trash className="h-3 w-3" />
 														Remove
 													</Button>
 												</div>
 												<div className="mt-1 text-gray-600">{comment.content}</div>
 												<div className="mt-2 flex items-center gap-2 text-sm text-gray-500">
 													<span>👍 {comment.likes}</span>
-													<span>•</span>
-													<span>{new Date(comment.publishedTime).toLocaleDateString()}</span>
+													{comment.bookmarkCount !== undefined && (
+														<>
+															<span>•</span>
+															<span>🔖 {comment.bookmarkCount}</span>
+														</>
+													)}
+													{comment.replyCount !== undefined && (
+														<>
+															<span>•</span>
+															<span>💬 {comment.replyCount}</span>
+														</>
+													)}
 												</div>
 												{comment.media && comment.media.length > 0 && (
 													<div className="mt-2 space-y-2">
 														{comment.media.map((m, mediaIndex) => (
 															<div key={`${m.url}-${mediaIndex}`} className={m.type === 'video' ? 'aspect-video w-full bg-black rounded-lg overflow-hidden' : ''}>
 																{m.type === 'video' ? (
-																	<video src={m.url} controls className="w-full h-full" />
+																	<video src={m.url} controls className="w-full h-full">
+																		<track kind="captions" src="" label="English" />
+																	</video>
 																) : (
 																	<img src={m.url} alt="Comment media" className="w-full object-cover rounded-lg" />
 																)}

@@ -6,6 +6,7 @@ import { Player } from '@remotion/player'
 import { eq } from 'drizzle-orm'
 import { ArrowLeft, Edit3, Film, Languages, Loader2, Play, Settings, Trash, Upload, Wand2 } from 'lucide-react'
 import { useState } from 'react'
+import LoadingButtonWithState from '~/components/LoadingButtonWithState'
 import { VideoModeSelect } from '~/components/business/general-comment/VideoModeSelect'
 import { Button } from '~/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card'
@@ -117,6 +118,8 @@ export default function AppGeneralCommentRender() {
 	const generateTitleFetcher = useFetcher()
 	const updateTitleFetcher = useFetcher()
 	const updateContentTranslationFetcher = useFetcher()
+	const translateCommentsFetcher = useFetcher()
+	const translateFetcher = useFetcher()
 
 	const handleDeleteComment = (index: number) => {
 		const formData = new FormData()
@@ -229,10 +232,9 @@ export default function AppGeneralCommentRender() {
 										commentDurations: durations.commentDurations,
 										audioPath: comment.audioPath,
 										publicAudioPath: comment.publicAudioPath,
-										createdAt: new Date(comment.createdAt * 1000).toISOString(),
-										likes: comment.likes || 0,
-										views: comment.views || 0,
-										commentCount: (comment.comments || []).length,
+										createdAt: typeof comment.createdAt === 'number' ? new Date(comment.createdAt * 1000).toISOString() : new Date().toISOString(),
+										likes: comment.typeInfo?.likes || 0,
+										commentCount: comment.typeInfo?.replyCount || 0,
 									}}
 								/>
 							</div>
@@ -415,21 +417,27 @@ export default function AppGeneralCommentRender() {
 								<p className="text-sm text-gray-900 whitespace-pre-wrap">{typeInfo.content}</p>
 							</div>
 							<div className="flex justify-end gap-2">
-								<Form action="translate" method="post" className="flex gap-2">
-									<Select name="model" defaultValue="deepseek">
+								<translateFetcher.Form action="translate" method="post" className="flex gap-2">
+									<Select name="model" defaultValue="r1">
 										<SelectTrigger className="w-[120px]">
 											<SelectValue placeholder="Select model" />
 										</SelectTrigger>
 										<SelectContent>
+											<SelectItem value="r1">R1</SelectItem>
 											<SelectItem value="deepseek">DeepSeek</SelectItem>
 											<SelectItem value="openai">OpenAI</SelectItem>
 										</SelectContent>
 									</Select>
-									<Button type="submit" variant="outline" size="sm" className="gap-2" disabled={!typeInfo.content || !!typeInfo.contentZh}>
-										<Languages className="h-4 w-4" />
-										Translate
-									</Button>
-								</Form>
+									<LoadingButtonWithState
+										variant="outline"
+										size="sm"
+										state={translateFetcher.state}
+										idleText="Translate"
+										loadingText="Translating..."
+										icon={<Languages className="mr-2 h-4 w-4" />}
+										disabled={!typeInfo.content || !!typeInfo.contentZh}
+									/>
+								</translateFetcher.Form>
 							</div>
 							{typeInfo.contentZh && (
 								<div className="bg-gray-50 rounded-lg p-4">
@@ -500,21 +508,27 @@ export default function AppGeneralCommentRender() {
 							<div className="border-t pt-4">
 								<div className="flex items-center justify-between mb-4">
 									<h4 className="text-sm font-medium text-gray-900">Comments ({comment.comments.length})</h4>
-									<Form action="translate-comments" method="post" className="flex gap-2">
-										<Select name="model" defaultValue="deepseek">
+									<translateCommentsFetcher.Form action="translate-comments" method="post" className="flex gap-2">
+										<Select name="model" defaultValue="r1">
 											<SelectTrigger className="w-[120px]">
 												<SelectValue placeholder="Select model" />
 											</SelectTrigger>
 											<SelectContent>
+												<SelectItem value="r1">R1</SelectItem>
 												<SelectItem value="deepseek">DeepSeek</SelectItem>
 												<SelectItem value="openai">OpenAI</SelectItem>
 											</SelectContent>
 										</Select>
-										<Button type="submit" variant="outline" size="sm" className="gap-2" disabled={comment.comments.every((c) => !!c.translatedContent)}>
-											<Languages className="h-4 w-4" />
-											Translate Comments
-										</Button>
-									</Form>
+										<LoadingButtonWithState
+											variant="outline"
+											size="sm"
+											state={translateCommentsFetcher.state}
+											idleText="Translate Comments"
+											loadingText="Translating..."
+											icon={<Languages className="mr-2 h-4 w-4" />}
+											disabled={comment.comments.every((c) => !!c.translatedContent)}
+										/>
+									</translateCommentsFetcher.Form>
 								</div>
 								<div className="space-y-4">
 									{(comment.comments || []).map((c, i) => {

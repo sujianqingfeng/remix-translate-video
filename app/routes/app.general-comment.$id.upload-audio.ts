@@ -1,6 +1,6 @@
 import { writeFile } from 'node:fs/promises'
 import path from 'node:path'
-import { type ActionFunctionArgs, json } from '@remix-run/node'
+import type { ActionFunctionArgs } from '@remix-run/node'
 import { eq } from 'drizzle-orm'
 import invariant from 'tiny-invariant'
 import { db, schema } from '~/lib/drizzle'
@@ -28,5 +28,5 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 		})
 		.where(eq(schema.generalComments.id, id))
 
-	return json({ success: true })
+	return { success: true }
 }
