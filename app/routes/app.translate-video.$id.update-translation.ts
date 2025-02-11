@@ -34,12 +34,10 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
 			translateVideo.transcripts[indexNumber].text = text.toString()
 			break
 		case 'literal':
-			invariant(textLiteralTranslation, 'textLiteralTranslation is required')
-			translateVideo.transcripts[indexNumber].textLiteralTranslation = textLiteralTranslation.toString()
+			translateVideo.transcripts[indexNumber].textLiteralTranslation = textLiteralTranslation?.toString()
 			break
 		case 'interpretation':
-			invariant(textInterpretation, 'textInterpretation is required')
-			translateVideo.transcripts[indexNumber].textInterpretation = textInterpretation.toString()
+			translateVideo.transcripts[indexNumber].textInterpretation = textInterpretation?.toString()
 			break
 		default:
 			throw new Error('Invalid field')

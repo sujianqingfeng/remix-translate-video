@@ -8,7 +8,7 @@ type SentenceSegmentationOptions = {
 // 配置常量
 const SENTENCE_END_MARKS_PATTERN = /[.!?。！？]/
 const NUMBER_PATTERN = /\d+/
-const SPECIAL_ABBREVIATIONS = new Set(['u.s', 'd.c', 'U.S', 'i.e', 'A.I', 'a.m', 'p.m', 'e.g', 'i.v'])
+const SPECIAL_ABBREVIATIONS = new Set(['u.s', 'd.c', 'U.S', 'i.e', 'A.I.', 'a.m', 'p.m', 'e.g', 'i.v'])
 
 // 检查是否是数字
 function isNumber(text: string | undefined): boolean {
