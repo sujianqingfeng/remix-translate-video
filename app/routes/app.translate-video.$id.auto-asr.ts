@@ -24,6 +24,7 @@ export const action = async ({ params }: ActionFunctionArgs) => {
 
 	const whisperCliPath = path.join(whisperProjectPath, 'build/bin/whisper-cli')
 	const modelPath = path.join(whisperProjectPath, 'models/ggml-medium.bin')
+	// const modelPath = path.join(whisperProjectPath, 'models/ggml-large-v3-turbo-q8_0.bin')
 	const resultPath = `${translateVideo.audioFilePath}.json`
 
 	await new Promise<void>((resolve, reject) => {
