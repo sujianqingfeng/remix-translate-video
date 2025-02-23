@@ -168,6 +168,30 @@ type ProcessTranscriptOptions = {
 	maxChineseLength?: number
 }
 
+// 找到最近的单词边界
+function findNearestWordBoundary(text: string, targetIndex: number): number {
+	// 如果目标位置已经是空格，直接返回
+	if (text[targetIndex]?.trim() === '') {
+		return targetIndex
+	}
+
+	let leftIndex = targetIndex
+	let rightIndex = targetIndex
+
+	// 向左搜索最近的单词边界
+	while (leftIndex > 0 && text[leftIndex - 1]?.trim() !== '') {
+		leftIndex--
+	}
+
+	// 向右搜索最近的单词边界
+	while (rightIndex < text.length && text[rightIndex]?.trim() !== '') {
+		rightIndex++
+	}
+
+	// 返回距离目标位置最近的边界
+	return targetIndex - leftIndex <= rightIndex - targetIndex ? leftIndex : rightIndex
+}
+
 export function processTranslatedLongTranscripts(transcripts: Transcript[], options: ProcessTranscriptOptions = {}) {
 	const { maxEnglishLength = 70, maxChineseLength = 35 } = options
 	const result: Transcript[] = []
@@ -232,8 +256,9 @@ export function processTranslatedLongTranscripts(transcripts: Transcript[], opti
 				result.push(firstPart)
 				result.push(...processTranslatedLongTranscripts([secondPart], options))
 			} else {
-				// 如果实在没有合适的分割点，就按照字符长度均分
-				const splitIndex = Math.floor(englishText.length / 2)
+				// 如果实在没有合适的分割点，找到最近的单词边界
+				const targetSplitIndex = Math.floor(englishText.length / 2)
+				const splitIndex = findNearestWordBoundary(englishText, targetSplitIndex)
 				const chineseSplitIndex = shouldSplitChinese ? Math.floor(chineseText.length / 2) : chineseText.length
 
 				const words = transcript.words || []
