@@ -122,7 +122,7 @@ export const Comments: React.FC<CommentsProps> = ({ comments, totalDurationInFra
 										{comment.translatedContent && (
 											<div className="bg-emerald-50 rounded-xl p-4">
 												<h4 className="text-xs font-semibold text-emerald-600 tracking-wide uppercase mb-2">Translation</h4>
-												<p className="text-xl text-gray-900 leading-normal font-medium">{comment.translatedContent}</p>
+												<p className="text-4xl text-gray-900 leading-normal font-medium">{comment.translatedContent}</p>
 											</div>
 										)}
 									</div>

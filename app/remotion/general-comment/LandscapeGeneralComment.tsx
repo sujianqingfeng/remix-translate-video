@@ -23,9 +23,6 @@ export const LandscapeGeneralComment: React.FC<GeneralCommentProps> = ({
 	views,
 	commentCount,
 }) => {
-	const frame = useCurrentFrame()
-	const { width, height } = useVideoConfig()
-
 	// Convert seconds to frames
 	const coverDurationInFrames = coverDurationInSeconds * fps
 	const totalCommentsDuration = commentDurations.reduce((acc, curr) => acc + curr, 0)

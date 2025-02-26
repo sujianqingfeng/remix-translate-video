@@ -22,22 +22,81 @@ function isNumberRelatedMark(word: SentenceWord, prevWord: SentenceWord | undefi
 }
 
 // 检查是否是特殊缩写的一部分
-function isPartOfSpecialAbbreviation(word: SentenceWord, prevWord: SentenceWord | undefined, nextWord: SentenceWord | undefined): boolean {
-	if (word.word !== '.' || !prevWord) return false
+function isPartOfSpecialAbbreviation(word: SentenceWord, words: SentenceWord[], currentIndex: number): boolean {
+	if (word.word !== '.') return false
 
-	const prevTwoChars = prevWord.word.toLowerCase()
-	const nextTwoChars = nextWord?.word?.toLowerCase() || ''
-	const possibleAbbr = `${prevTwoChars}.${nextTwoChars}`
+	// 获取当前点号前后的上下文
+	const contextWords: string[] = []
+	let leftIndex = currentIndex - 1
+	let rightIndex = currentIndex + 1
 
-	return Array.from(SPECIAL_ABBREVIATIONS).some((abbr) => possibleAbbr.includes(abbr))
+	// 向左收集单词，直到遇到空格或达到列表开头
+	while (leftIndex >= 0) {
+		const leftWord = words[leftIndex].word
+		if (leftWord.trim() === '') break
+		contextWords.unshift(leftWord.toLowerCase())
+		leftIndex--
+	}
+
+	// 向右收集单词，直到遇到空格或达到列表结尾
+	while (rightIndex < words.length) {
+		const rightWord = words[rightIndex].word
+		if (rightWord.trim() === '') break
+		contextWords.push(rightWord.toLowerCase())
+		rightIndex++
+	}
+
+	// 将点号插入到适当位置
+	contextWords.splice(currentIndex - leftIndex - 1, 0, '.')
+
+	// 构建可能的缩写
+	const possibleAbbr = contextWords.join('')
+
+	// 检查是否匹配任何特殊缩写
+	return Array.from(SPECIAL_ABBREVIATIONS).some((abbr) => {
+		// 完全匹配
+		if (possibleAbbr === abbr) return true
+		// 部分匹配（缩写可能是更大字符串的一部分）
+		if (possibleAbbr.includes(abbr)) return true
+		// 缩写可能是possibleAbbr的一部分（处理不完整的缩写）
+		if (abbr.includes(possibleAbbr)) return true
+		return false
+	})
 }
 
 // 检查是否是特殊缩写内部的点
-function isInternalAbbreviationDot(word: SentenceWord, prevWord: SentenceWord | undefined, nextWord: SentenceWord | undefined): boolean {
-	if (!prevWord || !nextWord) return false
+function isInternalAbbreviationDot(word: SentenceWord, words: SentenceWord[], currentIndex: number): boolean {
+	if (word.word !== '.') return false
 
-	const context = `${prevWord.word}${word.word}${nextWord.word}`.toLowerCase()
-	return Array.from(SPECIAL_ABBREVIATIONS).some((abbr) => abbr.includes(context))
+	// 获取当前点号前后的上下文
+	const contextWords: string[] = []
+	let leftIndex = currentIndex - 1
+	let rightIndex = currentIndex + 1
+
+	// 向左收集单词，直到遇到空格或达到列表开头
+	while (leftIndex >= 0) {
+		const leftWord = words[leftIndex].word
+		if (leftWord.trim() === '') break
+		contextWords.unshift(leftWord.toLowerCase())
+		leftIndex--
+	}
+
+	// 向右收集单词，直到遇到空格或达到列表结尾
+	while (rightIndex < words.length) {
+		const rightWord = words[rightIndex].word
+		if (rightWord.trim() === '') break
+		contextWords.push(rightWord.toLowerCase())
+		rightIndex++
+	}
+
+	// 将点号插入到适当位置
+	contextWords.splice(currentIndex - leftIndex - 1, 0, '.')
+
+	// 构建可能的缩写
+	const possibleAbbr = contextWords.join('')
+
+	// 检查是否匹配任何特殊缩写
+	return Array.from(SPECIAL_ABBREVIATIONS).some((abbr) => abbr.includes(possibleAbbr))
 }
 
 // 合并单词
@@ -62,7 +121,7 @@ export function assembleLongSentences(words: SentenceWord[]) {
 
 		// 处理科学计数法和小数
 		if (isNumberRelatedMark(word, prevWord, nextWord)) {
-			if (currentSentence.length > 0) {
+			if (currentSentence.length > 0 && nextWord) {
 				mergeWords(currentSentence[currentSentence.length - 1], word.word, nextWord)
 				i++ // 跳过下一个数字
 				continue
@@ -70,8 +129,8 @@ export function assembleLongSentences(words: SentenceWord[]) {
 		}
 
 		// 处理特殊缩写
-		if (isPartOfSpecialAbbreviation(word, prevWord, nextWord)) {
-			if (currentSentence.length > 0) {
+		if (isPartOfSpecialAbbreviation(word, words, i)) {
+			if (currentSentence.length > 0 && nextWord) {
 				mergeWords(currentSentence[currentSentence.length - 1], '.', nextWord)
 				i++ // 跳过下一个字符
 				continue
@@ -83,7 +142,7 @@ export function assembleLongSentences(words: SentenceWord[]) {
 		// 检查是否是句子结尾
 		if (SENTENCE_END_MARKS_PATTERN.test(word.word)) {
 			const isNumberRelated = isNumberRelatedMark(word, prevWord, nextWord)
-			const isInternalDot = isInternalAbbreviationDot(word, prevWord, nextWord)
+			const isInternalDot = isInternalAbbreviationDot(word, words, i)
 
 			if ((!isNumberRelated && !isInternalDot) || i === words.length - 1) {
 				sentences.push(currentSentence)

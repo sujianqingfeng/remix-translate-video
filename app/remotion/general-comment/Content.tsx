@@ -1,6 +1,6 @@
 import { format } from 'date-fns'
 import { Clock, Eye, MessageCircle, ThumbsUp } from 'lucide-react'
-import { interpolate, spring, useCurrentFrame, useVideoConfig } from 'remotion'
+import { spring, useCurrentFrame, useVideoConfig } from 'remotion'
 import { staticFile } from 'remotion'
 import type { GeneralCommentProps } from './types'
 
@@ -47,26 +47,26 @@ export const Content: React.FC<Pick<GeneralCommentProps, 'content' | 'contentZh'
 					{createdAt && (
 						<div className="flex items-center gap-2">
 							<Clock className="w-4 h-4" />
-							<span className="text-sm">{format(new Date(createdAt), 'MMM dd, yyyy HH:mm')}</span>
+							<span className="text-base font-medium text-gray-700">{format(new Date(createdAt), 'MMM dd, yyyy HH:mm')}</span>
 						</div>
 					)}
 					<div className="flex items-center gap-6">
 						{likes > 0 && (
 							<div className="flex items-center gap-2">
 								<ThumbsUp className="w-4 h-4 text-blue-500" />
-								<span className="text-sm font-medium">{formatNumber(likes)}</span>
+								<span className="text-base font-medium text-gray-800">{formatNumber(likes)}</span>
 							</div>
 						)}
 						{views > 0 && (
 							<div className="flex items-center gap-2">
 								<Eye className="w-4 h-4 text-emerald-500" />
-								<span className="text-sm font-medium">{formatNumber(views)}</span>
+								<span className="text-base font-medium text-gray-800">{formatNumber(views)}</span>
 							</div>
 						)}
 						{commentCount > 0 && (
 							<div className="flex items-center gap-2">
 								<MessageCircle className="w-4 h-4 text-purple-500" />
-								<span className="text-sm font-medium">{formatNumber(commentCount)}</span>
+								<span className="text-base font-medium text-gray-800">{formatNumber(commentCount)}</span>
 							</div>
 						)}
 					</div>

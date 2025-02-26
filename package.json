@@ -38,7 +38,7 @@
 		"@remotion/cli": "^4.0.266",
 		"@remotion/google-fonts": "^4.0.266",
 		"@remotion/media-parser": "^4.0.266",
-		"@tobyg74/tiktok-api-dl": "^1.2.2",
+		"@tobyg74/tiktok-api-dl": "^1.2.3",
 		"ai": "^4.1.20",
 		"archiver": "^7.0.1",
 		"class-variance-authority": "^0.7.0",
