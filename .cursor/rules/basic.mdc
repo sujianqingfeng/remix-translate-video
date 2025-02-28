@@ -3,7 +3,7 @@ description: basic
 globs: 
 alwaysApply: true
 ---
-- 项目使用 remix、remotion、date-fns、drizzle-orm 开发
-- 如果需要创建 action 的时候，新开启一个action文件路由来创建
+- 时间格式化使用 date-fns
+- 样式方案使用tailwindcss
 - 变量名使用小驼峰
 - 文字使用英文
