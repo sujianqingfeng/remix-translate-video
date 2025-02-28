@@ -1,10 +1,10 @@
 import { useFetcher } from '@remix-run/react'
-import { Merge, Pencil, Save, Trash, X } from 'lucide-react'
+import { AlignJustify, Merge, Pencil, Save, Trash, X } from 'lucide-react'
 import { useState } from 'react'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { cn } from '~/lib/utils'
-import type { Transcript } from '~/types'
+import type { Sentence, Transcript } from '~/types'
 
 function formatTime(seconds: number) {
 	const minutes = Math.floor(seconds / 60)
@@ -19,14 +19,21 @@ export default function Transcripts({ transcripts }: { transcripts: Transcript[]
 	const len = transcripts.length
 	const [editingIndex, setEditingIndex] = useState<number | null>(null)
 	const [editingField, setEditingField] = useState<'text' | 'literal' | 'interpretation' | null>(null)
+	const [showAlignedSentences, setShowAlignedSentences] = useState<number[]>([])
+
+	const toggleShowAlignedSentences = (index: number) => {
+		setShowAlignedSentences((prev) => (prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]))
+	}
 
 	return (
 		<div className="flex flex-col gap-3">
 			{transcripts.map((transcript, index) => {
 				const isEditing = editingIndex === index
+				const hasAlignedSentences = transcript.sentences && transcript.sentences.length > 0
+				const isShowingAlignedSentences = showAlignedSentences.includes(index)
 
 				return (
-					// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+					// biome-ignore lint/suspicious/noArrayIndexKey: transcript doesn't have a unique id
 					<div
 						key={index}
 						className={cn(
@@ -42,6 +49,21 @@ export default function Transcripts({ transcripts }: { transcripts: Transcript[]
 								<div className="px-2.5 py-1 rounded-full bg-primary/10 text-xs font-medium text-primary tracking-wide">
 									{formatTime(transcript.start)} - {formatTime(transcript.end)}
 								</div>
+
+								{hasAlignedSentences && (
+									<Button
+										variant="ghost"
+										size="sm"
+										className={cn(
+											'h-7 px-2 text-xs rounded-full transition-colors',
+											isShowingAlignedSentences ? 'bg-primary/20 text-primary' : 'hover:bg-primary/10 hover:text-primary',
+										)}
+										onClick={() => toggleShowAlignedSentences(index)}
+									>
+										<AlignJustify size={14} className="mr-1" />
+										{isShowingAlignedSentences ? 'Hide Sentences' : 'Show Sentences'}
+									</Button>
+								)}
 							</div>
 
 							<div className="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -109,6 +131,23 @@ export default function Transcripts({ transcripts }: { transcripts: Transcript[]
 									>
 										<Pencil size={14} />
 									</Button>
+								</div>
+							)}
+
+							{/* 显示对齐的句子 */}
+							{hasAlignedSentences && isShowingAlignedSentences && (
+								<div className="mt-2 pl-4 border-l-2 border-primary/10 space-y-2">
+									{(transcript.sentences as Sentence[]).map((sentence, sentenceIndex) => (
+										// biome-ignore lint/suspicious/noArrayIndexKey: sentence doesn't have a unique id
+										<div key={`${index}-${sentenceIndex}-${sentence.start}`} className="p-2 rounded bg-primary/5 text-xs text-foreground/80">
+											<div className="flex justify-between items-center mb-1">
+												<span className="text-[10px] text-muted-foreground">
+													{formatTime(sentence.start)} - {formatTime(sentence.end)}
+												</span>
+											</div>
+											<p>{sentence.text}</p>
+										</div>
+									))}
 								</div>
 							)}
 

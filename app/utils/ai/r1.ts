@@ -38,11 +38,13 @@ function createR1({ apiKey }: { apiKey: string }) {
 			prompt,
 			schema,
 			messages,
+			maxTokens,
 		}: {
 			system?: string
 			prompt?: string
 			messages?: Array<CoreMessage>
 			schema: z.Schema<OBJECT, z.ZodTypeDef, any> | Schema<OBJECT>
+			maxTokens?: number
 		}) => {
 			const { object } = await generateObject({
 				model: openai(model),
@@ -50,6 +52,7 @@ function createR1({ apiKey }: { apiKey: string }) {
 				system,
 				prompt,
 				messages,
+				maxTokens,
 			})
 
 			return object

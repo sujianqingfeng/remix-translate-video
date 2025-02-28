@@ -72,24 +72,11 @@ export const action = async ({ params }: ActionFunctionArgs) => {
 		end: item.offsets.to / 1000,
 	}))
 
-	const segments = processSentenceSegmentation({ words })
-
-	// 去除句子两边的符号 和 words
-	const transcripts = segments.map(({ text, start, end, words }) => {
-		const textResult = trimPunctuation(text)
-		return {
-			text: textResult,
-			start: start,
-			end: end,
-			words,
-		}
-	})
-
 	await db
 		.update(schema.translateVideos)
 		.set({
 			asrWords: words,
-			transcripts,
+			// transcripts,
 		})
 		.where(where)
 

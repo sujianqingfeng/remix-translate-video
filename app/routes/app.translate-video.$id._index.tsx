@@ -66,6 +66,7 @@ export default function TranslateVideoPage() {
 	const remoteRenderFetcher = useFetcher()
 	const splitFetcher = useFetcher()
 	const autoAsrFetcher = useFetcher()
+	const splitAlignFetcher = useFetcher()
 
 	const onCopy = async (text?: string | null) => {
 		if (!text) {
@@ -235,6 +236,27 @@ export default function TranslateVideoPage() {
 									<splitFetcher.Form method="post" action="split">
 										<LoadingButtonWithState state={splitFetcher.state} idleText="Split" className="transition-colors hover:bg-primary/10 hover:text-primary" variant="outline" />
 									</splitFetcher.Form>
+
+									<Separator orientation="vertical" className="h-10" />
+
+									<splitAlignFetcher.Form method="post" action="align" className="flex items-center gap-2">
+										<Select name="type" defaultValue="ai">
+											<SelectTrigger className="w-[100px]">
+												<SelectValue placeholder="Select Type" />
+											</SelectTrigger>
+											<SelectContent>
+												<SelectItem value="ai">AI</SelectItem>
+												<SelectItem value="code">Code</SelectItem>
+											</SelectContent>
+										</Select>
+										<LoadingButtonWithState
+											state={splitAlignFetcher.state}
+											idleText="Align"
+											className="gap-2 transition-colors hover:bg-primary/10 hover:text-primary"
+											variant="outline"
+											icon={<Languages size={16} />}
+										/>
+									</splitAlignFetcher.Form>
 
 									{playFile && (
 										<renderFetcher.Form method="post" action="render">

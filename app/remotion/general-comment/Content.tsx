@@ -43,30 +43,30 @@ export const Content: React.FC<Pick<GeneralCommentProps, 'content' | 'contentZh'
 		<div className="h-full overflow-hidden relative flex flex-col">
 			{/* Header */}
 			<div className="flex-none px-16 py-8 border-b border-gray-100">
-				<div className="flex items-center gap-8 text-gray-500">
+				<div className="flex items-center gap-8 text-black">
 					{createdAt && (
 						<div className="flex items-center gap-2">
-							<Clock className="w-4 h-4" />
-							<span className="text-base font-medium text-gray-700">{format(new Date(createdAt), 'MMM dd, yyyy HH:mm')}</span>
+							<Clock className="w-5 h-5 text-black" />
+							<span className="text-lg font-medium text-black">{format(new Date(createdAt), 'yyyy-MM-dd HH:mm')}</span>
 						</div>
 					)}
 					<div className="flex items-center gap-6">
 						{likes > 0 && (
 							<div className="flex items-center gap-2">
-								<ThumbsUp className="w-4 h-4 text-blue-500" />
-								<span className="text-base font-medium text-gray-800">{formatNumber(likes)}</span>
+								<ThumbsUp className="w-5 h-5 text-black" />
+								<span className="text-lg font-medium text-black">{formatNumber(likes)}</span>
 							</div>
 						)}
 						{views > 0 && (
 							<div className="flex items-center gap-2">
-								<Eye className="w-4 h-4 text-emerald-500" />
-								<span className="text-base font-medium text-gray-800">{formatNumber(views)}</span>
+								<Eye className="w-5 h-5 text-black" />
+								<span className="text-lg font-medium text-black">{formatNumber(views)}</span>
 							</div>
 						)}
 						{commentCount > 0 && (
 							<div className="flex items-center gap-2">
-								<MessageCircle className="w-4 h-4 text-purple-500" />
-								<span className="text-base font-medium text-gray-800">{formatNumber(commentCount)}</span>
+								<MessageCircle className="w-5 h-5 text-black" />
+								<span className="text-lg font-medium text-black">{formatNumber(commentCount)}</span>
 							</div>
 						)}
 					</div>

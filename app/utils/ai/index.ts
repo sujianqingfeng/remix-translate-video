@@ -1,3 +1,4 @@
+import { z } from 'zod'
 import type { ShortText } from '~/types'
 import createChatGPT from './chatgpt'
 import createDeepSeek from './deep-seek'
@@ -102,6 +103,19 @@ export async function generateShortText(theme: string) {
 	})
 
 	return JSON.parse(`${PREFILL_PREFIX}${result}`) as ShortText
+}
+
+export async function splitSentence(sentence: string) {
+	const result = await deepSeek.generateObject({
+		schema: z.object({
+			sentences: z.array(z.string()),
+		}),
+		system: '帮我分割句子，不要增减内容。不需要翻译当前文本, 句子尽可能短。',
+		prompt: sentence,
+		maxTokens: 8000,
+	})
+
+	return result.sentences
 }
 
 export { deepSeek, chatGPT, r1 }

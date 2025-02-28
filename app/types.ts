@@ -113,6 +113,7 @@ export type Transcript = {
 	words: AsrWord[]
 	textLiteralTranslation?: string
 	textInterpretation?: string
+	sentences?: Sentence[]
 }
 
 // fill in blank

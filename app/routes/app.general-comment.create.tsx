@@ -1,7 +1,6 @@
 import type { ActionFunctionArgs } from '@remix-run/node'
-import { Form, redirect, useActionData, useNavigate } from '@remix-run/react'
-import { format } from 'date-fns'
-import { Edit3, Trash } from 'lucide-react'
+import { Form, redirect } from '@remix-run/react'
+import { Trash } from 'lucide-react'
 import { useRef, useState } from 'react'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
@@ -420,7 +419,7 @@ export default function AppGeneralCommentCreate() {
 								<label htmlFor="secondsForEvery30Words" className="block text-sm font-medium text-gray-700 mb-1">
 									Seconds per 30 Words
 								</label>
-								<Input id="secondsForEvery30Words" type="number" name="secondsForEvery30Words" defaultValue={3} />
+								<Input id="secondsForEvery30Words" type="number" name="secondsForEvery30Words" defaultValue={10} />
 							</div>
 						</div>
 					</div>
