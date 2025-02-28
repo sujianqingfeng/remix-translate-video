@@ -301,6 +301,13 @@ export default function TranslateVideoPage() {
 											Batch Replace
 										</Button>
 									</Link>
+
+									<Form method="post" action="create-subtitle-translation">
+										<Button variant="secondary" className="gap-2 transition-colors hover:bg-primary/20 hover:text-primary">
+											<Languages size={16} />
+											Create Subtitle Translation
+										</Button>
+									</Form>
 								</div>
 							</div>
 						</CardContent>

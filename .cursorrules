@@ -1,3 +1,0 @@
-- 项目使用 remix、remotion、date-fns、drizzle-orm、shadcn/ui、lucide-react 开发
-- 如果需要创建 action 的时候，新开启一个action文件路由来创建
-- 变量名使用小驼峰

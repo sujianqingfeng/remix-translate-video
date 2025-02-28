@@ -1,1 +1,0 @@
-ALTER TABLE `general_comments` ADD `audio_path` text;

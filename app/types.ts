@@ -106,11 +106,17 @@ export type AsrWord = {
 	end: number
 }
 
+export type WithTimeWord = {
+	word: string
+	start: number
+	end: number
+}
+
 export type Transcript = {
 	text: string
 	start: number
 	end: number
-	words: AsrWord[]
+	words: WithTimeWord[]
 	textLiteralTranslation?: string
 	textInterpretation?: string
 	sentences?: Sentence[]

@@ -1,0 +1,10 @@
+---
+description: ui
+globs: *.tsx
+alwaysApply: false
+---
+- 组件库使用 shadcn/ui
+- 图标库使用 lucide-react
+- shadcn/ui的组件放置到 app/components/ui
+- 业务组件放置到 app/components/business
+- 公共组件放置到 app/components

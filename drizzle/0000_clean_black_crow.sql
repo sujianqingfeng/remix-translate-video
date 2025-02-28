@@ -1,3 +1,14 @@
+CREATE TABLE `dialogues` (
+	`id` text NOT NULL,
+	`dialogues` text DEFAULT '[]' NOT NULL,
+	`fps` integer DEFAULT 40 NOT NULL,
+	`output_file_path` text,
+	`job_id` text,
+	`created_at` integer NOT NULL
+);
+--> statement-breakpoint
+CREATE UNIQUE INDEX `dialogues_id_unique` ON `dialogues` (`id`);--> statement-breakpoint
+CREATE INDEX `dialogues_id_idx` ON `dialogues` (`id`);--> statement-breakpoint
 CREATE TABLE `downloads` (
 	`id` text NOT NULL,
 	`link` text NOT NULL,
@@ -16,7 +27,7 @@ CREATE UNIQUE INDEX `downloads_id_unique` ON `downloads` (`id`);--> statement-br
 CREATE INDEX `downloads_id_idx` ON `downloads` (`id`);--> statement-breakpoint
 CREATE TABLE `fill_in_blanks` (
 	`id` text NOT NULL,
-	`fps` integer DEFAULT 120 NOT NULL,
+	`fps` integer DEFAULT 60 NOT NULL,
 	`sentences` text DEFAULT '[]' NOT NULL,
 	`output_file_path` text,
 	`job_id` text,
@@ -25,6 +36,27 @@ CREATE TABLE `fill_in_blanks` (
 --> statement-breakpoint
 CREATE UNIQUE INDEX `fill_in_blanks_id_unique` ON `fill_in_blanks` (`id`);--> statement-breakpoint
 CREATE INDEX `fill_in_blank_id_idx` ON `fill_in_blanks` (`id`);--> statement-breakpoint
+CREATE TABLE `general_comments` (
+	`id` text NOT NULL,
+	`type` text NOT NULL,
+	`author` text NOT NULL,
+	`type_info` text NOT NULL,
+	`source` text NOT NULL,
+	`comments` text DEFAULT '[]',
+	`comment_pull_at` integer,
+	`job_id` text,
+	`cover_duration_in_seconds` integer DEFAULT 3 NOT NULL,
+	`seconds_for_every_30_words` integer DEFAULT 3 NOT NULL,
+	`fps` integer DEFAULT 30 NOT NULL,
+	`output_file_path` text,
+	`source_file_path` text,
+	`audio_path` text,
+	`public_audio_path` text,
+	`created_at` integer NOT NULL
+);
+--> statement-breakpoint
+CREATE UNIQUE INDEX `general_comments_id_unique` ON `general_comments` (`id`);--> statement-breakpoint
+CREATE INDEX `general_comments_id_idx` ON `general_comments` (`id`);--> statement-breakpoint
 CREATE TABLE `short_texts` (
 	`id` text NOT NULL,
 	`fps` integer DEFAULT 120 NOT NULL,
@@ -45,6 +77,19 @@ CREATE TABLE `short_texts` (
 --> statement-breakpoint
 CREATE UNIQUE INDEX `short_texts_id_unique` ON `short_texts` (`id`);--> statement-breakpoint
 CREATE INDEX `short_texts_id_idx` ON `short_texts` (`id`);--> statement-breakpoint
+CREATE TABLE `subtitle_translations` (
+	`id` text NOT NULL,
+	`title` text DEFAULT '',
+	`audio_file_path` text,
+	`with_time_words` text DEFAULT '[]',
+	`sentences` text DEFAULT '[]',
+	`split_sentences` text DEFAULT '[]',
+	`translate_video_id` text,
+	`created_at` integer NOT NULL
+);
+--> statement-breakpoint
+CREATE UNIQUE INDEX `subtitle_translations_id_unique` ON `subtitle_translations` (`id`);--> statement-breakpoint
+CREATE INDEX `subtitle_translations_id_idx` ON `subtitle_translations` (`id`);--> statement-breakpoint
 CREATE TABLE `tasks` (
 	`id` text NOT NULL,
 	`type` text NOT NULL,
@@ -77,6 +122,8 @@ CREATE UNIQUE INDEX `translate_comments_id_unique` ON `translate_comments` (`id`
 CREATE INDEX `translate_comments_id_idx` ON `translate_comments` (`id`);--> statement-breakpoint
 CREATE TABLE `translate_videos` (
 	`id` text NOT NULL,
+	`title` text DEFAULT '',
+	`title_zh` text DEFAULT '',
 	`source` text NOT NULL,
 	`download_id` text,
 	`upload_file_path` text,
@@ -84,6 +131,7 @@ CREATE TABLE `translate_videos` (
 	`asr_words` text DEFAULT '[]',
 	`transcripts` text DEFAULT '[]',
 	`output_file_path` text,
+	`subtitle_translation_id` text,
 	`created_at` integer NOT NULL
 );
 --> statement-breakpoint

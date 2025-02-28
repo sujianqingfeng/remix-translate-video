@@ -1,9 +1,78 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "620f057c-ab58-4a46-8c15-e76103ae4e6f",
+  "id": "1e46139a-7873-458c-bf2a-22b7478df2be",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
+    "dialogues": {
+      "name": "dialogues",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "dialogues": {
+          "name": "dialogues",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'[]'"
+        },
+        "fps": {
+          "name": "fps",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 40
+        },
+        "output_file_path": {
+          "name": "output_file_path",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "job_id": {
+          "name": "job_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "dialogues_id_unique": {
+          "name": "dialogues_id_unique",
+          "columns": [
+            "id"
+          ],
+          "isUnique": true
+        },
+        "dialogues_id_idx": {
+          "name": "dialogues_id_idx",
+          "columns": [
+            "id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
     "downloads": {
       "name": "downloads",
       "columns": {
@@ -122,7 +191,7 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": 120
+          "default": 60
         },
         "sentences": {
           "name": "sentences",
@@ -164,6 +233,147 @@
         },
         "fill_in_blank_id_idx": {
           "name": "fill_in_blank_id_idx",
+          "columns": [
+            "id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "general_comments": {
+      "name": "general_comments",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "type": {
+          "name": "type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "author": {
+          "name": "author",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "type_info": {
+          "name": "type_info",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "source": {
+          "name": "source",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "comments": {
+          "name": "comments",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "'[]'"
+        },
+        "comment_pull_at": {
+          "name": "comment_pull_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "job_id": {
+          "name": "job_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "cover_duration_in_seconds": {
+          "name": "cover_duration_in_seconds",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 3
+        },
+        "seconds_for_every_30_words": {
+          "name": "seconds_for_every_30_words",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 3
+        },
+        "fps": {
+          "name": "fps",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 30
+        },
+        "output_file_path": {
+          "name": "output_file_path",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "source_file_path": {
+          "name": "source_file_path",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "audio_path": {
+          "name": "audio_path",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "public_audio_path": {
+          "name": "public_audio_path",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "general_comments_id_unique": {
+          "name": "general_comments_id_unique",
+          "columns": [
+            "id"
+          ],
+          "isUnique": true
+        },
+        "general_comments_id_idx": {
+          "name": "general_comments_id_idx",
           "columns": [
             "id"
           ],
@@ -299,6 +509,91 @@
         },
         "short_texts_id_idx": {
           "name": "short_texts_id_idx",
+          "columns": [
+            "id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "subtitle_translations": {
+      "name": "subtitle_translations",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "''"
+        },
+        "audio_file_path": {
+          "name": "audio_file_path",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "with_time_words": {
+          "name": "with_time_words",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "'[]'"
+        },
+        "sentences": {
+          "name": "sentences",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "'[]'"
+        },
+        "split_sentences": {
+          "name": "split_sentences",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "'[]'"
+        },
+        "translate_video_id": {
+          "name": "translate_video_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "subtitle_translations_id_unique": {
+          "name": "subtitle_translations_id_unique",
+          "columns": [
+            "id"
+          ],
+          "isUnique": true
+        },
+        "subtitle_translations_id_idx": {
+          "name": "subtitle_translations_id_idx",
           "columns": [
             "id"
           ],
@@ -516,6 +811,22 @@
           "notNull": true,
           "autoincrement": false
         },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "''"
+        },
+        "title_zh": {
+          "name": "title_zh",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "''"
+        },
         "source": {
           "name": "source",
           "type": "text",
@@ -562,6 +873,13 @@
         },
         "output_file_path": {
           "name": "output_file_path",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "subtitle_translation_id": {
+          "name": "subtitle_translation_id",
           "type": "text",
           "primaryKey": false,
           "notNull": false,

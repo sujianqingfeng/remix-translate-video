@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from '@remix-run/react'
-import { BookOpen, ChevronLeft, ChevronRight, Download, FileCheck, Languages, type LucideIcon, MessageCircle, MessageSquare, Type } from 'lucide-react'
+import { BookOpen, ChevronLeft, ChevronRight, Download, FileCheck, FileText, Languages, type LucideIcon, MessageCircle, MessageSquare, Type } from 'lucide-react'
 import { useState } from 'react'
 
 interface MenuItem {
@@ -34,6 +34,13 @@ const menuItems: MenuItem[] = [
 		icon: Languages,
 		text: 'Video Translation',
 	},
+
+  {
+    to: '/app/subtitle-translations',
+    title: 'Subtitle Translations',
+    icon: FileText,
+    text: 'Subtitle Translations',
+  },
 
 	{
 		to: '/app/short-text',

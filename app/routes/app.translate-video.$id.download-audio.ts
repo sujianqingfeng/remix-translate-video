@@ -112,6 +112,5 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 	const { audioFilePath } = newTranslateVideo
 	invariant(audioFilePath, 'audioFilePath is required')
 
-	// return returnAudioFile(audioFilePath, id)
-	return {}
+	return returnAudioFile(audioFilePath, id)
 }

@@ -1,0 +1,6 @@
+---
+description: drizzle
+globs: *.{tsx,ts}
+alwaysApply: false
+---
+- 数据库操作使用drizzle-orm，schema文件在 app/db/schema.ts
