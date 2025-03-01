@@ -27,6 +27,7 @@ export default function SubtitleTranslationPage() {
 	// Use fetcher instead of Form and useActionData
 	const asrFetcher = useFetcher()
 	const alignmentFetcher = useFetcher()
+	const translationFetcher = useFetcher()
 	const [activeTab, setActiveTab] = useState('asr')
 
 	return (
@@ -148,11 +149,65 @@ export default function SubtitleTranslationPage() {
 				{/* Translation Tab Content */}
 				<TabsContent value="translation" className="border rounded-lg p-4 mt-4">
 					<h2 className="text-lg font-semibold mb-3">Translation</h2>
-					<p className="text-gray-500">This tab will contain tools for translating the transcribed text.</p>
 
-					{/* Placeholder for translation functionality */}
-					<div className="p-4 bg-gray-100 rounded-lg mt-4">
-						<p className="text-center text-gray-400">Translation functionality will be implemented here</p>
+					{subtitleTranslation.sentences && subtitleTranslation.sentences.length > 0 ? (
+						<div className="mb-4">
+							<p className="text-sm text-gray-500 mb-2">Aligned sentences available for translation.</p>
+
+							{subtitleTranslation.sentences.some((sentence) => sentence.textInterpretation) ? (
+								<div className="max-h-60 overflow-y-auto bg-gray-100 p-2 rounded mt-3">
+									{subtitleTranslation.sentences.map((subtitle, index) => (
+										<div key={`subtitle-translation-${subtitle.start}-${index}`} className="mb-2 bg-white p-2 rounded">
+											<p className="text-sm font-medium">{subtitle.text}</p>
+											{subtitle.textInterpretation ? (
+												<p className="text-sm mt-1 text-blue-600">{subtitle.textInterpretation}</p>
+											) : (
+												<p className="text-sm mt-1 text-gray-400 italic">No translation yet</p>
+											)}
+											<p className="text-xs text-gray-500 mt-1">
+												{subtitle.start.toFixed(2)}s - {subtitle.end.toFixed(2)}s
+											</p>
+										</div>
+									))}
+								</div>
+							) : (
+								<p className="text-sm text-gray-500 mt-2">No translations available yet. Use the form below to translate the text.</p>
+							)}
+						</div>
+					) : (
+						<div className="mb-4">
+							<p className="text-sm text-gray-500">No aligned sentences available. Please complete the alignment step first.</p>
+						</div>
+					)}
+
+					<div className="mt-4 border-t pt-4">
+						<h3 className="text-md font-medium mb-3">Translate Text</h3>
+						<translationFetcher.Form method="post" action={`/app/subtitle-translations/${subtitleTranslation.id}/translation`} className="flex flex-col gap-4">
+							<div>
+								<label htmlFor="model" className="block text-sm font-medium mb-1">
+									Select Translation Model
+								</label>
+								<Select name="model" defaultValue="deepseek">
+									<SelectTrigger className="w-full">
+										<SelectValue placeholder="Select translation model" />
+									</SelectTrigger>
+									<SelectContent>
+										<SelectItem value="deepseek">DeepSeek</SelectItem>
+										<SelectItem value="openai">OpenAI</SelectItem>
+										<SelectItem value="r1">R1</SelectItem>
+									</SelectContent>
+								</Select>
+							</div>
+
+							<LoadingButtonWithState
+								type="submit"
+								className="mt-2"
+								state={translationFetcher.state}
+								idleText="Translate Text"
+								loadingText="Translating..."
+								disabled={!subtitleTranslation.sentences || subtitleTranslation.sentences.length === 0}
+							/>
+						</translationFetcher.Form>
 					</div>
 				</TabsContent>
 

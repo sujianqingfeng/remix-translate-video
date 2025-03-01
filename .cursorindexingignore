@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+/build/
+/.cache/
+/out/
+/public/
+
+# Environment variables
+.env
+
+# Database files
+local.sqlite
+
+# Operating system files
+.DS_Store
+
+# Temporary files and directories
+/downloads/
+/uploads/
+/operations/
+
+# Editor directories
+/.vscode/
+/.zed/
+
+# Package manager files
+pnpm-lock.yaml
+
+# Drizzle generated files
+/drizzle/
+
+# Git directory
+.git/

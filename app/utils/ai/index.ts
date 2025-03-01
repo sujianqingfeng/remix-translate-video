@@ -1,5 +1,4 @@
 import type { ShortText } from '~/types'
-import { WordsToSentencesSchema } from '~/z-schema'
 import createChatGPT from './chatgpt'
 import createDeepSeek from './deep-seek'
 import createDouBao from './doubao'
@@ -14,18 +13,8 @@ const translatePrompt = '你是一个精通多语言的翻译大师，将文本�
 export type TranslationModel = 'deepseek' | 'openai' | 'r1'
 
 const MAX_TOKENS = 2000
-const MIN_TEXT_LENGTH = 1
-const MAX_TEXT_LENGTH = 5000
 
 export async function translate(text: string, model: TranslationModel = 'deepseek'): Promise<string> {
-	// Input validation
-	if (!text || text.length < MIN_TEXT_LENGTH) {
-		throw new Error('Text is too short')
-	}
-	if (text.length > MAX_TEXT_LENGTH) {
-		throw new Error('Text is too long')
-	}
-
 	// API key validation
 	switch (model) {
 		case 'openai': {
@@ -104,7 +93,5 @@ export async function generateShortText(theme: string) {
 
 	return JSON.parse(`${PREFILL_PREFIX}${result}`) as ShortText
 }
-
-
 
 export { deepSeek, chatGPT, r1 }

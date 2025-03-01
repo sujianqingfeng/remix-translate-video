@@ -30,6 +30,7 @@ export type Sentence = {
 	text: string
 	start: number
 	end: number
+	translation?: string
 }
 
 // short text
