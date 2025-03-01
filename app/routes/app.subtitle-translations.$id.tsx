@@ -26,6 +26,7 @@ export default function SubtitleTranslationPage() {
 	const { subtitleTranslation } = useLoaderData<typeof loader>()
 	// Use fetcher instead of Form and useActionData
 	const asrFetcher = useFetcher()
+	const alignmentFetcher = useFetcher()
 	const [activeTab, setActiveTab] = useState('asr')
 
 	return (
@@ -87,11 +88,60 @@ export default function SubtitleTranslationPage() {
 				{/* Alignment Tab Content */}
 				<TabsContent value="alignment" className="border rounded-lg p-4 mt-4">
 					<h2 className="text-lg font-semibold mb-3">Text Alignment</h2>
-					<p className="text-gray-500">This tab will contain tools for aligning the transcribed text with the audio.</p>
 
-					{/* Placeholder for alignment functionality */}
-					<div className="p-4 bg-gray-100 rounded-lg mt-4">
-						<p className="text-center text-gray-400">Alignment functionality will be implemented here</p>
+					{subtitleTranslation.withTimeWords && subtitleTranslation.withTimeWords.length > 0 ? (
+						<div className="mb-4">
+							<p className="text-sm text-gray-500 mb-2">ASR data available for alignment. Use the form below to align the text.</p>
+						</div>
+					) : (
+						<div className="mb-4">
+							<p className="text-sm text-gray-500">No ASR data available. Please complete the ASR step first.</p>
+						</div>
+					)}
+
+					{subtitleTranslation.sentences && subtitleTranslation.sentences.length > 0 ? (
+						<div className="mb-4">
+							<p className="text-sm text-gray-500 mb-2">Aligned Subtitles:</p>
+							<div className="max-h-60 overflow-y-auto bg-gray-100 p-2 rounded">
+								{subtitleTranslation.sentences.map((subtitle, index) => (
+									<div key={`subtitle-${subtitle.start}-${index}`} className="mb-2 bg-white p-2 rounded">
+										<p className="text-sm">{subtitle.text}</p>
+										<p className="text-xs text-gray-500">
+											{subtitle.start.toFixed(2)}s - {subtitle.end.toFixed(2)}s
+										</p>
+									</div>
+								))}
+							</div>
+						</div>
+					) : null}
+
+					<div className="mt-4 border-t pt-4">
+						<h3 className="text-md font-medium mb-3">Align Text</h3>
+						<alignmentFetcher.Form method="post" action={`/app/subtitle-translations/${subtitleTranslation.id}/alignment`} className="flex flex-col gap-4">
+							<div>
+								<label htmlFor="alignmentMethod" className="block text-sm font-medium mb-1">
+									Select Alignment Method
+								</label>
+								<Select name="alignmentMethod" defaultValue="ai">
+									<SelectTrigger className="w-full">
+										<SelectValue placeholder="Select alignment method" />
+									</SelectTrigger>
+									<SelectContent>
+										<SelectItem value="ai">AI Alignment</SelectItem>
+										<SelectItem value="code">Code-based Alignment</SelectItem>
+									</SelectContent>
+								</Select>
+							</div>
+
+							<LoadingButtonWithState
+								type="submit"
+								className="mt-2"
+								state={alignmentFetcher.state}
+								idleText="Align Text"
+								loadingText="Aligning..."
+								disabled={!subtitleTranslation.withTimeWords || subtitleTranslation.withTimeWords.length === 0}
+							/>
+						</alignmentFetcher.Form>
 					</div>
 				</TabsContent>
 

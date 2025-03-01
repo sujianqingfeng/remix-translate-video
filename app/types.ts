@@ -25,16 +25,11 @@ export type RemotionVideoComment = {
 
 // translate video
 
-export type SentenceWord = {
+export type Sentence = {
+	words: WordWithTime[]
+	text: string
 	start: number
 	end: number
-	word: string
-}
-export type Sentence = {
-	words: SentenceWord[]
-	text: string
-	start: number // 句子开始时间
-	end: number // 句子结束时间
 }
 
 // short text
@@ -106,7 +101,7 @@ export type AsrWord = {
 	end: number
 }
 
-export type WithTimeWord = {
+export type WordWithTime = {
 	word: string
 	start: number
 	end: number
@@ -116,7 +111,7 @@ export type Transcript = {
 	text: string
 	start: number
 	end: number
-	words: WithTimeWord[]
+	words: WordWithTime[]
 	textLiteralTranslation?: string
 	textInterpretation?: string
 	sentences?: Sentence[]

@@ -1,8 +1,8 @@
 import fsp from 'node:fs/promises'
 import path from 'node:path'
 import { describe, expect, it } from 'vitest'
-import { splitSentence } from '../ai'
-import { alignWords } from '../transcript'
+import { splitTextToSentencesWithAI } from '../ai'
+import { alignWordsAndSentences } from '../transcript'
 
 describe(
 	'transcript',
@@ -155,7 +155,7 @@ describe(
 				end: item.offsets.to / 1000,
 			}))
 
-			const alignedWords = alignWords(words, sentences)
+			const alignedWords = alignWordsAndSentences(words, sentences)
 
 			expect(alignedWords).toMatchInlineSnapshot(`
 				[

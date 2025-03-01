@@ -3,9 +3,9 @@ import { eq } from 'drizzle-orm'
 import invariant from 'tiny-invariant'
 import { db, schema } from '~/lib/drizzle'
 import type { Sentence } from '~/types'
-import { splitSentence } from '~/utils/ai'
+import { splitTextToSentencesWithAI } from '~/utils/ai'
 import { wordsToSentences } from '~/utils/align'
-import { alignWords, processSentenceSegmentation, trimPunctuation } from '~/utils/transcript'
+import { alignWordsAndSentences, processSentenceSegmentation, trimPunctuation } from '~/utils/transcript'
 
 export const action = async ({ params, request }: ActionFunctionArgs) => {
 	const { id } = params
@@ -29,8 +29,8 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
 		const texts = asrWords.reduce((acc: string, item: any) => {
 			return acc + item.word
 		}, '')
-		const sentences = await splitSentence(texts)
-		transcripts = alignWords(asrWords, sentences)
+		const sentences = await splitTextToSentencesWithAI(texts)
+		transcripts = alignWordsAndSentences(asrWords, sentences)
 	} else if (type === 'code') {
 		transcripts = processSentenceSegmentation({ words: asrWords })
 		// transcripts = wordsToSentences({ words: asrWords })

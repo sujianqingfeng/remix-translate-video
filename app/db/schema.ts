@@ -1,6 +1,17 @@
 import { createId } from '@paralleldrive/cuid2'
 import { index, integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
-import type { AsrWord, Comment, Dialogue, FillInBlankSentence, GeneralCommentTypeTextInfo, LittleDifficultWord, SentenceTranscript, Transcript, WithTimeWord, WordTranscript } from '~/types'
+import type {
+	AsrWord,
+	Comment,
+	Dialogue,
+	FillInBlankSentence,
+	GeneralCommentTypeTextInfo,
+	LittleDifficultWord,
+	SentenceTranscript,
+	Transcript,
+	WordTranscript,
+	WordWithTime,
+} from '~/types'
 
 export const downloads = sqliteTable(
 	'downloads',
@@ -101,7 +112,7 @@ export const translateVideos = sqliteTable(
 		asrWords: text('asr_words', { mode: 'json' }).$type<AsrWord[]>().default([]),
 		transcripts: text('transcripts', { mode: 'json' }).$type<Transcript[]>().default([]),
 		outputFilePath: text('output_file_path'),
-    subtitleTranslationId: text('subtitle_translation_id'),
+		subtitleTranslationId: text('subtitle_translation_id'),
 		createdAt: integer('created_at', { mode: 'timestamp_ms' })
 			.notNull()
 			.$defaultFn(() => new Date()),
@@ -116,19 +127,19 @@ export const subtitleTranslations = sqliteTable(
 			.notNull()
 			.$defaultFn(() => createId())
 			.unique(),
-    title: text('title').default(''),
-    audioFilePath: text('audio_file_path'),
-    withTimeWords: text('with_time_words', { mode: 'json' }).$type<WithTimeWord[]>().default([]),
+		title: text('title').default(''),
+		audioFilePath: text('audio_file_path'),
+		withTimeWords: text('with_time_words', { mode: 'json' }).$type<WordWithTime[]>().default([]),
 		sentences: text('sentences', { mode: 'json' }).$type<Transcript[]>().default([]),
-    splitSentences: text('split_sentences', { mode: 'json' }).$type<Transcript[]>().default([]),
-    translateVideoId: text('translate_video_id'),
+		splitSentences: text('split_sentences', { mode: 'json' }).$type<Transcript[]>().default([]),
+		translateVideoId: text('translate_video_id'),
 
-    createdAt: integer('created_at', { mode: 'timestamp_ms' })
+		createdAt: integer('created_at', { mode: 'timestamp_ms' })
 			.notNull()
 			.$defaultFn(() => new Date()),
 	},
 
-  (t) => [index('subtitle_translations_id_idx').on(t.id)],
+	(t) => [index('subtitle_translations_id_idx').on(t.id)],
 )
 
 export const shortTexts = sqliteTable(

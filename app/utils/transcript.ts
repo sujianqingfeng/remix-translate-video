@@ -1,7 +1,7 @@
-import type { Sentence, SentenceWord, Transcript } from '~/types'
+import type { Sentence, Transcript, WordWithTime } from '~/types'
 
 type SentenceSegmentationOptions = {
-	words: SentenceWord[]
+	words: WordWithTime[]
 	maxSentenceLength?: number
 }
 
@@ -17,12 +17,12 @@ function isNumber(text: string | undefined): boolean {
 }
 
 // 检查是否是数字相关的点号或逗号
-function isNumberRelatedMark(word: SentenceWord, prevWord: SentenceWord | undefined, nextWord: SentenceWord | undefined): boolean {
+function isNumberRelatedMark(word: WordWithTime, prevWord: WordWithTime | undefined, nextWord: WordWithTime | undefined): boolean {
 	return (word.word === '.' || word.word === ',') && isNumber(prevWord?.word) && isNumber(nextWord?.word)
 }
 
 // 检查是否是特殊缩写的一部分
-function isPartOfSpecialAbbreviation(word: SentenceWord, words: SentenceWord[], currentIndex: number): boolean {
+function isPartOfSpecialAbbreviation(word: WordWithTime, words: WordWithTime[], currentIndex: number): boolean {
 	if (word.word !== '.') return false
 
 	// 获取当前点号前后的上下文
@@ -65,7 +65,7 @@ function isPartOfSpecialAbbreviation(word: SentenceWord, words: SentenceWord[], 
 }
 
 // 检查是否是特殊缩写内部的点
-function isInternalAbbreviationDot(word: SentenceWord, words: SentenceWord[], currentIndex: number): boolean {
+function isInternalAbbreviationDot(word: WordWithTime, words: WordWithTime[], currentIndex: number): boolean {
 	if (word.word !== '.') return false
 
 	// 获取当前点号前后的上下文
@@ -100,18 +100,18 @@ function isInternalAbbreviationDot(word: SentenceWord, words: SentenceWord[], cu
 }
 
 // 合并单词
-function mergeWords(target: SentenceWord, connector: string, source: SentenceWord): void {
+function mergeWords(target: WordWithTime, connector: string, source: WordWithTime): void {
 	target.word = `${target.word}${connector}${source.word}`
 	target.end = source.end
 }
 
 // 先组装成长句，同时处理科学计数法、小数和特殊缩写
-export function assembleLongSentences(words: SentenceWord[]) {
+export function assembleLongSentences(words: WordWithTime[]) {
 	if (!Array.isArray(words) || words.length === 0) {
 		return []
 	}
 
-	const sentences: SentenceWord[][] = []
+	const sentences: WordWithTime[][] = []
 	let currentSentence: typeof words = []
 
 	for (let i = 0; i < words.length; i++) {
@@ -157,7 +157,7 @@ export function assembleLongSentences(words: SentenceWord[]) {
 }
 
 // 创建句子对象
-function createSentence(words: SentenceWord[]): Sentence {
+function createSentence(words: WordWithTime[]): Sentence {
 	return {
 		words,
 		text: words.map((w) => w.word).join(''),
@@ -167,7 +167,7 @@ function createSentence(words: SentenceWord[]): Sentence {
 }
 
 // 根据分隔符切分句子
-function splitBySubSentenceMarks(sentence: SentenceWord[]) {
+function splitBySubSentenceMarks(sentence: WordWithTime[]) {
 	const subSentences: Sentence[] = []
 	let currentSubSentence: typeof sentence = []
 	const subSentenceMarks = /[,，;；]/
@@ -464,7 +464,7 @@ export function generateFFmpegCommand(videoPath: string, escapedSrtPath: string)
 	]
 }
 
-export function alignWords(words: SentenceWord[], sentences: string[]): Sentence[] {
+export function alignWordsAndSentences(words: WordWithTime[], sentences: string[]): Sentence[] {
 	if (!words.length || !sentences.length) {
 		return []
 	}
