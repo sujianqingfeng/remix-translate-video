@@ -2,16 +2,15 @@ import path from 'node:path'
 import type { LoaderFunctionArgs } from '@remix-run/node'
 import { Form, Link, useFetcher, useLoaderData } from '@remix-run/react'
 import { eq } from 'drizzle-orm'
-import { Copy, Download, FileAudio, FileVideo, Globe2, Languages, Upload } from 'lucide-react'
+import { Copy, Download, FileAudio, FileVideo, Globe2, Languages } from 'lucide-react'
 import invariant from 'tiny-invariant'
+import AiModelSelect from '~/components/AiModelSelect'
 import BackPrevious from '~/components/BackPrevious'
 import LoadingButtonWithState from '~/components/LoadingButtonWithState'
 import Transcripts from '~/components/business/translate-video/Transcripts'
 import VideoPlayer from '~/components/business/translate-video/VideoPlayer'
 import { Button } from '~/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select'
-import { Separator } from '~/components/ui/separator'
 import { toast } from '~/hooks/use-toast'
 import { db, schema } from '~/lib/drizzle'
 import { safeCopyFileToPublic } from '~/utils/file'
@@ -61,12 +60,8 @@ export default function TranslateVideoPage() {
 
 	const translateFetcher = useFetcher()
 	const downloadVideoFetcher = useFetcher()
-	const uploadAsrFetcher = useFetcher()
 	const renderFetcher = useFetcher()
 	const remoteRenderFetcher = useFetcher()
-	const splitFetcher = useFetcher()
-	const autoAsrFetcher = useFetcher()
-	const splitAlignFetcher = useFetcher()
 
 	const onCopy = async (text?: string | null) => {
 		if (!text) {
@@ -123,10 +118,20 @@ export default function TranslateVideoPage() {
 											<Copy size={16} className="text-muted-foreground hover:text-foreground transition-colors" />
 										</Button>
 									</div>
+									<div className="mt-3 flex flex-wrap gap-2 items-center">
+										<translateFetcher.Form method="post" action="translate" className="flex items-center gap-2">
+											<AiModelSelect name="model" defaultValue="r1" />
+											<LoadingButtonWithState
+												state={translateFetcher.state}
+												idleText="Translate"
+												className="gap-2 transition-colors hover:bg-primary/10 hover:text-primary hover:border-primary"
+												variant="outline"
+												icon={<Languages size={16} />}
+											/>
+										</translateFetcher.Form>
+									</div>
 								</div>
 							</div>
-
-							<Separator />
 
 							<div className="space-y-4">
 								<h3 className="text-lg font-semibold flex items-center gap-2">
@@ -155,39 +160,24 @@ export default function TranslateVideoPage() {
 											/>
 										</downloadVideoFetcher.Form>
 									)}
+
+									{translateVideo.audioFilePath && (
+										<Form method="post" action="create-subtitle-translation">
+											<Button variant="secondary" className="gap-2 transition-colors hover:bg-primary/20 hover:text-primary">
+												<Languages size={16} />
+												Create Subtitle Translation
+											</Button>
+										</Form>
+									)}
 								</div>
 							</div>
-
-							<Separator />
 
 							<div className="space-y-4">
 								<h3 className="text-lg font-semibold flex items-center gap-2">
 									<Languages className="w-5 h-5 text-muted-foreground" />
-									Translation Actions
+									Rendering Actions
 								</h3>
 								<div className="flex flex-wrap gap-4">
-									<translateFetcher.Form method="post" action="translate" className="flex items-center gap-2">
-										<Select name="model" defaultValue="r1">
-											<SelectTrigger className="w-[140px]">
-												<SelectValue placeholder="Select Model" />
-											</SelectTrigger>
-											<SelectContent>
-												<SelectItem value="r1">R1</SelectItem>
-												<SelectItem value="deepseek">DeepSeek</SelectItem>
-												<SelectItem value="openai">OpenAI</SelectItem>
-											</SelectContent>
-										</Select>
-										<LoadingButtonWithState
-											state={translateFetcher.state}
-											idleText="Translate"
-											className="gap-2 transition-colors hover:bg-primary/10 hover:text-primary hover:border-primary"
-											variant="outline"
-											icon={<Languages size={16} />}
-										/>
-									</translateFetcher.Form>
-
-									<Separator orientation="vertical" className="h-10" />
-
 									{playFile && (
 										<renderFetcher.Form method="post" action="render">
 											<LoadingButtonWithState
@@ -219,25 +209,14 @@ export default function TranslateVideoPage() {
 										</Link>
 									)}
 
-									<Form method="post" action="create-translate-comment">
-										<Button variant="secondary" className="gap-2 transition-colors hover:bg-primary/20 hover:text-primary">
-											<Languages size={16} />
-											Start Translate Comment
-										</Button>
-									</Form>
-
-									<Link to="batch-replace">
-										<Button variant="outline" className="transition-colors hover:bg-primary/10 hover:text-primary hover:border-primary">
-											Batch Replace
-										</Button>
-									</Link>
-
-									<Form method="post" action="create-subtitle-translation">
-										<Button variant="secondary" className="gap-2 transition-colors hover:bg-primary/20 hover:text-primary">
-											<Languages size={16} />
-											Create Subtitle Translation
-										</Button>
-									</Form>
+									{translateVideo.outputFilePath && (
+										<Form method="post" action="create-translate-comment">
+											<Button variant="secondary" className="gap-2 transition-colors hover:bg-primary/20 hover:text-primary">
+												<Languages size={16} />
+												Start Translate Comment
+											</Button>
+										</Form>
+									)}
 								</div>
 							</div>
 						</CardContent>

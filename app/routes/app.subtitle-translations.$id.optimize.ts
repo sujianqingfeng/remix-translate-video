@@ -227,9 +227,7 @@ export const action = async ({ params }: ActionFunctionArgs) => {
 	const { sentences } = subtitleTranslation
 	invariant(sentences, 'sentences not found')
 
-	// console.log('🚀 ~ action ~ sentences:', sentences)
 	const optimizedSentences = optimizeSentences({ sentences })
-	console.log('🚀 ~ action ~ optimizedSentences:', optimizedSentences)
 
 	await db
 		.update(schema.subtitleTranslations)
