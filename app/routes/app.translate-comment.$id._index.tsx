@@ -114,6 +114,7 @@ export default function TranslateCommentPage() {
 								aspectRatio: `${render.compositionWidth} / ${render.compositionHeight}`,
 							}}
 							controls
+							acknowledgeRemotionLicense
 						/>
 					</div>
 

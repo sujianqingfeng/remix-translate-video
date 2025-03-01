@@ -1,3 +1,4 @@
+import type { Sentence, WordWithTime } from '~/types'
 import { WordsToSentencesSchema } from '~/z-schema'
 import { deepSeek } from './ai'
 

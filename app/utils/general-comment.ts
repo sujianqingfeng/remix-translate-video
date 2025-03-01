@@ -1,10 +1,6 @@
-import fs from 'node:fs'
 import { copyFile } from 'node:fs/promises'
 import path from 'node:path'
-import { PROXY, PUBLIC_DIR } from '~/constants'
-import { LandscapeGeneralComment } from '~/remotion/general-comment/LandscapeGeneralComment'
-import { PortraitGeneralComment } from '~/remotion/general-comment/PortraitGeneralComment'
-import { VerticalGeneralComment } from '~/remotion/general-comment/VerticalGeneralComment'
+import { PROXY } from '~/constants'
 import type { Comment, GeneralCommentTypeTextInfo } from '~/types'
 import { downloadFile } from './download'
 import { ensurePublicDir, getPublicAssetPath } from './file'
@@ -88,11 +84,10 @@ export const prepareVideoProps = (comment: any, durations: ReturnType<typeof cal
 		commentDurations: durations.commentDurations,
 		audioPath: comment.audioPath,
 		publicAudioPath: comment.publicAudioPath,
+		createdAt: comment.createdAt,
+		likes: comment.typeInfo?.likes || 0,
+		commentCount: comment.typeInfo?.replyCount || 0,
 	}
-}
-
-function isLocalPath(url: string) {
-	return url.startsWith('/assets/downloads/')
 }
 
 export const ensurePublicAssets = async (id: string, typeInfo: GeneralCommentTypeTextInfo, comments: Comment[]) => {
@@ -182,7 +177,7 @@ export const ensurePublicAssets = async (id: string, typeInfo: GeneralCommentTyp
 		}
 
 		// 处理评论作者头像
-		if (comment.authorThumbnail && comment.authorThumbnail.startsWith('http')) {
+		if (comment.authorThumbnail?.startsWith('http')) {
 			try {
 				const extension = path.extname(comment.authorThumbnail) || '.png'
 				const fileName = `comment-${commentIndex}-author${extension}`

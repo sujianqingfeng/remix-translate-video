@@ -135,14 +135,7 @@ export default function SubtitleTranslationPage() {
 								</Select>
 							</div>
 
-							<LoadingButtonWithState
-								type="submit"
-								className="mt-2"
-								state={alignmentFetcher.state}
-								idleText="Align Text"
-								loadingText="Aligning..."
-								disabled={!subtitleTranslation.withTimeWords || subtitleTranslation.withTimeWords.length === 0}
-							/>
+							<LoadingButtonWithState type="submit" className="mt-2" state={alignmentFetcher.state} idleText="Align Text" loadingText="Aligning..." />
 						</alignmentFetcher.Form>
 					</div>
 				</TabsContent>
@@ -200,14 +193,7 @@ export default function SubtitleTranslationPage() {
 								</Select>
 							</div>
 
-							<LoadingButtonWithState
-								type="submit"
-								className="mt-2"
-								state={translationFetcher.state}
-								idleText="Translate Text"
-								loadingText="Translating..."
-								disabled={!subtitleTranslation.sentences || subtitleTranslation.sentences.length === 0}
-							/>
+							<LoadingButtonWithState type="submit" className="mt-2" state={translationFetcher.state} idleText="Translate Text" loadingText="Translating..." />
 						</translationFetcher.Form>
 					</div>
 				</TabsContent>

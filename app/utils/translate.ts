@@ -1,33 +1,11 @@
-import { chatGPT, deepSeek, r1 } from './ai'
+import { type AiModel, aiGenerateText } from './ai'
 
-export type AiModel = 'deepseek' | 'openai' | 'r1'
-
-type AiGenerateTextOptions = {
-	systemPrompt: string
-	prompt: string
-	model: AiModel
-	maxTokens?: number
-}
-
-export async function aiGenerateText({ systemPrompt, prompt, model, maxTokens = 2000 }: AiGenerateTextOptions): Promise<string> {
-	const options = {
-		system: systemPrompt,
-		prompt: prompt,
-		maxTokens: maxTokens,
-	}
-
-	switch (model) {
-		case 'openai': {
-			return chatGPT.generateText(options)
-		}
-		case 'r1': {
-			return r1.generateText(options)
-		}
-		case 'deepseek': {
-			return deepSeek.generateText(options)
-		}
-		default: {
-			throw new Error(`Unsupported model: ${model}`)
-		}
-	}
+export async function translate(content: string, model: AiModel) {
+	return await aiGenerateText({
+		model,
+		systemPrompt:
+			'You are a professional translator. Translate the following text to Chinese. Maintain the original meaning, tone, and style. If there are any technical terms, ensure they are translated accurately.',
+		prompt: content,
+		maxTokens: 1000,
+	})
 }

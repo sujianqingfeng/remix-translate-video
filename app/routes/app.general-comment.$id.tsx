@@ -20,7 +20,7 @@ import { PortraitGeneralComment } from '~/remotion/general-comment/PortraitGener
 import { VerticalGeneralComment } from '~/remotion/general-comment/VerticalGeneralComment'
 import type { GeneralCommentTypeTextInfo } from '~/types'
 import { ensurePublicDir, getPublicAssetPath } from '~/utils/file'
-import { type VideoMode, calculateDurations, ensurePublicAssets, getVideoConfig } from '~/utils/general-comment'
+import { type VideoMode, calculateDurations, ensurePublicAssets, getVideoConfig, prepareVideoProps } from '~/utils/general-comment'
 
 const getVideoComponent = (mode: VideoMode) => {
 	switch (mode) {
@@ -77,6 +77,8 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 		comments: comment.comments || [],
 		typeInfo: newTypeInfo,
 	})
+
+	const inputProps = prepareVideoProps(comment, durations)
 	const videoConfig = getVideoConfig('landscape')
 
 	return {
@@ -88,6 +90,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 		},
 		durations,
 		videoConfig,
+		inputProps,
 	}
 }
 
@@ -106,7 +109,7 @@ interface Comment {
 }
 
 export default function AppGeneralCommentRender() {
-	const { comment, durations, videoConfig } = useLoaderData<typeof loader>()
+	const { comment, durations, videoConfig, inputProps } = useLoaderData<typeof loader>()
 	const typeInfo = comment.typeInfo as GeneralCommentTypeTextInfo
 	const [mode, setMode] = useState<VideoMode>('landscape')
 	const [editingCommentIndex, setEditingCommentIndex] = useState<number | null>(null)
@@ -219,23 +222,8 @@ export default function AppGeneralCommentRender() {
 										height: '100%',
 									}}
 									controls
-									inputProps={{
-										title: typeInfo.title,
-										content: typeInfo.content,
-										contentZh: typeInfo.contentZh,
-										author: comment.author,
-										images: typeInfo.images || [],
-										comments: comment.comments || [],
-										fps: durations.fps,
-										coverDurationInSeconds: durations.coverDurationInSeconds,
-										contentDurationInSeconds: durations.contentDurationInSeconds,
-										commentDurations: durations.commentDurations,
-										audioPath: comment.audioPath,
-										publicAudioPath: comment.publicAudioPath,
-										createdAt: typeof comment.createdAt === 'number' ? new Date(comment.createdAt * 1000).toISOString() : new Date().toISOString(),
-										likes: comment.typeInfo?.likes || 0,
-										commentCount: comment.typeInfo?.replyCount || 0,
-									}}
+									inputProps={inputProps}
+									acknowledgeRemotionLicense
 								/>
 							</div>
 						</div>

@@ -8,8 +8,35 @@ const deepSeek = createDeepSeek({ apiKey: process.env.DEEP_SEEK_API_KEY || '' })
 const r1 = createR1({ apiKey: process.env.R1_API_KEY || '' })
 const doubao = createDouBao({ apiKey: process.env.DOU_BAO_API_KEY || '' })
 
-const translatePrompt = '你是一个精通多语言的翻译大师，将文本翻译成中文。如果是中文，就返回原文。保留原文特定的术语(如有)，不要去解释内容和名词。如果内容是空的，就返回空的。'
+export type AiModel = 'deepseek' | 'openai' | 'r1'
 
-const MAX_TOKENS = 2000
+type AiGenerateTextOptions = {
+	systemPrompt: string
+	prompt: string
+	model: AiModel
+	maxTokens?: number
+}
+export async function aiGenerateText({ systemPrompt, prompt, model, maxTokens = 2000 }: AiGenerateTextOptions): Promise<string> {
+	const options = {
+		system: systemPrompt,
+		prompt: prompt,
+		maxTokens: maxTokens,
+	}
+
+	switch (model) {
+		case 'openai': {
+			return chatGPT.generateText(options)
+		}
+		case 'r1': {
+			return r1.generateText(options)
+		}
+		case 'deepseek': {
+			return deepSeek.generateText(options)
+		}
+		default: {
+			throw new Error(`Unsupported model: ${model}`)
+		}
+	}
+}
 
 export { deepSeek, chatGPT, r1, doubao }
