@@ -3,6 +3,7 @@ import { eq } from 'drizzle-orm'
 import invariant from 'tiny-invariant'
 import { db, schema } from '~/lib/drizzle'
 import type { Transcript } from '~/types'
+import { trimPunctuation } from '~/utils/transcript'
 
 type OptimizeSentencesOptions = {
 	sentences: Transcript[]
@@ -89,7 +90,15 @@ function optimizeSentences({ sentences, englishMaxLength = 70, chineseMaxLength 
 		}
 	}
 
-	return optimizedSentences
+	const trimmedSentences = optimizedSentences.map(({ text, textInterpretation, ...rest }) => {
+		return {
+			...rest,
+			text: text ? trimPunctuation(text) : text,
+			textInterpretation: textInterpretation ? trimPunctuation(textInterpretation) : textInterpretation,
+		}
+	})
+
+	return trimmedSentences
 }
 
 // Helper function to split text into chunks of maximum length

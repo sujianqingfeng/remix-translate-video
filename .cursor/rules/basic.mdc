@@ -3,6 +3,7 @@ description: basic
 globs: 
 alwaysApply: true
 ---
+- 包管理使用 pnpm
 - 时间格式化使用 date-fns
 - 工具类放置到 app/utils
 - 样式方案使用tailwindcss
