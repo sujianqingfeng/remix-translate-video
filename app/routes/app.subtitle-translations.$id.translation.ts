@@ -3,9 +3,9 @@ import { eq } from 'drizzle-orm'
 import invariant from 'tiny-invariant'
 import { db, schema } from '~/lib/drizzle'
 import type { Transcript } from '~/types'
-import { type TranslationModel, chatGPT, deepSeek, r1 } from '~/utils/ai'
+import { type AiModel, aiGenerateText } from '~/utils/translate'
 
-async function translateSubtitle(text: string, model: TranslationModel = 'deepseek'): Promise<string> {
+async function translateSubtitle(text: string, model: AiModel = 'deepseek'): Promise<string> {
 	const MAX_TOKENS = 8000
 
 	const translatePrompt = `You are a master translator fluent in multiple languages. Your task is to translate the given text into Chinese. If the text is already in Chinese, return it unchanged.
@@ -23,32 +23,12 @@ Please follow these guidelines:
 
 The text will be from subtitle content, so translations should be concise and suitable for on-screen display.`
 
-	switch (model) {
-		case 'openai': {
-			return chatGPT.generateText({
-				system: translatePrompt,
-				prompt: text,
-				maxTokens: MAX_TOKENS,
-			})
-		}
-		case 'r1': {
-			return r1.generateText({
-				system: translatePrompt,
-				prompt: text,
-				maxTokens: MAX_TOKENS,
-			})
-		}
-		case 'deepseek': {
-			return deepSeek.generateText({
-				system: translatePrompt,
-				prompt: text,
-				maxTokens: MAX_TOKENS,
-			})
-		}
-		default: {
-			throw new Error(`Unsupported model: ${model}`)
-		}
-	}
+	return aiGenerateText({
+		systemPrompt: translatePrompt,
+		prompt: text,
+		model: model,
+		maxTokens: MAX_TOKENS,
+	})
 }
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
@@ -56,7 +36,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 	invariant(id, 'id is required')
 
 	const formData = await request.formData()
-	const model = formData.get('model') as TranslationModel
+	const model = formData.get('model') as AiModel
 
 	invariant(model === 'deepseek' || model === 'openai' || model === 'r1', 'Invalid model')
 
