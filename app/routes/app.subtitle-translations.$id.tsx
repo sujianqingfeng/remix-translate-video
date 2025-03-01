@@ -28,6 +28,7 @@ export default function SubtitleTranslationPage() {
 	const asrFetcher = useFetcher()
 	const alignmentFetcher = useFetcher()
 	const translationFetcher = useFetcher()
+	const optimizationFetcher = useFetcher()
 	const [activeTab, setActiveTab] = useState('asr')
 
 	return (
@@ -65,7 +66,7 @@ export default function SubtitleTranslationPage() {
 
 					<div className="mt-4 border-t pt-4">
 						<h3 className="text-md font-medium mb-3">Convert Audio to Text</h3>
-						<asrFetcher.Form method="post" action={`/app/subtitle-translations/${subtitleTranslation.id}/asr`} className="flex flex-col gap-4">
+						<asrFetcher.Form method="post" action="asr" className="flex flex-col gap-4">
 							<div>
 								<label htmlFor="model" className="block text-sm font-medium mb-1">
 									Select ASR Model
@@ -118,7 +119,7 @@ export default function SubtitleTranslationPage() {
 
 					<div className="mt-4 border-t pt-4">
 						<h3 className="text-md font-medium mb-3">Align Text</h3>
-						<alignmentFetcher.Form method="post" action={`/app/subtitle-translations/${subtitleTranslation.id}/alignment`} className="flex flex-col gap-4">
+						<alignmentFetcher.Form method="post" action="alignment" className="flex flex-col gap-4">
 							<div>
 								<label htmlFor="alignmentMethod" className="block text-sm font-medium mb-1">
 									Select Alignment Method
@@ -154,7 +155,7 @@ export default function SubtitleTranslationPage() {
 						<div className="mb-4">
 							<p className="text-sm text-gray-500 mb-2">Aligned sentences available for translation.</p>
 
-							{subtitleTranslation.sentences.some((sentence) => sentence.textInterpretation) ? (
+							{subtitleTranslation.sentences.some((s) => s.textInterpretation) ? (
 								<div className="max-h-60 overflow-y-auto bg-gray-100 p-2 rounded mt-3">
 									{subtitleTranslation.sentences.map((subtitle, index) => (
 										<div key={`subtitle-translation-${subtitle.start}-${index}`} className="mb-2 bg-white p-2 rounded">
@@ -182,7 +183,7 @@ export default function SubtitleTranslationPage() {
 
 					<div className="mt-4 border-t pt-4">
 						<h3 className="text-md font-medium mb-3">Translate Text</h3>
-						<translationFetcher.Form method="post" action={`/app/subtitle-translations/${subtitleTranslation.id}/translation`} className="flex flex-col gap-4">
+						<translationFetcher.Form method="post" action="translation" className="flex flex-col gap-4">
 							<div>
 								<label htmlFor="model" className="block text-sm font-medium mb-1">
 									Select Translation Model
@@ -214,11 +215,37 @@ export default function SubtitleTranslationPage() {
 				{/* Optimized Display Tab Content */}
 				<TabsContent value="display" className="border rounded-lg p-4 mt-4">
 					<h2 className="text-lg font-semibold mb-3">Optimized Display</h2>
-					<p className="text-gray-500">This tab will show the optimized display of the subtitles.</p>
 
-					{/* Placeholder for optimized display functionality */}
-					<div className="p-4 bg-gray-100 rounded-lg mt-4">
-						<p className="text-center text-gray-400">Optimized display functionality will be implemented here</p>
+					{subtitleTranslation.optimizedSentences &&
+					subtitleTranslation.optimizedSentences.length > 0 &&
+					subtitleTranslation.optimizedSentences.some((s) => s.textInterpretation) ? (
+						<div className="mb-4">
+							<p className="text-sm text-gray-500 mb-2">Optimize how subtitles are displayed for better viewing experience.</p>
+
+							<div className="max-h-60 overflow-y-auto bg-gray-100 p-2 rounded mt-3">
+								<h3 className="text-md font-medium mb-2">Preview</h3>
+								{subtitleTranslation.optimizedSentences.map((subtitle, index) => (
+									<div key={`subtitle-optimized-${subtitle.start}-${index}`} className="mb-2 bg-white p-2 rounded">
+										<p className="text-sm">{subtitle.text}</p>
+										{subtitle.textInterpretation && <p className="text-sm text-blue-600">{subtitle.textInterpretation}</p>}
+										<p className="text-xs text-gray-500 mt-1">
+											{subtitle.start.toFixed(2)}s - {subtitle.end.toFixed(2)}s
+										</p>
+									</div>
+								))}
+							</div>
+						</div>
+					) : (
+						<div className="mb-4">
+							<p className="text-sm text-gray-500">No translated sentences available. Please complete the translation step first.</p>
+						</div>
+					)}
+
+					<div className="mt-4 border-t pt-4">
+						<h3 className="text-md font-medium mb-3">Optimize Display</h3>
+						<optimizationFetcher.Form method="post" action="optimize" className="flex flex-col gap-4">
+							<LoadingButtonWithState type="submit" className="mt-2" state={optimizationFetcher.state} idleText="Optimize Display" loadingText="Optimizing..." />
+						</optimizationFetcher.Form>
 					</div>
 				</TabsContent>
 			</Tabs>

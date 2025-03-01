@@ -3,6 +3,5 @@ description: remix
 globs: *.{tsx,ts}
 alwaysApply: false
 ---
-
 - 项目使用 remix 开发
 - 如果需要一个action，需要提取成一个新的action文件

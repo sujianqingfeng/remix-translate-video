@@ -80,6 +80,160 @@ export function splitTextToSentences({ text, maxSentenceLength = 100 }: SplitTex
 	})
 }
 
+export function alignWordsAndSentences(words: WordWithTime[], sentences: string[]): Sentence[] {
+	if (!words.length || !sentences.length) {
+		return []
+	}
+
+	const result: Sentence[] = []
+
+	// 构建完整的转录文本
+	const fullTranscript = words.map((w) => w.word).join('')
+
+	// 规范化文本以便于匹配
+	const normalizeText = (text: string) => {
+		return text.replace(/\s+/g, ' ').trim().toLowerCase()
+	}
+
+	// 为每个句子找到在完整转录文本中的位置
+	let startSearchIndex = 0
+
+	for (const sentence of sentences) {
+		if (!sentence.trim()) {
+			continue
+		}
+
+		// 尝试在转录文本中找到句子
+		const normalizedSentence = normalizeText(sentence)
+		const normalizedTranscript = normalizeText(fullTranscript.substring(startSearchIndex))
+
+		// 使用模糊匹配查找句子在转录文本中的位置
+		let sentenceStartIndex = findBestMatch(normalizedSentence, normalizedTranscript)
+
+		if (sentenceStartIndex === -1) {
+			// 如果找不到匹配，尝试使用句子的前半部分
+			const halfSentence = normalizedSentence.substring(0, Math.floor(normalizedSentence.length / 2))
+			sentenceStartIndex = normalizedTranscript.indexOf(halfSentence)
+
+			// 如果还是找不到，跳过这个句子
+			if (sentenceStartIndex === -1) {
+				continue
+			}
+		}
+
+		// 调整为全局索引
+		sentenceStartIndex += startSearchIndex
+
+		// 找到句子结束的位置
+		let sentenceEndIndex = sentenceStartIndex
+		let wordCount = 0
+		let sentenceLength = 0
+
+		// 找到包含句子的单词范围
+		let startWordIndex = -1
+		let endWordIndex = -1
+		let currentPosition = 0
+
+		for (let i = 0; i < words.length; i++) {
+			const word = words[i]
+			const prevPosition = currentPosition
+			currentPosition += word.word.length
+
+			// 找到起始单词
+			if (prevPosition <= sentenceStartIndex && currentPosition > sentenceStartIndex && startWordIndex === -1) {
+				startWordIndex = i
+			}
+
+			// 累计句子长度
+			if (startWordIndex !== -1) {
+				wordCount++
+				sentenceLength += word.word.length
+
+				// 检查是否已经覆盖了足够的文本
+				if (
+					sentenceLength >= normalizedSentence.length * 0.8 ||
+					(wordCount > 5 && normalizeText(fullTranscript.substring(sentenceStartIndex, currentPosition)).includes(normalizedSentence))
+				) {
+					endWordIndex = i
+					sentenceEndIndex = currentPosition
+					break
+				}
+			}
+
+			// 如果已经处理了太多单词但还没找到匹配，设置一个上限
+			if (startWordIndex !== -1 && wordCount > 30) {
+				endWordIndex = i
+				sentenceEndIndex = currentPosition
+				break
+			}
+		}
+
+		// 如果找到了单词范围
+		if (startWordIndex !== -1 && endWordIndex !== -1) {
+			const sentenceWords = words.slice(startWordIndex, endWordIndex + 1)
+
+			// 创建句子对象
+			result.push({
+				words: sentenceWords,
+				text: sentence,
+				start: sentenceWords[0].start,
+				end: sentenceWords[sentenceWords.length - 1].end,
+			})
+
+			// 更新下一次搜索的起始位置
+			startSearchIndex = sentenceEndIndex
+		}
+	}
+
+	// 处理剩余的单词
+	const lastWordIndex = result.length > 0 ? words.indexOf(result[result.length - 1].words[result[result.length - 1].words.length - 1]) + 1 : 0
+
+	if (lastWordIndex < words.length && result.length > 0) {
+		const remainingWords = words.slice(lastWordIndex)
+		const lastSentence = result[result.length - 1]
+		lastSentence.words = [...lastSentence.words, ...remainingWords]
+		lastSentence.end = remainingWords[remainingWords.length - 1].end
+	}
+
+	return result
+}
+
+// 辅助函数：找到最佳匹配位置
+function findBestMatch(needle: string, haystack: string): number {
+	// 直接匹配
+	const directIndex = haystack.indexOf(needle)
+	if (directIndex !== -1) {
+		return directIndex
+	}
+
+	// 尝试模糊匹配
+	// 1. 移除所有标点符号后匹配
+	const cleanNeedle = needle.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '')
+	const cleanHaystack = haystack.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '')
+	const cleanIndex = cleanHaystack.indexOf(cleanNeedle)
+	if (cleanIndex !== -1) {
+		// 找到对应的原始索引
+		let originalIndex = 0
+		let cleanCounter = 0
+		while (cleanCounter < cleanIndex && originalIndex < haystack.length) {
+			if (!/[.,\/#!$%\^&\*;:{}=\-_`~()]/.test(haystack[originalIndex])) {
+				cleanCounter++
+			}
+			originalIndex++
+		}
+		return originalIndex
+	}
+
+	// 2. 尝试匹配前几个单词
+	const needleWords = needle.split(/\s+/)
+	if (needleWords.length > 3) {
+		const firstFewWords = needleWords.slice(0, 3).join(' ')
+		return haystack.indexOf(firstFewWords)
+	}
+
+	return -1
+}
+
 export async function splitTextToSentencesWithAI(sentence: string) {
 	const result = await deepSeek.generateObject({
 		schema: WordsToSentencesSchema,

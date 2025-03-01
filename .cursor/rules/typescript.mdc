@@ -1,0 +1,7 @@
+---
+description: typescript
+globs: *.tsx,*.ts
+alwaysApply: false
+---
+- 全局type放置在 app/types.ts
+- 如果类型只在当前文件夹使用，就在当前文件定义，如果类型在全局使用，就在全局type定义

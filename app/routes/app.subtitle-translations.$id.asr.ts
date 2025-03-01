@@ -2,7 +2,6 @@ import { type ChildProcess, spawn } from 'node:child_process'
 import fsp from 'node:fs/promises'
 import path from 'node:path'
 import type { ActionFunctionArgs } from '@remix-run/node'
-import { json } from '@remix-run/node'
 import { eq } from 'drizzle-orm'
 import invariant from 'tiny-invariant'
 import { db, schema } from '~/lib/drizzle'
@@ -85,19 +84,16 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 			})
 			.where(where)
 
-		return json({
+		return {
 			success: true,
 			message: `ASR conversion completed successfully using ${model} model`,
 			wordCount: words.length,
-		})
+		}
 	} catch (error) {
 		console.error('Error in ASR conversion:', error)
-		return json(
-			{
-				success: false,
-				message: `ASR conversion failed: ${error instanceof Error ? error.message : String(error)}`,
-			},
-			{ status: 500 },
-		)
+		return {
+			success: false,
+			message: `ASR conversion failed: ${error instanceof Error ? error.message : String(error)}`,
+		}
 	}
 }
