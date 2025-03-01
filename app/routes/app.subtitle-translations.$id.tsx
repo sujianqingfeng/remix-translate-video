@@ -29,6 +29,7 @@ export default function SubtitleTranslationPage() {
 	const alignmentFetcher = useFetcher()
 	const translationFetcher = useFetcher()
 	const optimizationFetcher = useFetcher()
+	const syncScriptFetcher = useFetcher()
 	const [activeTab, setActiveTab] = useState('asr')
 
 	return (
@@ -232,6 +233,14 @@ export default function SubtitleTranslationPage() {
 						<optimizationFetcher.Form method="post" action="optimize" className="flex flex-col gap-4">
 							<LoadingButtonWithState type="submit" className="mt-2" state={optimizationFetcher.state} idleText="Optimize Display" loadingText="Optimizing..." />
 						</optimizationFetcher.Form>
+					</div>
+
+					<div className="mt-6 border-t pt-4">
+						<h3 className="text-md font-medium mb-3">Synchronize to Video Translation Script</h3>
+						<p className="text-sm text-gray-500 mb-3">Sync the optimized subtitle script to the video translation script for further processing.</p>
+						<syncScriptFetcher.Form method="post" action="sync-script" className="flex flex-col gap-4">
+							<LoadingButtonWithState type="submit" className="mt-2" state={syncScriptFetcher.state} idleText="Sync to Video Script" loadingText="Syncing..." />
+						</syncScriptFetcher.Form>
 					</div>
 				</TabsContent>
 			</Tabs>

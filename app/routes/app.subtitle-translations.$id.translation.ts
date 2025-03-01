@@ -3,7 +3,7 @@ import { eq } from 'drizzle-orm'
 import invariant from 'tiny-invariant'
 import { db, schema } from '~/lib/drizzle'
 import type { Transcript } from '~/types'
-import { type AiModel, aiGenerateText } from '~/utils/translate'
+import { type AiModel, aiGenerateText } from '~/utils/ai'
 
 async function translateSubtitle(text: string, model: AiModel = 'deepseek'): Promise<string> {
 	const MAX_TOKENS = 8000

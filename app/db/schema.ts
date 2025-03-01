@@ -109,7 +109,6 @@ export const translateVideos = sqliteTable(
 		downloadId: text('download_id'),
 		uploadFilePath: text('upload_file_path'),
 		audioFilePath: text('audio_file_path'),
-		asrWords: text('asr_words', { mode: 'json' }).$type<AsrWord[]>().default([]),
 		transcripts: text('transcripts', { mode: 'json' }).$type<Transcript[]>().default([]),
 		outputFilePath: text('output_file_path'),
 		subtitleTranslationId: text('subtitle_translation_id'),

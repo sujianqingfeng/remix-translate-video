@@ -160,51 +160,6 @@ export default function TranslateVideoPage() {
 
 							<Separator />
 
-							<Card className="bg-muted/30 group transition-all duration-300 hover:shadow-md">
-								<CardHeader>
-									<CardTitle className="flex items-center gap-2 text-lg">
-										<Upload className="w-5 h-5 text-muted-foreground" />
-										ASR Upload
-									</CardTitle>
-								</CardHeader>
-								<CardContent className="space-y-4">
-									<uploadAsrFetcher.Form method="post" action="upload-asr" encType="multipart/form-data" className="space-y-4">
-										<input
-											type="file"
-											name="file"
-											accept=".json"
-											className="w-full file:mr-4 file:rounded-lg file:border-0 file:bg-primary/10 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-primary hover:file:bg-primary/20 cursor-pointer transition-all"
-											required
-										/>
-										<Button type="submit" variant="secondary" className="w-full gap-2 transition-all hover:bg-primary/20 hover:text-primary">
-											<Upload size={16} />
-											Upload ASR
-										</Button>
-									</uploadAsrFetcher.Form>
-
-									<div className="relative">
-										<div className="absolute inset-0 flex items-center">
-											<span className="w-full border-t" />
-										</div>
-										<div className="relative flex justify-center text-xs uppercase">
-											<span className="bg-muted/30 px-2 text-muted-foreground">Or</span>
-										</div>
-									</div>
-
-									<autoAsrFetcher.Form method="post" action="auto-asr">
-										<LoadingButtonWithState
-											state={autoAsrFetcher.state}
-											idleText="Auto ASR"
-											className="w-full gap-2 transition-all hover:bg-primary/20 hover:text-primary"
-											variant="secondary"
-											icon={<Languages size={16} />}
-										/>
-									</autoAsrFetcher.Form>
-								</CardContent>
-							</Card>
-
-							<Separator />
-
 							<div className="space-y-4">
 								<h3 className="text-lg font-semibold flex items-center gap-2">
 									<Languages className="w-5 h-5 text-muted-foreground" />
@@ -232,31 +187,6 @@ export default function TranslateVideoPage() {
 									</translateFetcher.Form>
 
 									<Separator orientation="vertical" className="h-10" />
-
-									<splitFetcher.Form method="post" action="split">
-										<LoadingButtonWithState state={splitFetcher.state} idleText="Split" className="transition-colors hover:bg-primary/10 hover:text-primary" variant="outline" />
-									</splitFetcher.Form>
-
-									<Separator orientation="vertical" className="h-10" />
-
-									<splitAlignFetcher.Form method="post" action="align" className="flex items-center gap-2">
-										<Select name="type" defaultValue="ai">
-											<SelectTrigger className="w-[100px]">
-												<SelectValue placeholder="Select Type" />
-											</SelectTrigger>
-											<SelectContent>
-												<SelectItem value="ai">AI</SelectItem>
-												<SelectItem value="code">Code</SelectItem>
-											</SelectContent>
-										</Select>
-										<LoadingButtonWithState
-											state={splitAlignFetcher.state}
-											idleText="Align"
-											className="gap-2 transition-colors hover:bg-primary/10 hover:text-primary"
-											variant="outline"
-											icon={<Languages size={16} />}
-										/>
-									</splitAlignFetcher.Form>
 
 									{playFile && (
 										<renderFetcher.Form method="post" action="render">
