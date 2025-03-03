@@ -2,7 +2,7 @@ import path from 'node:path'
 import type { LoaderFunctionArgs } from '@remix-run/node'
 import { Form, Link, useFetcher, useLoaderData } from '@remix-run/react'
 import { eq } from 'drizzle-orm'
-import { Copy, Download, FileAudio, FileVideo, Globe2, Languages } from 'lucide-react'
+import { Captions, Copy, Download, FileAudio, FileVideo, Globe2, Languages, MessageSquare } from 'lucide-react'
 import invariant from 'tiny-invariant'
 import AiModelSelect from '~/components/AiModelSelect'
 import BackPrevious from '~/components/BackPrevious'
@@ -164,7 +164,7 @@ export default function TranslateVideoPage() {
 									{translateVideo.audioFilePath && (
 										<Form method="post" action="create-subtitle-translation">
 											<Button variant="secondary" className="gap-2 transition-colors hover:bg-primary/20 hover:text-primary">
-												<Languages size={16} />
+												<Captions size={16} />
 												Create Subtitle Translation
 											</Button>
 										</Form>
@@ -212,7 +212,7 @@ export default function TranslateVideoPage() {
 									{translateVideo.outputFilePath && (
 										<Form method="post" action="create-translate-comment">
 											<Button variant="secondary" className="gap-2 transition-colors hover:bg-primary/20 hover:text-primary">
-												<Languages size={16} />
+												<MessageSquare size={16} />
 												Start Translate Comment
 											</Button>
 										</Form>

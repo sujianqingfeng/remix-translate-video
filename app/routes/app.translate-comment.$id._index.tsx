@@ -6,6 +6,7 @@ import { format } from 'date-fns'
 import getVideoId from 'get-video-id'
 import { Copy, Trash, Wand2 } from 'lucide-react'
 import invariant from 'tiny-invariant'
+import AiModelSelect from '~/components/AiModelSelect'
 import BackPrevious from '~/components/BackPrevious'
 import LoadingButtonWithState from '~/components/LoadingButtonWithState'
 import Comments from '~/components/business/translate-comment/Comments'
@@ -213,16 +214,7 @@ export default function TranslateCommentPage() {
 									<div className="flex items-center gap-2 border-l pl-3">
 										<translateFetcher.Form action="translate" method="post">
 											<div className="flex gap-2">
-												<Select name="aiModel" defaultValue="r1">
-													<SelectTrigger className="w-[120px] h-9">
-														<SelectValue placeholder="Select AI" />
-													</SelectTrigger>
-													<SelectContent>
-														<SelectItem value="r1">R1</SelectItem>
-														<SelectItem value="deepseek">Deepseek</SelectItem>
-														<SelectItem value="openai">OpenAI</SelectItem>
-													</SelectContent>
-												</Select>
+												<AiModelSelect name="aiModel" defaultValue="deepseek" />
 												<LoadingButtonWithState variant="secondary" size="sm" state={translateFetcher.state} idleText="Translate" />
 											</div>
 										</translateFetcher.Form>
@@ -268,7 +260,7 @@ export default function TranslateCommentPage() {
 						<div className="flex justify-between items-center">
 							<h3 className="font-medium text-lg">Comments</h3>
 							{translateComment.comments?.length ? (
-								<deleteFetcher.Form action="delete-all-comments" method="post">
+								<deleteFetcher.Form action="delete-comments" method="post">
 									<Button variant="ghost" size="sm" className="hover:bg-destructive/10 hover:text-destructive text-destructive">
 										<Trash size={14} className="mr-1" />
 										Delete All

@@ -1,9 +1,10 @@
 import type { LoaderFunctionArgs } from '@remix-run/node'
-import { useFetcher, useLoaderData } from '@remix-run/react'
+import { Form, useFetcher, useLoaderData } from '@remix-run/react'
 import { eq } from 'drizzle-orm'
 import { AlignLeft, ArrowRight, Languages, Mic, MonitorPlay } from 'lucide-react'
 import { useState } from 'react'
 import invariant from 'tiny-invariant'
+import AiModelSelect from '~/components/AiModelSelect'
 import LoadingButtonWithState from '~/components/LoadingButtonWithState'
 import { Badge } from '~/components/ui/badge'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card'
@@ -191,15 +192,8 @@ export default function SubtitleTranslationPage() {
 										<label htmlFor="alignmentMethod" className="block text-sm font-medium mb-2">
 											Select Alignment Method
 										</label>
-										<Select name="alignmentMethod" defaultValue="ai">
-											<SelectTrigger className="w-full">
-												<SelectValue placeholder="Select alignment method" />
-											</SelectTrigger>
-											<SelectContent>
-												<SelectItem value="ai">AI Alignment</SelectItem>
-												<SelectItem value="code">Code-based Alignment</SelectItem>
-											</SelectContent>
-										</Select>
+
+										<AiModelSelect name="alignmentMethod" defaultValue="ai" />
 									</div>
 
 									<LoadingButtonWithState type="submit" className="mt-2 w-full sm:w-auto" state={alignmentFetcher.state} idleText="Align Text" loadingText="Aligning..." />
@@ -282,16 +276,8 @@ export default function SubtitleTranslationPage() {
 										<label htmlFor="model" className="block text-sm font-medium mb-2">
 											Select Translation Model
 										</label>
-										<Select name="model" defaultValue="deepseek">
-											<SelectTrigger className="w-full">
-												<SelectValue placeholder="Select translation model" />
-											</SelectTrigger>
-											<SelectContent>
-												<SelectItem value="deepseek">DeepSeek</SelectItem>
-												<SelectItem value="openai">OpenAI</SelectItem>
-												<SelectItem value="r1">R1</SelectItem>
-											</SelectContent>
-										</Select>
+
+										<AiModelSelect name="model" defaultValue="deepseek" />
 									</div>
 
 									<LoadingButtonWithState type="submit" className="mt-2 w-full sm:w-auto" state={translationFetcher.state} idleText="Translate Text" loadingText="Translating..." />
@@ -352,9 +338,9 @@ export default function SubtitleTranslationPage() {
 								<div className="bg-card rounded-lg p-6 shadow-sm">
 									<h3 className="text-lg font-medium mb-4">Sync to Video Script</h3>
 									<p className="text-sm text-muted-foreground mb-4">Export optimized subtitles to your video script</p>
-									<syncScriptFetcher.Form method="post" action="sync-script" className="flex flex-col gap-5">
+									<Form method="post" action="sync-script" className="flex flex-col gap-5">
 										<LoadingButtonWithState type="submit" className="w-full" state={syncScriptFetcher.state} idleText="Sync to Video Script" loadingText="Syncing..." />
-									</syncScriptFetcher.Form>
+									</Form>
 								</div>
 							</div>
 						</TabsContent>

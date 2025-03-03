@@ -9,6 +9,7 @@ export default function AiModelSelect({ name, defaultValue }: { name: string; de
 			<SelectContent>
 				<SelectItem value="r1">R1</SelectItem>
 				<SelectItem value="deepseek">DeepSeek</SelectItem>
+				<SelectItem value="volcanoEngineDeepseekV3">VolcanoEngine DeepSeek</SelectItem>
 				<SelectItem value="openai">OpenAI</SelectItem>
 			</SelectContent>
 		</Select>

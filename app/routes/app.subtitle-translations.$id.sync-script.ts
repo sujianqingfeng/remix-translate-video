@@ -1,9 +1,9 @@
-import type { ActionFunctionArgs } from '@remix-run/node'
+import { type ActionFunctionArgs, redirect } from '@remix-run/node'
 import { eq } from 'drizzle-orm'
 import invariant from 'tiny-invariant'
 import { db, schema } from '~/lib/drizzle'
 
-export const action = async ({ request, params }: ActionFunctionArgs) => {
+export const action = async ({ params }: ActionFunctionArgs) => {
 	const { id } = params
 	invariant(id, 'id is required')
 
@@ -23,7 +23,5 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 		})
 		.where(eq(schema.translateVideos.id, translateVideoId))
 
-	return {
-		success: true,
-	}
+	return redirect(`/app/translate-video/${translateVideoId}`)
 }

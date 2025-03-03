@@ -6,8 +6,9 @@ import { eq } from 'drizzle-orm'
 import invariant from 'tiny-invariant'
 import { TRANSLATE_VIDEO_COMBINED_SRT_FILE } from '~/constants'
 import { db, schema } from '~/lib/drizzle'
+import { generateFFmpegCommand } from '~/utils/ffmpeg'
 import { createOperationDir } from '~/utils/file'
-import { generateASS, generateFFmpegCommand } from '~/utils/transcript'
+import { generateASS } from '~/utils/transcript'
 
 export const action = async ({ params }: ActionFunctionArgs) => {
 	const { id } = params

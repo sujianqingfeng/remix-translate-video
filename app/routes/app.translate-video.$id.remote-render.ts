@@ -6,9 +6,10 @@ import { eq } from 'drizzle-orm'
 import invariant from 'tiny-invariant'
 import { RENDER_INFO_FILE, RENDER_ZIP_OUTPUT_FILE_NAME, TRANSLATE_VIDEO_COMBINED_SRT_FILE } from '~/constants'
 import { db, schema } from '~/lib/drizzle'
+import { generateFFmpegCommand } from '~/utils/ffmpeg'
 import { createFfmpegZipArchive, createOperationDir } from '~/utils/file'
 import { addRenderTask, uploadRenderZipFile } from '~/utils/remote-render'
-import { generateASS, generateFFmpegCommand } from '~/utils/transcript'
+import { generateASS } from '~/utils/transcript'
 
 export const action = async ({ params }: ActionFunctionArgs) => {
 	const { id } = params

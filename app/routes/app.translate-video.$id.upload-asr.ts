@@ -2,8 +2,6 @@ import type { ActionFunctionArgs } from '@remix-run/node'
 import { eq } from 'drizzle-orm'
 import invariant from 'tiny-invariant'
 import { db, schema } from '~/lib/drizzle'
-import { trimPunctuation } from '~/utils/transcript'
-import { processSentenceSegmentation } from '~/utils/transcript'
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
 	const { id } = params
