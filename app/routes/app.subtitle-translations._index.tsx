@@ -1,10 +1,20 @@
-import { useLoaderData } from '@remix-run/react'
-import { Link } from '@remix-run/react'
+import { Link, useFetcher, useLoaderData } from '@remix-run/react'
 import { formatDistanceToNow } from 'date-fns'
 import { desc } from 'drizzle-orm'
 import { PlusCircle } from 'lucide-react'
+import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+	AlertDialogTrigger,
+} from '~/components/ui/alert-dialog'
 import { Button } from '~/components/ui/button'
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '~/components/ui/table'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '~/components/ui/table'
 import { db, schema } from '~/lib/drizzle'
 
 export const loader = async () => {
@@ -20,6 +30,8 @@ export const loader = async () => {
 export default function SubtitleTranslationsPages() {
 	const { subtitleTranslations } = useLoaderData<typeof loader>()
 
+	const deleteFetcher = useFetcher()
+
 	return (
 		<div className="container py-8">
 			<div className="flex justify-between items-center mb-6">
@@ -33,7 +45,6 @@ export default function SubtitleTranslationsPages() {
 			</div>
 
 			<Table>
-				<TableCaption>Subtitle Translations List</TableCaption>
 				<TableHeader>
 					<TableRow>
 						<TableHead>Title</TableHead>
@@ -57,10 +68,29 @@ export default function SubtitleTranslationsPages() {
 								<TableCell>{formatDistanceToNow(new Date(translation.createdAt), { addSuffix: true })}</TableCell>
 								<TableCell>{translation.audioFilePath ? 'Uploaded' : 'Not Uploaded'}</TableCell>
 								<TableCell>{translation.sentences?.length || 0}</TableCell>
-								<TableCell className="text-right">
+								<TableCell className="text-right space-x-2">
 									<Button variant="outline" size="sm" asChild>
 										<Link to={`/app/subtitle-translations/${translation.id}`}>View</Link>
 									</Button>
+									<AlertDialog>
+										<AlertDialogTrigger asChild>
+											<Button variant="destructive" size="sm">
+												Delete
+											</Button>
+										</AlertDialogTrigger>
+										<AlertDialogContent>
+											<AlertDialogHeader>
+												<AlertDialogTitle>Are you sure?</AlertDialogTitle>
+												<AlertDialogDescription>This action cannot be undone. This will permanently delete the translation and all its data.</AlertDialogDescription>
+											</AlertDialogHeader>
+											<AlertDialogFooter>
+												<AlertDialogCancel>Cancel</AlertDialogCancel>
+												<deleteFetcher.Form method="post" action={`/app/subtitle-translations/${translation.id}/delete`}>
+													<AlertDialogAction type="submit">Delete</AlertDialogAction>
+												</deleteFetcher.Form>
+											</AlertDialogFooter>
+										</AlertDialogContent>
+									</AlertDialog>
 								</TableCell>
 							</TableRow>
 						))

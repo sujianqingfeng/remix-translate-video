@@ -1,11 +1,11 @@
-import { rm, unlink } from 'node:fs/promises'
+import { rm } from 'node:fs/promises'
 import path from 'node:path'
 import type { ActionFunctionArgs } from '@remix-run/node'
 import { eq } from 'drizzle-orm'
 import invariant from 'tiny-invariant'
 import { PUBLIC_DIR } from '~/constants'
 import { db, schema } from '~/lib/drizzle'
-import { createOperationDir, fileExist, safeDeletePublicFile } from '~/utils/file'
+import { createOperationDir, safeDeletePublicFile } from '~/utils/file'
 
 export const action = async ({ params }: ActionFunctionArgs) => {
 	const id = params.id
