@@ -86,7 +86,6 @@ export const action = async ({ params }: ActionFunctionArgs) => {
 		outputLocation: outputPath,
 		onProgress: throttleRenderOnProgress,
 		concurrency: 8,
-		hardwareAcceleration: 'required',
 		logLevel: 'error',
 	})
 
