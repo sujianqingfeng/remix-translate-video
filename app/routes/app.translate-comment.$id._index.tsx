@@ -72,7 +72,11 @@ export default function TranslateCommentPage() {
 	const generatePublishTitleFetcher = useFetcher()
 
 	const currentTime = format(translateComment.commentPullAt ?? new Date(), 'yyyy-MM-dd HH:mm')
-	const desc = `视频ID：${videoId}\n视频仅供娱乐，请勿过度解读\n评论权重受点赞等影响，在不同的时间，评论的内容可能不同，当前视频评论拉取时间${currentTime}\n虽然评论是真实的，但是内容不一定是真的，大家注意分辨。`
+	const desc = `视频源ID：${videoId}
+本视频为娱乐向作品，请勿作过度延伸解读
+排序算法受点赞量、互动时效等多维度数据影响
+评论内容具有动态调整特性，当前数据抓取时间：${currentTime}
+请务必保持理性判断，注意甄别信息真实性`
 	const publishTitle = `外网真实评论：${translateComment.translatedTitle}`
 	const generatedTitle = (generatePublishTitleFetcher.data as { title: string } | undefined)?.title
 
